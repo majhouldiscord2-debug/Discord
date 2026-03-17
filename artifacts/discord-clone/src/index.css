@@ -20,20 +20,20 @@
 }
 
 :root {
-  --background: 223 7% 21%;
-  --foreground: 220 13% 95%;
-  --sidebar: 220 6% 18%;
-  --sidebar-dark: 225 6% 13%;
-  --sidebar-darker: 226 6% 15%;
-  --primary: 235 86% 65%;
+  --background: 220 50% 6%;
+  --foreground: 214 30% 90%;
+  --sidebar: 220 55% 8%;
+  --sidebar-dark: 220 60% 5%;
+  --sidebar-darker: 220 55% 7%;
+  --primary: 216 92% 54%;
   --primary-foreground: 0 0% 100%;
-  --accent: 227 6% 27%;
-  --muted: 214 9% 61%;
-  --muted-foreground: 214 9% 61%;
+  --accent: 220 50% 13%;
+  --muted: 215 25% 50%;
+  --muted-foreground: 215 25% 50%;
   --success: 145 65% 39%;
   --warning: 38 95% 54%;
   --danger: 359 82% 60%;
-  --border: 225 6% 13%;
+  --border: 220 50% 10%;
 }
 
 @layer base {

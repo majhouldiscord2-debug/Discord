@@ -39,13 +39,13 @@ export function FriendsList() {
   const pendingCount = pending.length;
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a1220" }}>
       {/* Top Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
         style={{
-          borderBottom: "1px solid rgba(0,0,0,0.28)",
-          background: "linear-gradient(180deg, #33353a 0%, #313338 100%)",
+          borderBottom: "1px solid rgba(0,0,0,0.4)",
+          background: "linear-gradient(180deg, #0c1530 0%, #0a1220 100%)",
         }}
       >
         <div className="flex items-center gap-2">
@@ -106,7 +106,7 @@ export function FriendsList() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full text-[#dbdee1] placeholder:text-[#5e6068] text-[14px] py-[7px] pl-3 pr-9 rounded-[6px] outline-none transition-all duration-150 focus:ring-1 focus:ring-white/10"
-                style={{ backgroundColor: "#1e1f22" }}
+                style={{ backgroundColor: "#060b14" }}
               />
               <Search className="absolute right-3 top-[8px] w-[15px] h-[15px] text-[#5e6068]" />
             </div>
@@ -134,7 +134,7 @@ export function FriendsList() {
                 return (
                   <div
                     key={rel.id}
-                    className="flex items-center justify-between py-[10px] px-3 rounded-[8px] cursor-pointer group transition-all duration-150 hover:bg-[#35373c] border-t border-[rgba(255,255,255,0.04)] first:border-t-0 animate-fade-slide-up"
+                    className="flex items-center justify-between py-[10px] px-3 rounded-[8px] cursor-pointer group transition-all duration-150 hover:bg-[#0d1a2e] border-t border-[rgba(255,255,255,0.04)] first:border-t-0 animate-fade-slide-up"
                     style={{ animationDelay: `${i * 40}ms` }}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -143,7 +143,7 @@ export function FriendsList() {
                         src={src}
                         color="#5865f2"
                         size="md"
-                        statusBg="#313338"
+                        statusBg="#0a1220"
                         className="transition-transform duration-150 group-hover:scale-105"
                       />
                       <div className="flex flex-col min-w-0">
@@ -221,7 +221,7 @@ function TabBtn({
         "px-3 py-1 text-[13px] font-medium rounded-[5px] transition-all duration-150 relative whitespace-nowrap",
         isActive
           ? "bg-[#404249] text-[#f2f3f5]"
-          : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+          : "text-[#87898c] hover:bg-[#0d1a2e] hover:text-[#dbdee1]"
       )}
     >
       {label}
@@ -249,8 +249,8 @@ function ActionBtn({
       className={cn(
         "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150",
         danger
-          ? "bg-[#1e1f22] text-[#ed4245] hover:text-white hover:bg-[#ed4245] hover:shadow-[0_2px_8px_rgba(237,66,69,0.4)]"
-          : "bg-[#1e1f22] text-[#87898c] hover:text-[#f2f3f5] hover:bg-[#35373c]"
+          ? "bg-[#060b14] text-[#ed4245] hover:text-white hover:bg-[#ed4245] hover:shadow-[0_2px_8px_rgba(237,66,69,0.4)]"
+          : "bg-[#060b14] text-[#87898c] hover:text-[#f2f3f5] hover:bg-[#0d1a2e]"
       )}
     >
       {children}
@@ -268,7 +268,7 @@ function AddFriendView() {
       </p>
       <div
         className="flex items-center rounded-[8px] px-4 py-3 gap-3 transition-all duration-150 focus-within:ring-1 focus-within:ring-[#5865f2]/40"
-        style={{ backgroundColor: "#1e1f22" }}
+        style={{ backgroundColor: "#060b14" }}
       >
         <input
           type="text"

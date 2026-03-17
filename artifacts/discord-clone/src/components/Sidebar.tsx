@@ -39,7 +39,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
     <div
       className="w-[240px] h-full flex flex-col shrink-0"
       style={{
-        background: "linear-gradient(180deg, #28292e 0%, #2b2d31 60%, #272930 100%)",
+        background: "linear-gradient(180deg, #080d1a 0%, #080f1c 60%, #06091a 100%)",
       }}
     >
       {/* Top Search Button */}
@@ -128,7 +128,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
                   src={src}
                   color="#5865f2"
                   size="sm"
-                  statusBg={activeDm === ch.id ? "#404249" : "#2b2d31"}
+                  statusBg={activeDm === ch.id ? "#152438" : "#080f1c"}
                 />
                 <span className="truncate text-[14px] font-medium">{name}</span>
               </button>
@@ -141,7 +141,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
       <div
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
         style={{
-          background: "linear-gradient(180deg, #1e1f22 0%, #202225 100%)",
+          background: "linear-gradient(180deg, #050c16 0%, #060e1a 100%)",
           borderTop: "1px solid rgba(0,0,0,0.2)",
         }}
       >

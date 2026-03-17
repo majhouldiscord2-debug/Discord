@@ -36,7 +36,7 @@ export default function Home() {
         ) : (
           <div
             className="flex-1 h-full flex flex-col items-center justify-center gap-3"
-            style={{ backgroundColor: "#313338" }}
+            style={{ backgroundColor: "#0a1220" }}
           >
             <p className="text-[#87898c] text-[15px] font-semibold">Coming soon...</p>
             <p className="text-[#5e6068] text-[13px]">This section isn't available yet.</p>

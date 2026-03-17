@@ -1,21 +1,10 @@
 import { useState } from "react";
-import { Eye, EyeOff, Bot, User, AlertCircle } from "lucide-react";
+import { Shield, AlertCircle } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
-import { cn } from "@/lib/utils";
-
-function DiscordWordmark() {
-  return (
-    <svg viewBox="0 0 126.67 96" className="h-8 fill-white" xmlns="http://www.w3.org/2000/svg">
-      <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,10.75A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm41.64,0C77.82,65.69,72.6,60,72.6,53s5-12.74,11.49-12.74S96.23,46,96.12,53,91.08,65.69,84.09,65.69Z" />
-    </svg>
-  );
-}
 
 export default function Login() {
   const { login } = useDiscord();
   const [token, setToken] = useState("");
-  const [tokenType, setTokenType] = useState<"user" | "bot">("user");
-  const [showToken, setShowToken] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,122 +12,118 @@ export default function Login() {
     if (!token.trim()) return;
     setError(null);
     setLoading(true);
-    const res = await login(token.trim(), tokenType);
+    const res = await login(token.trim(), "user");
     setLoading(false);
     if (!res.success) {
-      setError(res.error ?? "Invalid token. Check the token type and try again.");
+      setError(res.error ?? "Invalid token. Check and try again.");
     }
   }
 
   return (
     <div
       className="flex h-screen w-full items-center justify-center"
-      style={{ background: "linear-gradient(135deg, #1a1c2e 0%, #1e1f22 50%, #111214 100%)" }}
+      style={{
+        background: "radial-gradient(ellipse 80% 60% at 50% 35%, #0b1a38 0%, #050c1c 50%, #020508 100%)",
+      }}
     >
-      <div className="w-full max-w-[440px] mx-4">
+      <div className="w-full max-w-[400px] mx-4">
         <div
-          className="rounded-2xl px-8 py-10 animate-scale-in"
-          style={{ backgroundColor: "#313338", boxShadow: "0 24px 64px rgba(0,0,0,0.6)" }}
+          className="rounded-[28px] px-10 py-11 animate-scale-in"
+          style={{
+            backgroundColor: "rgba(6, 12, 26, 0.92)",
+            border: "1px solid rgba(25, 60, 110, 0.35)",
+            boxShadow: "0 40px 100px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.04)",
+            backdropFilter: "blur(24px)",
+          }}
         >
-          <div className="flex justify-center mb-6">
-            <DiscordWordmark />
+          {/* Shield Icon */}
+          <div className="flex justify-center mb-7">
+            <div
+              className="w-[68px] h-[68px] rounded-full flex items-center justify-center"
+              style={{
+                background: "linear-gradient(145deg, #1d6ef5 0%, #1252cc 100%)",
+                boxShadow: "0 10px 32px rgba(29, 110, 245, 0.45), 0 0 0 1px rgba(29,110,245,0.2)",
+              }}
+            >
+              <Shield className="w-8 h-8 text-white" fill="white" strokeWidth={0} />
+            </div>
           </div>
 
-          <h1 className="text-[24px] font-bold text-[#f2f3f5] text-center mb-1">
-            Connect your account
+          {/* Title */}
+          <h1
+            className="text-center text-[28px] font-black italic text-white mb-2 tracking-tight"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            NEXUS OBSIDIAN
           </h1>
-          <p className="text-[#949ba4] text-[14px] text-center mb-8 leading-relaxed">
-            Enter your Discord token to link real data to your dashboard.
+
+          {/* Subtitle */}
+          <p
+            className="text-center text-[10.5px] text-[#3a5070] mb-9"
+            style={{ letterSpacing: "0.28em", fontFamily: "'Courier New', monospace" }}
+          >
+            ZENITH OVERFLOW V19.5
           </p>
 
-          {/* Token type selector */}
-          <div
-            className="flex rounded-xl overflow-hidden mb-5 p-1"
-            style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            {(["user", "bot"] as const).map((t) => (
-              <button
-                key={t}
-                onClick={() => setTokenType(t)}
-                className={cn(
-                  "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-[13px] font-semibold transition-all duration-200",
-                  tokenType === t
-                    ? "bg-[#5865f2] text-white shadow-lg"
-                    : "text-[#949ba4] hover:text-[#dbdee1]"
-                )}
-              >
-                {t === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-                {t === "user" ? "User Token" : "Bot Token"}
-              </button>
-            ))}
-          </div>
-
-          {/* Token input */}
-          <div className="mb-2">
-            <label className="block text-[11px] font-bold tracking-widest uppercase text-[#949ba4] mb-2">
-              {tokenType === "bot" ? "Bot Token" : "User Token"}
-            </label>
-            <div
-              className="flex items-center rounded-lg px-4 gap-3 transition-all focus-within:ring-2 focus-within:ring-[#5865f2]/50"
-              style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+          {/* Registry Token label */}
+          <div className="mb-3.5">
+            <label
+              className="block text-[10px] font-bold text-[#3a5070] mb-2.5"
+              style={{ letterSpacing: "0.2em", fontFamily: "'Courier New', monospace" }}
             >
-              <input
-                type={showToken ? "text" : "password"}
-                placeholder={tokenType === "bot" ? "MTxxxxxx.xxxxxx.xxxxxx" : "Paste your token here"}
-                value={token}
-                onChange={(e) => setToken(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                className="flex-1 bg-transparent py-3.5 text-[14px] text-[#dbdee1] placeholder:text-[#4e5058] outline-none"
-                autoComplete="off"
-                spellCheck={false}
-              />
-              <button
-                onClick={() => setShowToken((v) => !v)}
-                className="text-[#949ba4] hover:text-[#dbdee1] transition-colors shrink-0"
-              >
-                {showToken ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
+              REGISTRY TOKEN
+            </label>
+            <input
+              type="password"
+              placeholder="mfa.XXXXX.XXXXX.XXXXX"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+              className="w-full rounded-xl px-4 py-3.5 text-[13px] text-[#6a90b8] outline-none transition-all placeholder:text-[#1e3450]"
+              style={{
+                backgroundColor: "#030810",
+                border: "1px solid rgba(15, 40, 75, 0.7)",
+                caretColor: "#1d6ef5",
+                fontFamily: "'Courier New', monospace",
+              }}
+              autoComplete="off"
+              spellCheck={false}
+            />
           </div>
 
           {error && (
-            <div className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-lg" style={{ backgroundColor: "rgba(237,66,69,0.12)", border: "1px solid rgba(237,66,69,0.25)" }}>
-              <AlertCircle className="w-4 h-4 text-[#ed4245] mt-0.5 shrink-0" />
-              <p className="text-[13px] text-[#ed4245] leading-relaxed">{error}</p>
-            </div>
-          )}
-
-          {tokenType === "user" && (
             <div
-              className="flex items-start gap-2 mb-5 px-3 py-2.5 rounded-lg"
-              style={{ backgroundColor: "rgba(250,166,26,0.1)", border: "1px solid rgba(250,166,26,0.2)" }}
+              className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-xl"
+              style={{
+                backgroundColor: "rgba(237,66,69,0.08)",
+                border: "1px solid rgba(237,66,69,0.2)",
+              }}
             >
-              <AlertCircle className="w-4 h-4 text-[#faa61a] mt-0.5 shrink-0" />
-              <p className="text-[12px] text-[#faa61a] leading-relaxed">
-                User tokens give full account access including DMs, friends, and all servers.
-              </p>
+              <AlertCircle className="w-4 h-4 text-[#ed4245] mt-0.5 shrink-0" />
+              <p className="text-[12px] text-[#ed4245] leading-relaxed">{error}</p>
             </div>
           )}
 
+          {/* Initialize Uplink button */}
           <button
             onClick={handleLogin}
             disabled={!token.trim() || loading}
-            className="w-full py-3 rounded-lg text-[15px] font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-1"
-            style={{ background: "linear-gradient(135deg, #5865f2, #7b68ee)" }}
+            className="w-full py-4 rounded-full text-[12.5px] font-black text-white uppercase transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-3"
+            style={{
+              background: "linear-gradient(145deg, #1d6ef5 0%, #1458d8 100%)",
+              boxShadow: "0 8px 28px rgba(29, 110, 245, 0.5), 0 2px 8px rgba(0,0,0,0.4)",
+              letterSpacing: "0.16em",
+            }}
           >
             {loading ? (
               <>
                 <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                Verifying…
+                CONNECTING…
               </>
             ) : (
-              "Log in"
+              "INITIALIZE UPLINK"
             )}
           </button>
-
-          <p className="text-[12px] text-[#4e5058] text-center mt-5 leading-relaxed">
-            Your token is stored securely on the server and never shared.
-          </p>
         </div>
       </div>
     </div>

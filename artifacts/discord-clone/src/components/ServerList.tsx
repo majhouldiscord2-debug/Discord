@@ -67,10 +67,10 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
         <div className="absolute left-[68px] z-50 pointer-events-none animate-scale-in">
           <div
             className="text-white text-[13px] font-semibold px-3 py-2 rounded-lg shadow-2xl whitespace-nowrap"
-            style={{ background: "#111214", border: "1px solid rgba(255,255,255,0.08)" }}
+            style={{ background: "#06090f", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             {name}
-            <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#111214]" />
+            <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#06090f]" />
           </div>
         </div>
       )}
@@ -86,7 +86,7 @@ export function ServerList() {
     <div
       className="w-[72px] h-full flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0"
       style={{
-        background: "linear-gradient(180deg, #17181c 0%, #1e1f22 50%, #1a1b1f 100%)",
+        background: "linear-gradient(180deg, #080e1c 0%, #060b14 50%, #070a18 100%)",
       }}
     >
       {/* Home / DMs Button */}
@@ -94,15 +94,15 @@ export function ServerList() {
         name="Direct Messages"
         isActive={activeServer === "dms"}
         onClick={() => setActiveServer("dms")}
-        glowColor="#5865f2"
+        glowColor="#1d6ef5"
       >
         <div
           className="w-12 h-12 flex items-center justify-center transition-all duration-200"
           style={{
             borderRadius: activeServer === "dms" ? 16 : 24,
             background: activeServer === "dms"
-              ? "linear-gradient(135deg, #5865f2 0%, #7289da 100%)"
-              : "#2e3035",
+              ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
+              : "#0a1420",
           }}
         >
           <DiscordLogo />
@@ -135,7 +135,7 @@ export function ServerList() {
                 className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[13px] font-bold text-white"
                 style={{
                   borderRadius: isActive ? 16 : 24,
-                  backgroundColor: "#5865f2",
+                  backgroundColor: "#1d6ef5",
                   boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
                 }}
               >
@@ -151,17 +151,17 @@ export function ServerList() {
       {/* Add Server */}
       <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
         <div
-          className="w-12 h-12 flex items-center justify-center text-[#23a55a] transition-all duration-200 group"
-          style={{ borderRadius: 24, background: "#2e3035" }}
+          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200 group"
+          style={{ borderRadius: 24, background: "#0a1420" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.background = "#1db954";
             (e.currentTarget as HTMLDivElement).style.color = "white";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
-            (e.currentTarget as HTMLDivElement).style.color = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+            (e.currentTarget as HTMLDivElement).style.color = "#1db954";
           }}
         >
           <Plus className="w-6 h-6" />
@@ -171,17 +171,17 @@ export function ServerList() {
       {/* Explore */}
       <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
         <div
-          className="w-12 h-12 flex items-center justify-center text-[#23a55a] transition-all duration-200"
-          style={{ borderRadius: 24, background: "#2e3035" }}
+          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
+          style={{ borderRadius: 24, background: "#0a1420" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.background = "#1db954";
             (e.currentTarget as HTMLDivElement).style.color = "white";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
-            (e.currentTarget as HTMLDivElement).style.color = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+            (e.currentTarget as HTMLDivElement).style.color = "#1db954";
           }}
         >
           <Compass className="w-6 h-6" />
@@ -193,17 +193,17 @@ export function ServerList() {
       {/* Download */}
       <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
         <div
-          className="w-12 h-12 flex items-center justify-center text-[#5865f2] transition-all duration-200"
-          style={{ borderRadius: 24, background: "#2e3035" }}
+          className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"
+          style={{ borderRadius: 24, background: "#0a1420" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#5865f2";
+            (e.currentTarget as HTMLDivElement).style.background = "#1d6ef5";
             (e.currentTarget as HTMLDivElement).style.color = "white";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
-            (e.currentTarget as HTMLDivElement).style.color = "#5865f2";
+            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+            (e.currentTarget as HTMLDivElement).style.color = "#1d6ef5";
           }}
         >
           <Download className="w-[22px] h-[22px]" />

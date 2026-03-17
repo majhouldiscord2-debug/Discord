@@ -117,13 +117,13 @@ export default function Logs() {
   }), [logs]);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a1220" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
         style={{
           borderBottom: "1px solid rgba(0,0,0,0.28)",
-          background: "linear-gradient(180deg, #33353a 0%, #313338 100%)",
+          background: "linear-gradient(180deg, #0c1530 0%, #0a1220 100%)",
         }}
       >
         <div className="flex items-center gap-2">
@@ -143,14 +143,14 @@ export default function Logs() {
                 "px-2.5 py-[3px] text-[11px] font-bold rounded-[4px] transition-all duration-150 tracking-wider",
                 activeLevel === lvl
                   ? lvl === "ALL"
-                    ? "bg-[#404249] text-[#f2f3f5]"
+                    ? "bg-[#152438] text-[#f2f3f5]"
                     : lvl === "ERROR"
                     ? "bg-[#f23f43]/20 text-[#f23f43]"
                     : lvl === "WARN"
                     ? "bg-[#f0b232]/20 text-[#f0b232]"
                     : lvl === "DEBUG"
                     ? "bg-[#7289da]/20 text-[#7289da]"
-                    : "bg-[#404249] text-[#87898c]"
+                    : "bg-[#152438] text-[#87898c]"
                   : "text-[#5e6068] hover:text-[#87898c] hover:bg-white/5"
               )}
             >
@@ -170,7 +170,7 @@ export default function Logs() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-[180px] text-[#dbdee1] placeholder:text-[#5e6068] text-[12px] py-[5px] pl-3 pr-8 rounded-[5px] outline-none transition-all focus:w-[240px] focus:ring-1 focus:ring-white/10"
-            style={{ backgroundColor: "#1e1f22" }}
+            style={{ backgroundColor: "#060b14" }}
           />
           <Search className="absolute right-2.5 top-[6px] w-3.5 h-3.5 text-[#5e6068]" />
         </div>
@@ -184,7 +184,7 @@ export default function Logs() {
               "flex items-center gap-1.5 px-2.5 py-[4px] text-[11px] font-semibold rounded-[5px] transition-all",
               streaming
                 ? "bg-[#23a55a]/20 text-[#23a55a] hover:bg-[#23a55a]/30"
-                : "bg-[#404249] text-[#87898c] hover:text-[#dbdee1] hover:bg-[#4a4d55]"
+                : "bg-[#152438] text-[#87898c] hover:text-[#dbdee1] hover:bg-[#1a3050]"
             )}
           >
             <RefreshCw className={cn("w-3 h-3", streaming && "animate-spin")} />
@@ -295,7 +295,7 @@ export default function Logs() {
                         {log.level}
                       </span>
                     </div>
-                    <span className="text-[10px] text-[#4a4d55] truncate pr-2 group-hover:text-[#5e6068] transition-colors">
+                    <span className="text-[10px] text-[#1a3050] truncate pr-2 group-hover:text-[#5e6068] transition-colors">
                       [{log.source}]
                     </span>
                     <span className="text-[11px] truncate" style={{ color: m.color === "#87898c" ? "#6d6f76" : m.color }}>
@@ -314,8 +314,8 @@ export default function Logs() {
             style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
           >
             <span className="text-[11px] text-[#23a55a] font-mono">›</span>
-            <span className="text-[10px] text-[#2e3035] font-mono animate-pulse">_</span>
-            <span className="ml-auto text-[9px] text-[#2e3035] font-mono tabular-nums">
+            <span className="text-[10px] text-[#060b14] font-mono animate-pulse">_</span>
+            <span className="ml-auto text-[9px] text-[#060b14] font-mono tabular-nums">
               {counts.ERROR > 0 && <span className="text-[#f23f43] mr-2">{counts.ERROR} error{counts.ERROR !== 1 ? "s" : ""}</span>}
               {counts.WARN > 0 && <span className="text-[#f0b232] mr-2">{counts.WARN} warning{counts.WARN !== 1 ? "s" : ""}</span>}
               {logs.length} total

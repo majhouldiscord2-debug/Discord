@@ -100,11 +100,11 @@ function WumpusFace({ size = "md" }: { size?: "xs" | "sm" | "md" }) {
     <svg width={s} height={s} viewBox="0 0 40 40" fill="none">
       <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
       <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
-      <ellipse cx="14" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
-      <ellipse cx="26" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+      <ellipse cx="14" cy="16" rx="4" ry="5" fill="#1d6ef5" opacity="0.8" />
+      <ellipse cx="26" cy="16" rx="4" ry="5" fill="#1d6ef5" opacity="0.8" />
       <ellipse cx="14" cy="16" rx="2" ry="2.5" fill="white" />
       <ellipse cx="26" cy="16" rx="2" ry="2.5" fill="white" />
-      <path d="M16 26 Q20 29 24 26" stroke="#5865f2" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+      <path d="M16 26 Q20 29 24 26" stroke="#1d6ef5" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
     </svg>
   );
 }
@@ -123,7 +123,7 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
           className="w-20 h-20 rounded-full border-4 flex items-center justify-center overflow-hidden"
           style={{
             borderColor: item.glowColor,
-            backgroundColor: item.darkBg ?? "#1a1b1e",
+            backgroundColor: item.darkBg ?? "#080f1c",
             boxShadow: `0 0 20px ${item.glowColor}50`,
           }}
         >
@@ -215,7 +215,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
 
   if (loading) {
     return (
-      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#0d0d10" }}>
+      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#050a12" }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${glowColor} transparent transparent transparent` }} />
           <span className="text-[13px] text-[#949ba4]">Loading settings…</span>
@@ -225,7 +225,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
   }
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#0d0d10" }}>
+    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#050a12" }}>
       {/* Header */}
       <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <button
@@ -248,7 +248,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
         {/* Behaviour section */}
         <div className="mb-1">
           <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Behaviour</p>
-          <div className="rounded-xl px-3" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="rounded-xl px-3" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
             <SettingRow icon={<AtSign className="w-4 h-4 text-[#949ba4]" />} label="Smart Mentions" description="Target active members only">
               <ToggleSwitch on={smartMention} onToggle={() => setSmartMention(v => !v)} />
             </SettingRow>
@@ -275,7 +275,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
                 value={delay}
                 onChange={e => setDelay(e.target.value)}
                 className="w-16 text-center text-[13px] font-semibold rounded-lg py-1.5 outline-none text-[#f2f3f5]"
-                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.12)" }}
+                style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.12)" }}
               />
             </div>
           </div>
@@ -284,7 +284,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
         {/* Target Servers */}
         <div className="mt-4 mb-1">
           <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Target Servers</p>
-          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
             {servers.map((s, i) => (
               <div key={i} className="flex items-center justify-between py-2.5" style={{ borderBottom: i < servers.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
                 <div className="flex items-center gap-2">
@@ -304,7 +304,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
                 onChange={e => setNewServer(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
                 className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
-                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.08)" }}
               />
               <button
                 onClick={() => { if (newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
@@ -320,7 +320,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
         {/* Message Templates */}
         <div className="mt-4 mb-1">
           <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Message Templates</p>
-          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
             {messages.map((m, i) => (
               <div key={i} className="flex items-start gap-2 py-2.5" style={{ borderBottom: i < messages.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
                 <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: glowColor }} />
@@ -338,7 +338,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
                 onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
                 className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
-                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.08)" }}
               />
               <button
                 onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
@@ -353,12 +353,12 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
       </div>
 
       {/* Save bar */}
-      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#111114" }}>
+      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#080e1a" }}>
         <button
           onClick={handleSave}
           disabled={saving}
           className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
-          style={{ background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${glowColor})` }}
+          style={{ background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : `linear-gradient(135deg, ${item.darkBg ?? "#1d6ef5"}, ${glowColor})` }}
         >
           {saving ? (
             <>
@@ -387,7 +387,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#0d0d10" }}>
+    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#050a12" }}>
       {editing && (
         <EditPanel item={item} onBack={() => setEditing(false)} glowColor={item.glowColor} />
       )}
@@ -411,7 +411,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
         <div
           className="flex-1 relative flex items-center justify-center"
           style={{
-            background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, ${item.darkBg ?? "#1a0a2e"} 45%, #0d0d10 100%)`,
+            background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, ${item.darkBg ?? "#1a0a2e"} 45%, #050a12 100%)`,
           }}
         >
           {/* Outer glow rings */}
@@ -430,7 +430,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
               className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center overflow-hidden"
               style={{
                 borderColor: item.glowColor,
-                backgroundColor: item.darkBg ?? "#1a1b1e",
+                backgroundColor: item.darkBg ?? "#080f1c",
                 boxShadow: `0 0 40px ${item.glowColor}60, inset 0 0 20px ${item.glowColor}15`,
               }}
             >
@@ -440,11 +440,11 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
                 <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
                   <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
                   <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
-                  <ellipse cx="14" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
-                  <ellipse cx="26" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+                  <ellipse cx="14" cy="16" rx="4" ry="5" fill="#1d6ef5" opacity="0.8" />
+                  <ellipse cx="26" cy="16" rx="4" ry="5" fill="#1d6ef5" opacity="0.8" />
                   <ellipse cx="14" cy="16" rx="2" ry="2.5" fill="white" />
                   <ellipse cx="26" cy="16" rx="2" ry="2.5" fill="white" />
-                  <path d="M16 26 Q20 29 24 26" stroke="#5865f2" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+                  <path d="M16 26 Q20 29 24 26" stroke="#1d6ef5" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
                 </svg>
               )}
             </div>
@@ -454,7 +454,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
         </div>
 
         {/* Info panel */}
-        <div className="shrink-0 px-6 py-5" style={{ backgroundColor: "#111114", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="shrink-0 px-6 py-5" style={{ backgroundColor: "#080e1a", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
           <div className="flex items-start justify-between mb-3">
             <div>
               <h2 className="text-[22px] font-bold text-[#f2f3f5] mb-0.5">{item.name}</h2>
@@ -488,7 +488,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
           <button
             onClick={() => setEditing(true)}
             className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ background: `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${item.glowColor})` }}
+            style={{ background: `linear-gradient(135deg, ${item.darkBg ?? "#1d6ef5"}, ${item.glowColor})` }}
           >
             <Zap className="w-4 h-4" />
             Edit
@@ -507,7 +507,7 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
     <div
       className="relative rounded-lg overflow-hidden cursor-pointer group ring-1 ring-white/10 hover:ring-white/30 animate-fade-slide-up"
       style={{
-        backgroundColor: "#111114",
+        backgroundColor: "#080e1a",
         animationDelay: `${delay}ms`,
         transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease, ring 0.2s ease",
         transform: hovered ? "translateY(-3px) scale(1.02)" : "translateY(0) scale(1)",
@@ -550,19 +550,19 @@ export default function Shop() {
   const [selectedItem, setSelectedItem] = useState<AutomationItem | null>(null);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#0d0d10" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#050a12" }}>
       {selectedItem && (
         <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
       )}
       {/* Top Navigation Bar */}
       <div
         className="shrink-0 flex items-center px-5 gap-6 h-14 border-b"
-        style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "#0d0d10" }}
+        style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "#050a12" }}
       >
         <div className="flex items-center gap-2 shrink-0">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg, #5865f2, #9b59b6)" }}
+            style={{ background: "linear-gradient(135deg, #1d6ef5, #9b59b6)" }}
           >
             <WumpusFace size="xs" />
           </div>
@@ -590,7 +590,7 @@ export default function Shop() {
 
         <div
           className="flex items-center gap-2 px-3 py-1.5 rounded-md w-52"
-          style={{ backgroundColor: "#1e1f22" }}
+          style={{ backgroundColor: "#060b14" }}
         >
           <Search className="w-4 h-4 text-[#949ba4] shrink-0" />
           <input
@@ -611,7 +611,7 @@ export default function Shop() {
 
         <div
           className="flex items-center gap-2 px-3 py-1.5 rounded-full"
-          style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+          style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <div
             className="w-5 h-5 rounded-full flex items-center justify-center"
@@ -640,7 +640,7 @@ export default function Shop() {
                 <button
                   onClick={() => setShowSort(!showSort)}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[14px] font-medium text-[#f2f3f5] hover:bg-white/10 transition-colors"
-                  style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+                  style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
                   {sortBy}
                   <ChevronDown className="w-4 h-4 text-[#949ba4]" />
@@ -648,7 +648,7 @@ export default function Shop() {
                 {showSort && (
                   <div
                     className="absolute right-0 top-full mt-1 w-48 rounded-md overflow-hidden shadow-xl z-20"
-                    style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
                   >
                     {sortOptions.map((opt) => (
                       <button
@@ -656,7 +656,7 @@ export default function Shop() {
                         onClick={() => { setSortBy(opt); setShowSort(false); }}
                         className={cn(
                           "w-full text-left px-3 py-2 text-[14px] transition-colors",
-                          sortBy === opt ? "text-[#5865f2] bg-[#5865f2]/10" : "text-[#dbdee1] hover:bg-white/5"
+                          sortBy === opt ? "text-[#1d6ef5] bg-[#1d6ef5]/10" : "text-[#dbdee1] hover:bg-white/5"
                         )}
                       >
                         {opt}
@@ -669,7 +669,7 @@ export default function Shop() {
 
             <button
               className="flex items-center gap-2 px-4 py-1.5 rounded-md text-[14px] font-semibold text-[#f2f3f5] transition-colors hover:brightness-110"
-              style={{ background: "linear-gradient(135deg, #5865f2, #9b59b6)" }}
+              style={{ background: "linear-gradient(135deg, #1d6ef5, #9b59b6)" }}
             >
               <Shuffle className="w-4 h-4" />
               Shuffle!

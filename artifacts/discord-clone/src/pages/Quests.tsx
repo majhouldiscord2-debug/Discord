@@ -210,7 +210,7 @@ function OrbsIcon({ size = 16 }: { size?: number }) {
       style={{
         width: size,
         height: size,
-        background: "linear-gradient(135deg, #5865f2 0%, #9b59b6 100%)",
+        background: "linear-gradient(135deg, #1d6ef5 0%, #9b59b6 100%)",
       }}
     >
       <div
@@ -228,7 +228,7 @@ function QuestCard({ quest }: { quest: Quest }) {
     <div
       className="rounded-xl overflow-hidden flex flex-col transition-all duration-200"
       style={{
-        backgroundColor: "#1e1f22",
+        backgroundColor: "#060b14",
         border: "1px solid rgba(255,255,255,0.08)",
         willChange: "transform",
       }}
@@ -252,7 +252,7 @@ function QuestCard({ quest }: { quest: Quest }) {
           style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)" }}
         >
           <div className="flex items-center gap-1.5 text-[12px] text-white/90">
-            <Check className="w-3 h-3 text-[#23a55a]" />
+            <Check className="w-3 h-3 text-[#1db954]" />
             <span>Promoted by</span>
             <span className="font-semibold">{quest.developer}</span>
           </div>
@@ -266,7 +266,7 @@ function QuestCard({ quest }: { quest: Quest }) {
           {/* Quest icon */}
           <div
             className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #3a3dc4 0%, #5865f2 50%, #7b68ee 100%)", border: "2px solid rgba(88,101,242,0.4)" }}
+            style={{ background: "linear-gradient(135deg, #3a3dc4 0%, #1d6ef5 50%, #7b68ee 100%)", border: "2px solid rgba(88,101,242,0.4)" }}
           >
             <OrbsIcon size={20} />
           </div>
@@ -292,7 +292,7 @@ function QuestCard({ quest }: { quest: Quest }) {
         {quest.status === "watching" ? (
           <button
             className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#5865f2" }}
+            style={{ backgroundColor: "#1d6ef5" }}
           >
             <Play className="w-4 h-4 fill-white" />
             Watch ({quest.timeLeft} left)
@@ -300,7 +300,7 @@ function QuestCard({ quest }: { quest: Quest }) {
         ) : accepted ? (
           <button
             className="w-full py-2 rounded-md text-[14px] font-semibold transition-all flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#23a55a", color: "white" }}
+            style={{ backgroundColor: "#1db954", color: "white" }}
           >
             <Check className="w-4 h-4" />
             Quest Accepted!
@@ -309,7 +309,7 @@ function QuestCard({ quest }: { quest: Quest }) {
           <button
             onClick={() => setAccepted(true)}
             className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110"
-            style={{ backgroundColor: "#5865f2" }}
+            style={{ backgroundColor: "#1d6ef5" }}
           >
             Accept Quest
           </button>
@@ -329,11 +329,11 @@ export default function Quests() {
   const [activeTab, setActiveTab] = useState<"all" | "claimed">("all");
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#313338" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a1220" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-6"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#313338" }}
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a1220" }}
       >
         <div className="flex items-center gap-2">
           <Target className="w-5 h-5 text-[#949ba4]" />
@@ -347,7 +347,7 @@ export default function Quests() {
         <div className="flex-1" />
         <div
           className="flex items-center gap-2 px-3 py-1 rounded-full text-[13px] font-bold text-[#f2f3f5]"
-          style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+          style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
         >
           <OrbsIcon size={16} />
           <span>2130</span>
@@ -364,14 +364,14 @@ export default function Quests() {
               <div className="flex items-center gap-2">
                 <button
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-                  style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+                  style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
                   Suggested
                   <ChevronDown className="w-3.5 h-3.5 text-[#949ba4]" />
                 </button>
                 <button
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-                  style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.1)" }}
+                  style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
                 >
                   <SlidersHorizontal className="w-3.5 h-3.5" />
                   Filters
@@ -397,16 +397,16 @@ export default function Quests() {
                   <div
                     key={q.id}
                     className="flex items-center gap-4 px-4 py-3 rounded-lg"
-                    style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.06)" }}
+                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.06)" }}
                   >
                     <div
                       className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                      style={{ background: "linear-gradient(135deg, #23a55a, #1a8b48)" }}
+                      style={{ background: "linear-gradient(135deg, #1db954, #1a8b48)" }}
                     >
                       <Check className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[11px] font-bold text-[#23a55a] tracking-wider">{q.questTitle}</div>
+                      <div className="text-[11px] font-bold text-[#1db954] tracking-wider">{q.questTitle}</div>
                       <div className="flex items-center gap-1.5 text-[14px] font-semibold text-[#f2f3f5]">
                         <span>Claimed</span>
                         <OrbsIcon size={13} />

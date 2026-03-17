@@ -23,9 +23,9 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center" style={{ backgroundColor: "#1e1f22" }}>
+      <div className="flex h-screen w-full items-center justify-center" style={{ backgroundColor: "#060b14" }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-full border-2 border-[#5865f2]/30 border-t-[#5865f2] animate-spin" />
+          <div className="w-10 h-10 rounded-full border-2 border-[#1d6ef5]/30 border-t-[#1d6ef5] animate-spin" />
           <span className="text-[#949ba4] text-[14px]">Loading…</span>
         </div>
       </div>
