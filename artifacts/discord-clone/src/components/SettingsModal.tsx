@@ -284,12 +284,18 @@ function PlaceholderPage({ title }: { title: string }) {
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
   const [activePage, setActivePage] = useState<SettingsPage>("my-account");
   const [search, setSearch] = useState("");
+  const [pageKey, setPageKey] = useState(0);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     if (open) window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
+
+  const handlePageChange = (page: SettingsPage) => {
+    setActivePage(page);
+    setPageKey(k => k + 1);
+  };
 
   if (!open) return null;
 
@@ -298,11 +304,11 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
     .filter((s) => s.items.length > 0);
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 flex" style={{ left: 72, backgroundColor: "#313338" }}>
+    <div className="fixed inset-y-0 right-0 z-50 flex animate-modal-slide-in" style={{ left: 72, backgroundColor: "#313338" }}>
 
       {/* ── Sidebar ── */}
       <div
-        className="shrink-0 h-full flex flex-col items-end overflow-y-auto discord-scrollbar pt-[72px] pb-[20px]"
+        className="shrink-0 h-full flex flex-col items-end overflow-y-auto discord-scrollbar pt-[72px] pb-[20px] animate-sidebar-slide-in"
         style={{ width: 232, backgroundColor: "#2b2d31" }}
       >
         {/* inner column — right-justified to sit flush against content */}
@@ -370,7 +376,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                 ) : (
                   <button
                     key={item.id}
-                    onClick={() => setActivePage(item.id as SettingsPage)}
+                    onClick={() => handlePageChange(item.id as SettingsPage)}
                     className={cn(
                       "w-full flex items-center gap-2 px-2 py-[6px] rounded-[3px] transition-colors text-left",
                       activePage === item.id
@@ -408,7 +414,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
       {/* ── Content pane ── */}
       <div className="flex-1 flex overflow-hidden" style={{ backgroundColor: "#313338" }}>
         {/* page */}
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <div key={pageKey} className="flex-1 flex flex-col overflow-hidden min-w-0 animate-page-slide-right">
           {activePage === "my-account"
             ? <MyAccountPage />
             : <PlaceholderPage title={pageTitles[activePage] ?? activePage} />}

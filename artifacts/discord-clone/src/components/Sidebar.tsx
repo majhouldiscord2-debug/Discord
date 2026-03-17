@@ -160,9 +160,11 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
           >
             <Headphones className="w-[17px] h-[17px]" />
           </IconBtn>
-          <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
-            <Settings className="w-[17px] h-[17px]" />
-          </IconBtn>
+          <div className="group">
+            <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
+              <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
+            </IconBtn>
+          </div>
         </div>
       </div>
     </div>

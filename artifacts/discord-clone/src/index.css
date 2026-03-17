@@ -63,6 +63,41 @@
   to   { opacity: 1; transform: scale(1); }
 }
 
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sidebarSlideIn {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pageSlideInRight {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pageSlideInLeft {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spinOnce {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(90deg); }
+}
+
 /* ── Animation utilities ─────────────────────────────────────── */
 @layer utilities {
   .animate-fade-slide-up {
@@ -70,6 +105,24 @@
   }
   .animate-scale-in {
     animation: scaleIn 0.25s ease both;
+  }
+  .animate-modal-slide-in {
+    animation: modalSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-sidebar-slide-in {
+    animation: sidebarSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-page-slide-right {
+    animation: pageSlideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-page-slide-left {
+    animation: pageSlideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-view-fade {
+    animation: viewFadeIn 0.25s ease both;
+  }
+  .hover\:animate-spin-once:hover {
+    animation: spinOnce 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .online-pulse {
     animation: onlinePulse 2.4s ease-in-out infinite;

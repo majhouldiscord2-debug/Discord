@@ -21,26 +21,28 @@ export default function Home() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
-      {view === "shop" ? (
-        <Shop />
-      ) : view === "quests" ? (
-        <Quests />
-      ) : view === "nitro" ? (
-        <LogsPage />
-      ) : view === "friends" || view === "dm" ? (
-        <>
-          <FriendsList />
-          <ActiveNow />
-        </>
-      ) : (
-        <div
-          className="flex-1 h-full flex flex-col items-center justify-center gap-3"
-          style={{ backgroundColor: "#313338" }}
-        >
-          <p className="text-[#87898c] text-[15px] font-semibold">Coming soon...</p>
-          <p className="text-[#5e6068] text-[13px]">This section isn't available yet.</p>
-        </div>
-      )}
+      <div key={view} className="flex flex-1 h-full overflow-hidden animate-view-fade">
+        {view === "shop" ? (
+          <Shop />
+        ) : view === "quests" ? (
+          <Quests />
+        ) : view === "nitro" ? (
+          <LogsPage />
+        ) : view === "friends" || view === "dm" ? (
+          <>
+            <FriendsList />
+            <ActiveNow />
+          </>
+        ) : (
+          <div
+            className="flex-1 h-full flex flex-col items-center justify-center gap-3"
+            style={{ backgroundColor: "#313338" }}
+          >
+            <p className="text-[#87898c] text-[15px] font-semibold">Coming soon...</p>
+            <p className="text-[#5e6068] text-[13px]">This section isn't available yet.</p>
+          </div>
+        )}
+      </div>
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
