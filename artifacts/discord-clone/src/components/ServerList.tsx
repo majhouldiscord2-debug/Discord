@@ -12,6 +12,26 @@ function DiscordLogo() {
   );
 }
 
+function BotIcon() {
+  return (
+    <svg viewBox="0 0 100 100" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Antenna */}
+      <line x1="50" y1="8" x2="50" y2="22" stroke="white" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="50" cy="6" r="5" fill="white" />
+      {/* Ears */}
+      <rect x="7" y="40" width="10" height="20" rx="5" fill="white" />
+      <rect x="83" y="40" width="10" height="20" rx="5" fill="white" />
+      {/* Head */}
+      <rect x="18" y="24" width="64" height="54" rx="18" fill="white" />
+      {/* Face screen */}
+      <rect x="26" y="32" width="48" height="38" rx="10" fill="#1d6ef5" />
+      {/* Eyes */}
+      <rect x="34" y="43" width="12" height="16" rx="4" fill="white" />
+      <rect x="54" y="43" width="12" height="16" rx="4" fill="white" />
+    </svg>
+  );
+}
+
 interface ServerButtonProps {
   name: string;
   children: React.ReactNode;
@@ -79,6 +99,7 @@ interface ServerListProps {
 
 export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
   const { guilds } = useDiscord();
+  const [isBotMode, setIsBotMode] = useState(false);
 
   return (
     <div
@@ -88,9 +109,12 @@ export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
       }}
     >
       <ServerButton
-        name="Direct Messages"
+        name={isBotMode ? "Bot Mode" : "Direct Messages"}
         isActive={activeServer === "dms"}
-        onClick={() => onSelectServer("dms")}
+        onClick={() => {
+          setIsBotMode(v => !v);
+          onSelectServer("dms");
+        }}
         glowColor="#1d6ef5"
       >
         <div
@@ -102,7 +126,7 @@ export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
               : "#0a1420",
           }}
         >
-          <DiscordLogo />
+          {isBotMode ? <BotIcon /> : <DiscordLogo />}
         </div>
       </ServerButton>
 
