@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, LogOut } from "lucide-react";
+import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, LogOut, Sparkles, ScrollText, BarChart2, Wrench, Server } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
 import { avatarUrl } from "@/lib/api";
 import { Avatar } from "./Avatar";
@@ -55,38 +55,25 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
 
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto discord-scrollbar pt-2 px-2">
-        {/* Nav Items */}
+        {/* Nav Items — Profile 1 (Discord) vs Profile 2 (Bot) */}
         <div className="space-y-[2px] mb-1">
-          <NavItem
-            icon={<Users className="w-[18px] h-[18px]" />}
-            label="Stats"
-            isActive={activeItem === "friends"}
-            onClick={() => handleNav("friends")}
-          />
-          <NavItem
-            icon={<MailCheck className="w-[18px] h-[18px]" />}
-            label="Message Requests"
-            isActive={activeItem === "requests"}
-            onClick={() => handleNav("requests")}
-          />
-          <NavItem
-            icon={<Zap className="w-[18px] h-[18px]" />}
-            label="Logs"
-            isActive={activeItem === "logs"}
-            onClick={() => handleNav("logs")}
-          />
-          <NavItem
-            icon={<ShoppingBag className="w-[18px] h-[18px]" />}
-            label="Tools"
-            isActive={activeItem === "tools"}
-            onClick={() => handleNav("tools")}
-          />
-          <NavItem
-            icon={<Target className="w-[18px] h-[18px]" />}
-            label="Servers"
-            isActive={activeItem === "servers"}
-            onClick={() => handleNav("servers")}
-          />
+          {isBotMode ? (
+            <>
+              <NavItem icon={<BarChart2 className="w-[18px] h-[18px]" />}  label="Stats"            isActive={activeItem === "friends"} onClick={() => handleNav("friends")} />
+              <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />}  label="Message Requests" isActive={activeItem === "requests"} onClick={() => handleNav("requests")} />
+              <NavItem icon={<ScrollText className="w-[18px] h-[18px]" />} label="Logs"             isActive={activeItem === "logs"}     onClick={() => handleNav("logs")} />
+              <NavItem icon={<Wrench className="w-[18px] h-[18px]" />}     label="Tools"            isActive={activeItem === "tools"}    onClick={() => handleNav("tools")} />
+              <NavItem icon={<Server className="w-[18px] h-[18px]" />}     label="Servers"          isActive={activeItem === "servers"}  onClick={() => handleNav("servers")} />
+            </>
+          ) : (
+            <>
+              <NavItem icon={<Users className="w-[18px] h-[18px]" />}      label="Friends"          isActive={activeItem === "friends"}  onClick={() => handleNav("friends")} />
+              <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />}  label="Message Requests" isActive={activeItem === "requests"}  onClick={() => handleNav("requests")} />
+              <NavItem icon={<Sparkles className="w-[18px] h-[18px]" />}   label="Nitro Home"       isActive={activeItem === "nitro"}    onClick={() => handleNav("nitro")} />
+              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop"            isActive={activeItem === "tools"}    onClick={() => handleNav("tools")} />
+              <NavItem icon={<Target className="w-[18px] h-[18px]" />}     label="Quests"           isActive={activeItem === "servers"}  onClick={() => handleNav("servers")} />
+            </>
+          )}
         </div>
 
         {/* DMs Header */}
