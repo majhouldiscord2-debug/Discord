@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SlidersHorizontal, ChevronDown, MoreHorizontal, ArrowUpRight, Target } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, MoreHorizontal, ArrowUpRight, Target, ChevronLeft, Star, Zap, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Quest {
@@ -48,18 +48,6 @@ function ArknightsBanner() {
         style={{ background: "linear-gradient(135deg, #1a2540 0%, #253a6b 40%, #6b8fcc 70%, #f0d060 100%)" }}
       />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 60% 30%, rgba(240,208,96,0.2) 0%, transparent 50%)" }} />
-    </div>
-  );
-}
-
-function WweBanner() {
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a0505 30%, #2d0505 60%, #1a0a0a 100%)" }}
-      />
-      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(180,10,10,0.3) 0%, transparent 60%)" }} />
     </div>
   );
 }
@@ -123,20 +111,6 @@ const quests: Quest[] = [
     questColor: "#66aaff",
   },
   {
-    id: 4,
-    game: "WWE 2K26",
-    developer: "WWE 2K26",
-    questTitle: "WWE 2K26 QUEST",
-    reward: 200,
-    description: "Watch the video to win 200 Orbs!",
-    endsDate: "3/23",
-    status: "watching",
-    timeLeft: "02:00",
-    bannerBg: "",
-    bannerContent: <WweBanner />,
-    questColor: "#e8c800",
-  },
-  {
     id: 5,
     game: "Valheim",
     developer: "Iron Gate",
@@ -182,9 +156,154 @@ function OrbsIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-function QuestCard({ quest }: { quest: Quest }) {
-  const [accepted, setAccepted] = useState(false);
+function QuestDetailModal({ quest, onClose }: { quest: Quest; onClose: () => void }) {
+  const [editing, setEditing] = useState(false);
 
+  return (
+    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#050a12" }}>
+      {/* Back button */}
+      <div className="shrink-0 flex items-center px-4 pt-4 pb-2">
+        <button
+          onClick={onClose}
+          className="flex items-center gap-1.5 text-[#949ba4] hover:text-[#f2f3f5] transition-colors group"
+        >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5" />
+          </div>
+          <span className="text-[14px] font-medium">Back</span>
+        </button>
+      </div>
+
+      {/* Large banner */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="relative h-[240px] shrink-0 overflow-hidden">
+          {quest.bannerContent}
+          {/* Glow ring overlay */}
+          <div
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          >
+            <div
+              className="rounded-full opacity-20"
+              style={{ width: 220, height: 220, border: `1px solid ${quest.questColor}`, boxShadow: `0 0 60px ${quest.questColor}40` }}
+            />
+            <div
+              className="absolute rounded-full opacity-30"
+              style={{ width: 140, height: 140, border: `1px solid ${quest.questColor}` }}
+            />
+          </div>
+          {/* Reward badge */}
+          <div
+            className="absolute bottom-3 left-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-bold"
+            style={{ backgroundColor: "rgba(0,0,0,0.7)", border: `1px solid ${quest.questColor}44`, color: quest.questColor }}
+          >
+            <OrbsIcon size={14} />
+            {quest.reward} Orbs
+          </div>
+          <div
+            className="absolute top-3 right-3 text-[11px] font-bold px-2 py-1 rounded-md"
+            style={{ backgroundColor: "rgba(0,0,0,0.6)", color: "#949ba4" }}
+          >
+            Ends {quest.endsDate}
+          </div>
+        </div>
+
+        {/* Info panel */}
+        <div className="flex-1 overflow-y-auto discord-scrollbar px-6 py-5">
+          {/* Title row */}
+          <div className="mb-4">
+            <p className="text-[11px] font-bold tracking-widest uppercase mb-1" style={{ color: quest.questColor }}>
+              {quest.questTitle}
+            </p>
+            <h2 className="text-[22px] font-bold text-[#f2f3f5] mb-0.5">{quest.game}</h2>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-0.5">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+                ))}
+              </div>
+              <span className="text-[12px] text-[#949ba4]">by {quest.developer}</span>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div
+            className="rounded-xl p-4 mb-5"
+            style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}
+          >
+            <p className="text-[10px] font-bold tracking-widest uppercase mb-2" style={{ color: quest.questColor }}>
+              Description
+            </p>
+            <p className="text-[#dbdee1] text-[14px] leading-relaxed">
+              {quest.description}
+            </p>
+          </div>
+
+          {/* Edit panel (expanded inline) */}
+          {editing && (
+            <div
+              className="rounded-xl p-4 mb-5"
+              style={{ backgroundColor: "#080e1a", border: `1px solid ${quest.questColor}33` }}
+            >
+              <p className="text-[10px] font-bold tracking-widest uppercase mb-3" style={{ color: quest.questColor }}>
+                Edit Quest
+              </p>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <label className="text-[11px] text-[#949ba4] mb-1 block">Quest Title</label>
+                  <input
+                    defaultValue={quest.questTitle}
+                    className="w-full text-[13px] rounded-lg px-3 py-2 outline-none text-[#dbdee1]"
+                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-[#949ba4] mb-1 block">Description</label>
+                  <textarea
+                    defaultValue={quest.description}
+                    rows={3}
+                    className="w-full text-[13px] rounded-lg px-3 py-2 outline-none text-[#dbdee1] resize-none"
+                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] text-[#949ba4] mb-1 block">Reward (Orbs)</label>
+                  <input
+                    type="number"
+                    defaultValue={quest.reward}
+                    className="w-full text-[13px] rounded-lg px-3 py-2 outline-none text-[#dbdee1]"
+                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
+                  />
+                </div>
+                <button
+                  onClick={() => setEditing(false)}
+                  className="w-full py-2 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+                  style={{ background: `linear-gradient(135deg, #23a55a, #1a8b48)` }}
+                >
+                  <Check className="w-4 h-4" />
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* CTA */}
+        <div className="shrink-0 px-6 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#080e1a" }}>
+          <button
+            onClick={() => setEditing(v => !v)}
+            className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+            style={{ background: `linear-gradient(135deg, #1a1a2e, ${quest.questColor})` }}
+          >
+            <Zap className="w-4 h-4" />
+            {editing ? "Close Edit" : "Edit"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuestCard({ quest, onMore }: { quest: Quest; onMore: () => void }) {
   return (
     <div
       className="rounded-xl overflow-hidden flex flex-col transition-all duration-200"
@@ -208,32 +327,14 @@ function QuestCard({ quest }: { quest: Quest }) {
 
       {/* CTA Button */}
       <div className="p-3">
-        {quest.status === "watching" ? (
-          <button
-            className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#1db954" }}
-          >
-            More
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        ) : accepted ? (
-          <button
-            className="w-full py-2 rounded-md text-[14px] font-semibold transition-all flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#1a9e47", color: "white" }}
-          >
-            More
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        ) : (
-          <button
-            onClick={() => setAccepted(true)}
-            className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#23a55a" }}
-          >
-            More
-            <ArrowUpRight className="w-4 h-4" />
-          </button>
-        )}
+        <button
+          onClick={onMore}
+          className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+          style={{ backgroundColor: "#1db954" }}
+        >
+          More
+          <ArrowUpRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
@@ -247,9 +348,14 @@ const claimedQuests = [
 
 export default function Quests() {
   const [activeTab, setActiveTab] = useState<"all" | "claimed">("all");
+  const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#0a1220" }}>
+      {selectedQuest && (
+        <QuestDetailModal quest={selectedQuest} onClose={() => setSelectedQuest(null)} />
+      )}
+
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-6"
@@ -303,7 +409,7 @@ export default function Quests() {
             <div className="grid grid-cols-2 gap-3 pb-4">
               {quests.map((quest, i) => (
                 <div key={quest.id} className="animate-fade-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
-                  <QuestCard quest={quest} />
+                  <QuestCard quest={quest} onMore={() => setSelectedQuest(quest)} />
                 </div>
               ))}
             </div>
