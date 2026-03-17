@@ -44,7 +44,7 @@ export function FriendsList() {
       >
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-[#7d8188]" />
-          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Friends</span>
+          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Stats</span>
         </div>
 
         <div className="w-px h-5 bg-white/10 mx-1" />

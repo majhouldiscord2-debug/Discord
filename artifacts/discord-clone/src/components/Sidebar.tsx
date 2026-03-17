@@ -51,7 +51,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
         <div className="space-y-[2px] mb-1">
           <NavItem
             icon={<Users className="w-[18px] h-[18px]" />}
-            label="Friends"
+            label="Stats"
             isActive={activeItem === "friends"}
             onClick={() => handleNav("friends")}
           />
@@ -63,7 +63,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
           />
           <NavItem
             icon={<Zap className="w-[18px] h-[18px]" />}
-            label="Nitro"
+            label="Logs"
             isActive={activeItem === "nitro"}
             onClick={() => handleNav("nitro")}
             badge={
@@ -74,7 +74,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
           />
           <NavItem
             icon={<ShoppingBag className="w-[18px] h-[18px]" />}
-            label="Shop"
+            label="Tools"
             isActive={activeItem === "shop"}
             onClick={() => handleNav("shop")}
             badge={
@@ -85,7 +85,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
           />
           <NavItem
             icon={<Target className="w-[18px] h-[18px]" />}
-            label="Quests"
+            label="Servers"
             isActive={activeItem === "quests"}
             onClick={() => handleNav("quests")}
           />
