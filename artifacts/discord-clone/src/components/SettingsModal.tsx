@@ -131,11 +131,20 @@ function MyAccountPage() {
         <div className="space-y-0">
           {/* Profile card */}
           <div className="rounded-lg overflow-hidden mb-4" style={{ backgroundColor: "#1e1f22" }}>
-            {/* Banner */}
+            {/* Banner — pure black */}
             <div
               className="h-[100px] relative"
-              style={{ background: "linear-gradient(135deg, #23272a 0%, #2c2f33 100%)" }}
-            />
+              style={{ background: "#000000" }}
+            >
+              {/* Subtle noise grain overlay */}
+              <div
+                className="absolute inset-0 opacity-20"
+                style={{
+                  backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
+                  backgroundSize: "150px 150px",
+                }}
+              />
+            </div>
             {/* Avatar + name row */}
             <div className="px-4 pb-4">
               <div className="flex items-end justify-between -mt-8 mb-3">
@@ -143,28 +152,33 @@ function MyAccountPage() {
                   <div
                     className="w-[80px] h-[80px] rounded-full flex items-center justify-center text-[28px] font-bold text-white border-[6px]"
                     style={{
-                      backgroundColor: currentUser.avatarColor,
+                      backgroundColor: "#000000",
                       borderColor: "#1e1f22",
+                      boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
                     }}
                   >
-                    {currentUser.initials}
+                    <span className="text-[22px] font-black tracking-tight" style={{ color: "#fff" }}>
+                      {currentUser.initials}
+                    </span>
                   </div>
-                  {/* online indicator */}
+                  {/* DND indicator */}
                   <div
-                    className="absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full border-[3px]"
-                    style={{ backgroundColor: "#23a55a", borderColor: "#1e1f22" }}
-                  />
+                    className="absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full border-[3px] flex items-center justify-center"
+                    style={{ backgroundColor: "#f23f43", borderColor: "#1e1f22" }}
+                  >
+                    <div className="w-[8px] h-[2px] bg-white rounded-full" />
+                  </div>
                 </div>
                 <button
-                  className="px-4 py-[7px] rounded-[3px] text-[14px] font-medium text-white transition-all hover:brightness-110"
+                  className="px-4 py-[7px] rounded-[4px] text-[13px] font-semibold text-white transition-all hover:brightness-110"
                   style={{ backgroundColor: "#5865f2" }}
                 >
                   Edit User Profile
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[20px] font-bold text-[#f2f3f5]">{currentUser.name}</span>
-                <span className="text-[#949ba4] text-[16px]">···</span>
+                <span className="text-[20px] font-bold text-[#f2f3f5] tracking-tight">{currentUser.name}</span>
+                <span className="text-[#5e6068] text-[16px]">···</span>
               </div>
               {/* Badges */}
               <div className="flex items-center gap-1 mt-1">
@@ -194,7 +208,7 @@ function MyAccountPage() {
               label="Email"
               value={
                 <div className="flex items-center gap-2">
-                  <span>{showEmail ? "velvetsky@gmail.com" : "••••••••••••@gmail.com"}</span>
+                  <span>{showEmail ? "majhoul@gmail.com" : "m•••••••@gmail.com"}</span>
                   <button
                     className="text-[#00b0f4] text-[13px] font-medium hover:underline"
                     onClick={() => setShowEmail(!showEmail)}
@@ -266,15 +280,19 @@ function StandingPage() {
 function PlaceholderPage({ title }: { title: string }) {
   return (
     <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-8 max-w-[740px]">
-      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-6">{title}</h2>
+      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-6 tracking-tight">{title}</h2>
       <div
-        className="rounded-lg p-6 flex flex-col items-center justify-center py-16 text-center"
-        style={{ backgroundColor: "#1e1f22" }}
+        className="rounded-lg flex flex-col items-center justify-center py-16 text-center"
+        style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.04)" }}
       >
-        <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "#313338" }}>
-          <Palette className="w-7 h-7 text-[#949ba4]" />
+        <div
+          className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+          style={{ background: "linear-gradient(135deg, #1a1b1e, #313338)" }}
+        >
+          <Palette className="w-6 h-6 text-[#5e6068]" />
         </div>
-        <p className="text-[#949ba4] text-[15px]">This settings page is a preview and has no interactive content.</p>
+        <p className="text-[#5e6068] text-[14px] font-medium">This section is coming soon.</p>
+        <p className="text-[#3e4147] text-[12px] mt-1">No settings available here yet.</p>
       </div>
     </div>
   );
@@ -358,8 +376,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
               />
               <div>
                 <div className="text-[14px] font-bold text-[#f2f3f5] leading-tight">{currentUser.name}</div>
-                <button className="text-[12px] text-[#949ba4] hover:text-[#dbdee1] transition-colors flex items-center gap-1">
-                  Edit Profiles <Pencil className="w-3 h-3" />
+                <button className="text-[12px] text-[#6d6f76] hover:text-[#dbdee1] transition-colors flex items-center gap-1">
+                  Edit Profile <Pencil className="w-3 h-3" />
                 </button>
               </div>
             </div>

@@ -12,12 +12,12 @@ export interface User {
 
 export const currentUser: User = {
   id: "me",
-  name: "velvetsky",
-  username: "velvetsky",
-  statusText: "Building something cool...",
-  status: "online",
-  avatarColor: "#5865f2",
-  initials: "V",
+  name: "! MajHouL",
+  username: "majhoul.gg",
+  statusText: "Getting members for our server",
+  status: "dnd",
+  avatarColor: "#111214",
+  initials: "M",
 };
 
 export const friendsOnline: User[] = [
