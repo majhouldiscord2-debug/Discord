@@ -10,6 +10,7 @@ interface AutomationItem {
   ring?: string;
   description?: string;
   icon?: string;
+  darkBg?: string;
 }
 
 const automationItems: AutomationItem[] = [
@@ -21,6 +22,7 @@ const automationItems: AutomationItem[] = [
     ring: "border-cyan-400",
     description: "Grow your Discord server FAST with active joins and smart @ mentions\nPerfect adversting services — start boosting your members instantly!",
     icon: "/mentionitor-icon.png",
+    darkBg: "#001a3a",
   },
   { id: 2,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 3,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
@@ -97,7 +99,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
         <div
           className="flex-1 relative flex items-center justify-center"
           style={{
-            background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, #1a0a2e 45%, #0d0d10 100%)`,
+            background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, ${item.darkBg ?? "#1a0a2e"} 45%, #0d0d10 100%)`,
           }}
         >
           {/* Outer glow rings */}
@@ -110,25 +112,29 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
             style={{ width: 240, height: 240, border: `1px solid ${item.glowColor}` }}
           />
 
-          {/* Main wumpus */}
+          {/* Main avatar */}
           <div className="relative flex flex-col items-center gap-3">
             <div
-              className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center"
+              className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center overflow-hidden"
               style={{
                 borderColor: item.glowColor,
-                backgroundColor: "#1a1b1e",
+                backgroundColor: item.darkBg ?? "#1a1b1e",
                 boxShadow: `0 0 40px ${item.glowColor}60, inset 0 0 20px ${item.glowColor}15`,
               }}
             >
-              <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
-                <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
-                <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
-                <ellipse cx="14" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
-                <ellipse cx="26" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
-                <ellipse cx="14" cy="16" rx="2" ry="2.5" fill="white" />
-                <ellipse cx="26" cy="16" rx="2" ry="2.5" fill="white" />
-                <path d="M16 26 Q20 29 24 26" stroke="#5865f2" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
-              </svg>
+              {item.icon ? (
+                <img src={item.icon} alt={item.name} className="w-full h-full object-cover rounded-full" />
+              ) : (
+                <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
+                  <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
+                  <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
+                  <ellipse cx="14" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+                  <ellipse cx="26" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+                  <ellipse cx="14" cy="16" rx="2" ry="2.5" fill="white" />
+                  <ellipse cx="26" cy="16" rx="2" ry="2.5" fill="white" />
+                  <path d="M16 26 Q20 29 24 26" stroke="#5865f2" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+                </svg>
+              )}
             </div>
             <div className="w-24 h-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.15)" }} />
             <div className="w-16 h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
@@ -163,13 +169,13 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
             </button>
           </div>
 
-          <p className="text-[#949ba4] text-[13px] leading-relaxed mb-4">
-            A sleek animated avatar style inspired by futuristic AI companions. Comes with a glowing ring effect that reacts to your voice activity.
+          <p className="text-[#949ba4] text-[13px] leading-relaxed mb-4 whitespace-pre-line">
+            {item.description ?? "A sleek animated avatar style inspired by futuristic AI companions. Comes with a glowing ring effect that reacts to your voice activity."}
           </p>
 
           <button
             className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ background: `linear-gradient(135deg, ${item.glowColor}, #9b59b6)` }}
+            style={{ background: `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${item.glowColor})` }}
           >
             <Zap className="w-4 h-4" />
             Edit
