@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SlidersHorizontal, ChevronDown, MoreHorizontal, Play, Check, Target } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, MoreHorizontal, ArrowUpRight, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Quest {
@@ -200,11 +200,6 @@ function QuestCard({ quest }: { quest: Quest }) {
       <div className="relative h-[150px]">
         {quest.bannerContent}
         <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
-          {quest.status === "watching" && (
-            <button className="w-7 h-7 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition-colors">
-              <Play className="w-3.5 h-3.5 fill-white" />
-            </button>
-          )}
           <button className="w-7 h-7 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition-colors">
             <MoreHorizontal className="w-4 h-4" />
           </button>
@@ -218,24 +213,25 @@ function QuestCard({ quest }: { quest: Quest }) {
             className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
             style={{ backgroundColor: "#1db954" }}
           >
-            <Play className="w-4 h-4 fill-white" />
-            Watch ({quest.timeLeft} left)
+            More
+            <ArrowUpRight className="w-4 h-4" />
           </button>
         ) : accepted ? (
           <button
             className="w-full py-2 rounded-md text-[14px] font-semibold transition-all flex items-center justify-center gap-2"
             style={{ backgroundColor: "#1a9e47", color: "white" }}
           >
-            <Check className="w-4 h-4" />
-            Quest Accepted!
+            More
+            <ArrowUpRight className="w-4 h-4" />
           </button>
         ) : (
           <button
             onClick={() => setAccepted(true)}
-            className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110"
+            className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
             style={{ backgroundColor: "#23a55a" }}
           >
-            Accept Quest
+            More
+            <ArrowUpRight className="w-4 h-4" />
           </button>
         )}
       </div>
