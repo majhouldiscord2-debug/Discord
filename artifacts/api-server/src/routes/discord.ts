@@ -98,22 +98,26 @@ router.get("/discord/relationships", async (_req, res) => {
   return res.json(result.data);
 });
 
-router.post("/auth/token", async (req, res) => {
-  const { token, tokenType } = req.body as { token: string; tokenType: string };
-  if (!token) return res.status(400).json({ error: "Token required" });
-  const type = tokenType === "bot" ? "bot" : "user";
-  const verify = await discordFetch("/users/@me", token, type);
-  if (!verify.ok) {
-    return res.status(401).json({ error: "Invalid token", details: verify.data });
+router.post("/auth/token", async (req, res, next) => {
+  try {
+    const { token, tokenType } = req.body as { token: string; tokenType: string };
+    if (!token) return res.status(400).json({ error: "Token required" });
+    const type = tokenType === "bot" ? "bot" : "user";
+    const verify = await discordFetch("/users/@me", token, type);
+    if (!verify.ok) {
+      return res.status(401).json({ error: "Invalid token", details: verify.data });
+    }
+    await db
+      .insert(discordAuthTable)
+      .values({ id: 1, token, tokenType: type })
+      .onConflictDoUpdate({
+        target: discordAuthTable.id,
+        set: { token, tokenType: type, createdAt: new Date() },
+      });
+    return res.json({ success: true, user: verify.data });
+  } catch (err) {
+    next(err);
   }
-  await db
-    .insert(discordAuthTable)
-    .values({ id: 1, token, tokenType: type })
-    .onConflictDoUpdate({
-      target: discordAuthTable.id,
-      set: { token, tokenType: type, createdAt: new Date() },
-    });
-  return res.json({ success: true, user: verify.data });
 });
 
 router.delete("/auth/token", async (_req, res) => {
