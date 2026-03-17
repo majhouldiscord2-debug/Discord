@@ -1,4 +1,5 @@
-import { useState, useId } from "react";
+import { useState, useId, useEffect } from "react";
+import { getToolSettings, saveToolSettings } from "@/lib/api";
 import { Search, Heart, ChevronDown, Shuffle, Info, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight, Clock, MessageSquare, Server, AtSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -169,19 +170,58 @@ function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 }
 
 function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: () => void; glowColor: string }) {
+  const [loading, setLoading] = useState(true);
   const [autoJoin, setAutoJoin] = useState(true);
   const [smartMention, setSmartMention] = useState(true);
   const [dmMode, setDmMode] = useState(false);
   const [delay, setDelay] = useState("3");
-  const [servers, setServers] = useState(["Chill Zone", "Gaming HQ"]);
+  const [servers, setServers] = useState<string[]>(["Chill Zone", "Gaming HQ"]);
   const [newServer, setNewServer] = useState("");
-  const [messages, setMessages] = useState(["Hey! Check this out 👋", "Join us for some fun!"]);
+  const [messages, setMessages] = useState<string[]>(["Hey! Check this out 👋", "Join us for some fun!"]);
   const [newMessage, setNewMessage] = useState("");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    getToolSettings(item.id).then((s) => {
+      setAutoJoin(s.autoJoin);
+      setSmartMention(s.smartMention);
+      setDmMode(s.dmMode);
+      setDelay(String(s.delay));
+      setServers(s.servers as string[]);
+      setMessages(s.messages as string[]);
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, [item.id]);
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await saveToolSettings({
+        toolId: item.id,
+        autoJoin,
+        smartMention,
+        dmMode,
+        delay: parseInt(delay, 10) || 3,
+        servers,
+        messages,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#0d0d10" }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${glowColor} transparent transparent transparent` }} />
+          <span className="text-[13px] text-[#949ba4]">Loading settings…</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -316,10 +356,16 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
       <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#111114" }}>
         <button
           onClick={handleSave}
-          className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+          disabled={saving}
+          className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
           style={{ background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${glowColor})` }}
         >
-          {saved ? (
+          {saving ? (
+            <>
+              <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+              Saving…
+            </>
+          ) : saved ? (
             <>
               <Star className="w-4 h-4 fill-white" />
               Saved!
