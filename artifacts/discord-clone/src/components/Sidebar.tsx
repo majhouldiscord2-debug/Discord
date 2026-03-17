@@ -8,27 +8,26 @@ import { cn } from "@/lib/utils";
 interface SidebarProps {
   activeView?: string;
   onNavigate?: (view: string) => void;
+  onOpenDm?: (channelId: string) => void;
+  activeDmId?: string | null;
   onOpenSettings?: () => void;
 }
 
-export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: SidebarProps) {
+export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDmId, onOpenSettings }: SidebarProps) {
   const { user, channels, logout } = useDiscord();
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
-  const [activeDm, setActiveDm] = useState<string | null>(null);
 
-  const activeItem = activeView === "dm" ? "" : activeView;
+  const activeItem = (activeView === "dm") ? "" : activeView;
 
   const dmChannels = channels.filter((c) => c.type === 1 || c.type === 3).slice(0, 12);
 
   const handleNav = (key: string) => {
-    setActiveDm(null);
     onNavigate?.(key);
   };
 
   const handleDm = (id: string) => {
-    setActiveDm(id);
-    onNavigate?.("dm");
+    onOpenDm?.(id);
   };
 
   const userAvatar = user ? avatarUrl(user) : null;
@@ -111,13 +110,14 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
               : (recipient?.global_name ?? recipient?.username ?? "Unknown");
             const initials = name[0]?.toUpperCase() ?? "?";
             const src = recipient ? avatarUrl(recipient) : null;
+            const isActive = activeDmId === ch.id;
             return (
               <button
                 key={ch.id}
                 onClick={() => handleDm(ch.id)}
                 className={cn(
                   "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
-                  activeDm === ch.id
+                  isActive
                     ? "bg-[#404249] text-[#f2f3f5]"
                     : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
                 )}
@@ -128,7 +128,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
                   src={src}
                   color="#5865f2"
                   size="sm"
-                  statusBg={activeDm === ch.id ? "#152438" : "#080f1c"}
+                  statusBg={isActive ? "#152438" : "#080f1c"}
                 />
                 <span className="truncate text-[14px] font-medium">{name}</span>
               </button>
@@ -195,11 +195,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
 }
 
 function NavItem({
-  icon,
-  label,
-  isActive,
-  onClick,
-  badge,
+  icon, label, isActive, onClick, badge,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -227,10 +223,7 @@ function NavItem({
 }
 
 function IconBtn({
-  children,
-  title,
-  onClick,
-  danger,
+  children, title, onClick, danger,
 }: {
   children: React.ReactNode;
   title: string;

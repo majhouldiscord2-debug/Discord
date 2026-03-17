@@ -31,12 +31,8 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Active pill */}
       <div
-        className={cn(
-          "absolute left-0 rounded-r-full transition-all duration-200",
-          "bg-white"
-        )}
+        className={cn("absolute left-0 rounded-r-full transition-all duration-200 bg-white")}
         style={{
           width: isActive ? 4 : hovered ? 4 : hasNotification ? 4 : 0,
           height: isActive ? 40 : hovered ? 20 : hasNotification ? 8 : 0,
@@ -44,7 +40,6 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
         }}
       />
 
-      {/* Notification badge */}
       {!isActive && notificationCount && notificationCount > 0 && (
         <div className="absolute bottom-0 right-1 min-w-[18px] h-[18px] bg-[#ed4245] rounded-full flex items-center justify-center z-20 px-1 shadow-lg">
           <span className="text-[10px] text-white font-bold leading-none">{notificationCount}</span>
@@ -62,7 +57,6 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
         {children}
       </button>
 
-      {/* Tooltip */}
       {hovered && (
         <div className="absolute left-[68px] z-50 pointer-events-none animate-scale-in">
           <div
@@ -78,9 +72,13 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
   );
 }
 
-export function ServerList() {
+interface ServerListProps {
+  activeServer: "dms" | string;
+  onSelectServer: (serverId: "dms" | string) => void;
+}
+
+export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
   const { guilds } = useDiscord();
-  const [activeServer, setActiveServer] = useState<string | "dms">("dms");
 
   return (
     <div
@@ -89,11 +87,10 @@ export function ServerList() {
         background: "linear-gradient(180deg, #080e1c 0%, #060b14 50%, #070a18 100%)",
       }}
     >
-      {/* Home / DMs Button */}
       <ServerButton
         name="Direct Messages"
         isActive={activeServer === "dms"}
-        onClick={() => setActiveServer("dms")}
+        onClick={() => onSelectServer("dms")}
         glowColor="#1d6ef5"
       >
         <div
@@ -111,7 +108,6 @@ export function ServerList() {
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {/* Server List — real guilds */}
       {guilds.map((guild) => {
         const iconSrc = guildIconUrl(guild);
         const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
@@ -121,7 +117,7 @@ export function ServerList() {
             key={guild.id}
             name={guild.name}
             isActive={isActive}
-            onClick={() => setActiveServer(guild.id)}
+            onClick={() => onSelectServer(guild.id)}
           >
             {iconSrc ? (
               <img
@@ -148,10 +144,9 @@ export function ServerList() {
 
       <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {/* Add Server */}
       <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
         <div
-          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200 group"
+          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
           style={{ borderRadius: 24, background: "#0a1420" }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
@@ -168,7 +163,6 @@ export function ServerList() {
         </div>
       </ServerButton>
 
-      {/* Explore */}
       <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
         <div
           className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
@@ -190,7 +184,6 @@ export function ServerList() {
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {/* Download */}
       <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
         <div
           className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"

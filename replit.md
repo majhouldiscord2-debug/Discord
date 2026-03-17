@@ -67,6 +67,8 @@ React + Vite frontend styled as a Discord dashboard ("Nexus Obsidian"). Talks to
 - Auth: `src/hooks/useDiscord.tsx` — handles token login, loads guilds/channels/relationships
 - API: `src/lib/api.ts` — all fetch helpers, `fetchWithRetry` for startup resilience
 - Pages: `Login`, `Home`, `Tools`, `Logs`, `Quests`
+- Components: `ChatView` (DM + channel chat with message history, send box, infinite scroll), `GuildChannelList` (server channel sidebar with categories), `ServerList` (controlled), `Sidebar` (DM nav + DM list), `SettingsModal` (uses real user data from useDiscord)
+- Full navigation: clicking a server shows its channels; clicking a channel shows live messages; clicking a DM shows the DM chat
 - No direct `attached_assets` imports; Discord CDN URLs used for avatars/icons
 
 ### `artifacts/api-server` (`@workspace/api-server`)
@@ -75,6 +77,7 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 
 - Entry: `src/index.ts` — reads `PORT`, starts Express
 - Routes: mounted at `/api`
+- Discord routes: `GET /discord/me`, `GET /discord/guilds`, `GET /discord/guilds/:guildId/channels`, `GET /discord/channels`, `GET /discord/channels/:channelId/messages`, `POST /discord/channels/:channelId/messages`, `GET /discord/relationships`, `POST /auth/token`, `DELETE /auth/token`, `GET /auth/status`
 - Depends on: `@workspace/db`, `@workspace/api-zod`
 
 ### `discord-ui-standalone` (standalone)

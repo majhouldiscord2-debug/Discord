@@ -181,7 +181,7 @@ export function FriendsList() {
                 );
               })}
 
-              {displayRels.length === 0 && activeTab !== "add" && (
+              {displayRels.length === 0 && (activeTab as string) !== "add" && (
                 <div className="flex flex-col items-center justify-center py-20 select-none animate-fade-slide-up">
                   <div className="w-[180px] h-[180px] mb-5 flex items-center justify-center rounded-full" style={{ background: "rgba(255,255,255,0.03)" }}>
                     <Users className="w-24 h-24 text-[#3e4147]" />

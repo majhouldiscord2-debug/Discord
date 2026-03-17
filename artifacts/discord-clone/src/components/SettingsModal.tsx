@@ -6,7 +6,9 @@ import {
   LogOut, Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { currentUser } from "@/lib/mock-data";
+import { useDiscord } from "@/hooks/useDiscord";
+import { avatarUrl } from "@/lib/api";
+import { Avatar } from "./Avatar";
 
 interface SettingsModalProps {
   open: boolean;
@@ -37,14 +39,14 @@ const navSections: NavSection[] = [
   {
     label: "User Settings",
     items: [
-      { id: "my-account",      label: "My Account",      icon: <User className="w-4 h-4" /> },
-      { id: "content-social",  label: "Content & Social", icon: <Globe className="w-4 h-4" /> },
-      { id: "data-privacy",    label: "Data & Privacy",   icon: <Shield className="w-4 h-4" /> },
-      { id: "family-center",   label: "Family Center",    icon: <Users className="w-4 h-4" /> },
-      { id: "authorized-apps", label: "Authorized Apps",  icon: <Cpu className="w-4 h-4" /> },
-      { id: "devices",         label: "Devices",          icon: <Cpu className="w-4 h-4" /> },
-      { id: "connections",     label: "Connections",      icon: <Link2 className="w-4 h-4" /> },
-      { id: "notifications",   label: "Notifications",    icon: <Bell className="w-4 h-4" /> },
+      { id: "my-account",      label: "My Account",       icon: <User className="w-4 h-4" /> },
+      { id: "content-social",  label: "Content & Social",  icon: <Globe className="w-4 h-4" /> },
+      { id: "data-privacy",    label: "Data & Privacy",    icon: <Shield className="w-4 h-4" /> },
+      { id: "family-center",   label: "Family Center",     icon: <Users className="w-4 h-4" /> },
+      { id: "authorized-apps", label: "Authorized Apps",   icon: <Cpu className="w-4 h-4" /> },
+      { id: "devices",         label: "Devices",           icon: <Cpu className="w-4 h-4" /> },
+      { id: "connections",     label: "Connections",       icon: <Link2 className="w-4 h-4" /> },
+      { id: "notifications",   label: "Notifications",     icon: <Bell className="w-4 h-4" /> },
     ],
   },
   {
@@ -98,8 +100,6 @@ const pageTitles: Record<string, string> = {
   "activity-privacy": "Activity Privacy",
 };
 
-/* ─── small reusable pieces ─── */
-
 function TabBtn({ label, isActive, onClick }: { label: string; isActive: boolean; onClick: () => void }) {
   return (
     <button
@@ -114,11 +114,7 @@ function TabBtn({ label, isActive, onClick }: { label: string; isActive: boolean
   );
 }
 
-function AccountField({
-  label, value, onEdit, editLabel = "Edit",
-}: {
-  label: string; value: React.ReactNode; onEdit: () => void; editLabel?: string;
-}) {
+function AccountField({ label, value, onEdit, editLabel = "Edit" }: { label: string; value: React.ReactNode; onEdit: () => void; editLabel?: string }) {
   return (
     <div className="flex items-center justify-between px-4 py-[14px]">
       <div className="min-w-0 flex-1 pr-4">
@@ -140,15 +136,19 @@ function Divider() {
   return <div className="h-px mx-4" style={{ backgroundColor: "rgba(255,255,255,0.06)" }} />;
 }
 
-/* ─── page components ─── */
-
 function MyAccountPage() {
+  const { user } = useDiscord();
   const [activeTab, setActiveTab] = useState<"security" | "standing">("security");
   const [showEmail, setShowEmail] = useState(false);
 
+  const displayName = user?.global_name ?? user?.username ?? "Unknown";
+  const username = user?.username ?? "";
+  const discriminator = user?.discriminator && user.discriminator !== "0" ? `#${user.discriminator}` : "";
+  const initials = displayName[0]?.toUpperCase() ?? "?";
+  const avatarSrc = user ? avatarUrl(user) : null;
+
   return (
     <>
-      {/* fixed page header */}
       <div className="px-10 pt-[72px] pb-0 shrink-0">
         <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-4">My Account</h2>
         <div className="flex items-end gap-0 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
@@ -157,13 +157,10 @@ function MyAccountPage() {
         </div>
       </div>
 
-      {/* scrollable body */}
       <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-5">
         {activeTab === "security" ? (
           <div className="max-w-[660px] space-y-[10px]">
-            {/* Profile card */}
             <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#111214" }}>
-              {/* Banner */}
               <div className="h-[100px] relative" style={{ background: "#000" }}>
                 <div
                   className="absolute inset-0 opacity-[0.08]"
@@ -173,22 +170,28 @@ function MyAccountPage() {
                   }}
                 />
               </div>
-              {/* Avatar row */}
               <div className="px-4 pb-3">
                 <div className="flex items-end justify-between -mt-9 mb-2">
                   <div className="relative">
-                    <div
-                      className="w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold text-white border-[6px]"
-                      style={{ backgroundColor: currentUser.avatarColor || "#5865f2", borderColor: "#111214", fontSize: 20 }}
-                    >
-                      {currentUser.initials}
-                    </div>
+                    {avatarSrc ? (
+                      <img
+                        src={avatarSrc}
+                        alt={displayName}
+                        className="w-[72px] h-[72px] rounded-full border-[6px] object-cover"
+                        style={{ borderColor: "#111214" }}
+                      />
+                    ) : (
+                      <div
+                        className="w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold text-white border-[6px]"
+                        style={{ backgroundColor: "#5865f2", borderColor: "#111214", fontSize: 20 }}
+                      >
+                        {initials}
+                      </div>
+                    )}
                     <div
                       className="absolute bottom-[5px] right-[5px] w-[14px] h-[14px] rounded-full border-[3px] flex items-center justify-center"
-                      style={{ backgroundColor: "#f23f43", borderColor: "#111214" }}
-                    >
-                      <div className="w-[6px] h-[2px] bg-white rounded-full" />
-                    </div>
+                      style={{ backgroundColor: "#23a55a", borderColor: "#111214" }}
+                    />
                   </div>
                   <button
                     className="px-3 py-[6px] rounded-[3px] text-[13px] font-semibold text-white hover:brightness-110 transition-all"
@@ -198,39 +201,40 @@ function MyAccountPage() {
                   </button>
                 </div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[18px] font-bold text-[#f2f3f5]">{currentUser.name}</span>
-                  <span className="text-[#5e6068] text-[14px]">···</span>
+                  <span className="text-[18px] font-bold text-[#f2f3f5]">{displayName}</span>
+                  {user?.bot && (
+                    <span className="px-1 py-[1px] text-[9px] font-bold bg-[#5865f2] text-white rounded uppercase tracking-wide">BOT</span>
+                  )}
                 </div>
-                <div className="flex items-center gap-1">
-                  {["🔵", "🔺", "⭕", "💠"].map((icon, i) => (
-                    <span key={i} className="text-[15px]">{icon}</span>
-                  ))}
-                </div>
+                <div className="text-[14px] text-[#87898c]">{username}{discriminator}</div>
               </div>
             </div>
 
-            {/* Account fields */}
             <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#111214" }}>
-              <AccountField label="Display Name" value={currentUser.name} onEdit={() => {}} />
+              <AccountField label="Display Name" value={displayName} onEdit={() => {}} />
               <Divider />
-              <AccountField label="Username" value={currentUser.username} onEdit={() => {}} />
+              <AccountField label="Username" value={`${username}${discriminator}`} onEdit={() => {}} />
               <Divider />
-              <AccountField
-                label="Email"
-                value={
-                  <div className="flex items-center gap-2">
-                    <span>{showEmail ? "majhoul@gmail.com" : "***********@gmail.com"}</span>
-                    <button
-                      className="text-[#00b0f4] text-[13px] hover:underline"
-                      onClick={() => setShowEmail(!showEmail)}
-                    >
-                      {showEmail ? "Hide" : "Reveal"}
-                    </button>
-                  </div>
-                }
-                onEdit={() => {}}
-              />
-              <Divider />
+              {user?.email ? (
+                <>
+                  <AccountField
+                    label="Email"
+                    value={
+                      <div className="flex items-center gap-2">
+                        <span>{showEmail ? user.email : user.email.replace(/(?<=.{2}).(?=.*@)/g, "*")}</span>
+                        <button
+                          className="text-[#00b0f4] text-[13px] hover:underline"
+                          onClick={() => setShowEmail(!showEmail)}
+                        >
+                          {showEmail ? "Hide" : "Reveal"}
+                        </button>
+                      </div>
+                    }
+                    onEdit={() => {}}
+                  />
+                  <Divider />
+                </>
+              ) : null}
               <AccountField
                 label="Phone Number"
                 value="You haven't added a phone number yet."
@@ -279,12 +283,15 @@ function PlaceholderPage({ title }: { title: string }) {
   );
 }
 
-/* ─── main modal ─── */
-
 export function SettingsModal({ open, onClose }: SettingsModalProps) {
+  const { user, logout } = useDiscord();
   const [activePage, setActivePage] = useState<SettingsPage>("my-account");
   const [search, setSearch] = useState("");
   const [pageKey, setPageKey] = useState(0);
+
+  const displayName = user?.global_name ?? user?.username ?? "Unknown";
+  const initials = displayName[0]?.toUpperCase() ?? "?";
+  const avatarSrc = user ? avatarUrl(user) : null;
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -306,24 +313,26 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
   return (
     <div className="fixed inset-y-0 right-0 z-50 flex animate-modal-slide-in" style={{ left: 72, backgroundColor: "#313338" }}>
 
-      {/* ── Sidebar ── */}
+      {/* Sidebar */}
       <div
         className="shrink-0 h-full flex flex-col items-end overflow-y-auto discord-scrollbar pt-[72px] pb-[20px] animate-sidebar-slide-in"
         style={{ width: 232, backgroundColor: "#2b2d31" }}
       >
-        {/* inner column — right-justified to sit flush against content */}
         <div className="w-[200px]">
-
           {/* User header */}
           <div className="px-2 pb-2">
             <div className="flex items-center gap-2">
               <div className="relative shrink-0">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-[12px]"
-                  style={{ backgroundColor: currentUser.avatarColor || "#5865f2" }}
-                >
-                  {currentUser.initials}
-                </div>
+                {avatarSrc ? (
+                  <img src={avatarSrc} alt={displayName} className="w-8 h-8 rounded-full object-cover" />
+                ) : (
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-[12px]"
+                    style={{ backgroundColor: "#5865f2" }}
+                  >
+                    {initials}
+                  </div>
+                )}
                 <div
                   className="absolute -bottom-[1px] -right-[1px] w-[11px] h-[11px] rounded-full border-[2px]"
                   style={{ backgroundColor: "#23a55a", borderColor: "#2b2d31" }}
@@ -331,7 +340,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
               </div>
               <div className="min-w-0">
                 <div className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">
-                  {currentUser.name}
+                  {displayName}
                 </div>
                 <button className="flex items-center gap-1 text-[11px] text-[#6d6f76] hover:text-[#dbdee1] transition-colors">
                   Edit Profiles <Pencil className="w-2.5 h-2.5" />
@@ -367,7 +376,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                 item.id === "logout" ? (
                   <button
                     key={item.id}
-                    onClick={onClose}
+                    onClick={() => { logout(); onClose(); }}
                     className="w-full flex items-center gap-2 px-2 py-[6px] rounded-[3px] text-[#ed4245] transition-colors hover:bg-[#ed424520]"
                   >
                     <span className="shrink-0">{item.icon}</span>
@@ -396,7 +405,6 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             </div>
           ))}
 
-          {/* Version */}
           <div className="mt-4 px-2">
             <p className="text-[11px]" style={{ color: "#6d6f76" }}>stable 511379 (2376a86)</p>
             <div className="flex flex-wrap items-center gap-1 mt-1">
@@ -411,16 +419,14 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
       </div>
 
-      {/* ── Content pane ── */}
+      {/* Content pane */}
       <div className="flex-1 flex overflow-hidden" style={{ backgroundColor: "#313338" }}>
-        {/* page */}
         <div key={pageKey} className="flex-1 flex flex-col overflow-hidden min-w-0 animate-page-slide-right">
           {activePage === "my-account"
             ? <MyAccountPage />
             : <PlaceholderPage title={pageTitles[activePage] ?? activePage} />}
         </div>
 
-        {/* close button */}
         <div className="shrink-0 flex flex-col items-center pt-[72px] px-5">
           <button
             onClick={onClose}

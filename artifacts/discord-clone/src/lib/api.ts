@@ -42,6 +42,16 @@ export interface DiscordGuild {
   owner?: boolean;
 }
 
+export interface GuildChannel {
+  id: string;
+  type: number;
+  name: string;
+  position: number;
+  parent_id?: string;
+  topic?: string;
+  nsfw?: boolean;
+}
+
 export interface DiscordChannel {
   id: string;
   type: number;
@@ -55,6 +65,30 @@ export interface DiscordRelationship {
   type: number;
   user: DiscordUser;
   nickname?: string;
+}
+
+export interface MessageAttachment {
+  id: string;
+  filename: string;
+  url: string;
+  proxy_url: string;
+  content_type?: string;
+  size: number;
+  width?: number;
+  height?: number;
+}
+
+export interface DiscordMessage {
+  id: string;
+  channel_id: string;
+  author: DiscordUser;
+  content: string;
+  timestamp: string;
+  edited_timestamp: string | null;
+  attachments: MessageAttachment[];
+  embeds: unknown[];
+  type: number;
+  referenced_message?: DiscordMessage | null;
 }
 
 export interface AuthStatus {
@@ -135,4 +169,30 @@ export async function getDiscordRelationships(): Promise<DiscordRelationship[]> 
   if (!res.ok) return [];
   const data = await res.json();
   return Array.isArray(data) ? data : [];
+}
+
+export async function getGuildChannels(guildId: string): Promise<GuildChannel[]> {
+  const res = await fetch(`${API_BASE}/discord/guilds/${guildId}/channels`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+export async function getChannelMessages(channelId: string, limit = 50, before?: string): Promise<DiscordMessage[]> {
+  let url = `${API_BASE}/discord/channels/${channelId}/messages?limit=${limit}`;
+  if (before) url += `&before=${before}`;
+  const res = await fetch(url);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+export async function sendMessage(channelId: string, content: string): Promise<DiscordMessage | null> {
+  const res = await fetch(`${API_BASE}/discord/channels/${channelId}/messages`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content }),
+  });
+  if (!res.ok) return null;
+  return res.json();
 }
