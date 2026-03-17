@@ -20,7 +20,6 @@ const automationItems: AutomationItem[] = [
   { id: 7,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 8,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 9,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
-  { id: 10, name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
 ];
 
 function WumpusFace({ size = "md" }: { size?: "xs" | "sm" | "md" }) {
@@ -389,7 +388,7 @@ export default function Shop() {
               <AutomationCard
                 key={item.id}
                 item={item}
-                onOpen={item.id === 1 ? () => setSelectedItem(item) : undefined}
+                onOpen={() => setSelectedItem(item)}
               />
             ))}
         </div>
