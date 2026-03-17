@@ -5,12 +5,9 @@ import { GuildChannelList } from "@/components/GuildChannelList";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
-import { BotSidebar } from "@/components/BotSidebar";
-import type { BotView } from "@/components/BotSidebar";
 import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
 import LogsPage from "@/pages/Logs";
-import Stats from "@/pages/Stats";
 import { SettingsModal } from "@/components/SettingsModal";
 import { useDiscord } from "@/hooks/useDiscord";
 import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
@@ -19,7 +16,6 @@ export default function Home() {
   const { user, guilds, channels } = useDiscord();
 
   const [isBotMode, setIsBotMode] = useState(false);
-  const [botView, setBotView] = useState<BotView>("stats");
 
   const [activeServer, setActiveServer] = useState<"dms" | string>("dms");
   const [view, setView] = useState<string>("friends");
@@ -57,35 +53,8 @@ export default function Home() {
 
   const activeDmChannel: DiscordChannel | undefined = channels.find((c) => c.id === activeDmId);
   const dmRecipient = activeDmChannel?.recipients?.[0] ?? null;
-  const showGuildSidebar = activeServer !== "dms" && activeGuild !== null;
 
-  function renderBotContent() {
-    switch (botView) {
-      case "stats":    return <Stats />;
-      case "requests": return <FriendsList />;
-      case "logs":     return <LogsPage />;
-      case "activity": return <LogsPage />;
-      case "tools":    return <Tools />;
-      case "servers":  return <Quests />;
-      default:         return <Stats />;
-    }
-  }
-
-  if (isBotMode) {
-    return (
-      <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
-        <BotSidebar
-          activeView={botView}
-          onNavigate={setBotView}
-          onToggleBotMode={() => setIsBotMode(false)}
-        />
-        <div key={botView} className="flex flex-1 h-full overflow-hidden animate-view-fade">
-          {renderBotContent()}
-        </div>
-        <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      </div>
-    );
-  }
+  const showGuildSidebar = !isBotMode && activeServer !== "dms" && activeGuild !== null;
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
@@ -94,7 +63,7 @@ export default function Home() {
         activeServer={activeServer}
         onSelectServer={handleSelectServer}
         isBotMode={isBotMode}
-        onToggleBotMode={() => setIsBotMode(true)}
+        onToggleBotMode={() => setIsBotMode(v => !v)}
       />
 
       {/* Sidebar: DM nav or guild channels */}
@@ -112,6 +81,7 @@ export default function Home() {
           onOpenDm={handleOpenDm}
           activeDmId={activeDmId}
           onOpenSettings={() => setSettingsOpen(true)}
+          isBotMode={isBotMode}
         />
       )}
 
@@ -132,7 +102,7 @@ export default function Home() {
               <p className="text-[#5e6068] text-[13px]">Select a channel to start chatting</p>
             </div>
           )
-        ) : view === "dm" && activeDmId ? (
+        ) : view === "dm" && activeDmId && !isBotMode ? (
           <ChatView
             channelId={activeDmId}
             channelName={dmRecipient ? (dmRecipient.global_name ?? dmRecipient.username) : "DM"}

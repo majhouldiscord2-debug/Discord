@@ -11,9 +11,10 @@ interface SidebarProps {
   onOpenDm?: (channelId: string) => void;
   activeDmId?: string | null;
   onOpenSettings?: () => void;
+  isBotMode?: boolean;
 }
 
-export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDmId, onOpenSettings }: SidebarProps) {
+export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDmId, onOpenSettings, isBotMode = false }: SidebarProps) {
   const { user, channels, logout } = useDiscord();
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
@@ -93,48 +94,58 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
           <span className="text-[10px] font-bold text-[#6d6f76] group-hover:text-[#c0c3c9] uppercase tracking-widest transition-colors select-none">
             Direct Messages
           </span>
-          <button className="opacity-0 group-hover:opacity-100 text-[#6d6f76] hover:text-[#dbdee1] transition-all p-0.5 rounded">
-            <Plus className="w-3.5 h-3.5" />
-          </button>
+          {!isBotMode && (
+            <button className="opacity-0 group-hover:opacity-100 text-[#6d6f76] hover:text-[#dbdee1] transition-all p-0.5 rounded">
+              <Plus className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
-        {/* DM Contacts */}
-        <div className="space-y-[1px] pb-2">
-          {dmChannels.length === 0 && (
-            <p className="text-[12px] text-[#4e5058] px-2 py-2">No recent DMs</p>
-          )}
-          {dmChannels.map((ch, i) => {
-            const recipient = ch.recipients?.[0];
-            const name = ch.type === 3
-              ? (ch.name ?? ch.recipients?.map(r => r.username).join(", ") ?? "Group DM")
-              : (recipient?.global_name ?? recipient?.username ?? "Unknown");
-            const initials = name[0]?.toUpperCase() ?? "?";
-            const src = recipient ? avatarUrl(recipient) : null;
-            const isActive = activeDmId === ch.id;
-            return (
-              <button
-                key={ch.id}
-                onClick={() => handleDm(ch.id)}
-                className={cn(
-                  "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
-                  isActive
-                    ? "bg-[#404249] text-[#f2f3f5]"
-                    : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
-                )}
-                style={{ animationDelay: `${i * 30}ms` }}
-              >
-                <Avatar
-                  initials={initials}
-                  src={src}
-                  color="#5865f2"
-                  size="sm"
-                  statusBg={isActive ? "#152438" : "#080f1c"}
-                />
-                <span className="truncate text-[14px] font-medium">{name}</span>
-              </button>
-            );
-          })}
-        </div>
+        {/* DM Contacts or In Progress */}
+        {isBotMode ? (
+          <div className="flex flex-col items-center justify-center py-8 px-4 gap-2">
+            <div className="w-8 h-8 rounded-full border-2 border-[#1d6ef5]/40 border-t-[#1d6ef5] animate-spin mb-1" />
+            <p className="text-[13px] font-semibold text-[#f2f3f5]">In Progress</p>
+            <p className="text-[11px] text-[#4e5058] text-center">Direct messages are disabled in bot mode</p>
+          </div>
+        ) : (
+          <div className="space-y-[1px] pb-2">
+            {dmChannels.length === 0 && (
+              <p className="text-[12px] text-[#4e5058] px-2 py-2">No recent DMs</p>
+            )}
+            {dmChannels.map((ch, i) => {
+              const recipient = ch.recipients?.[0];
+              const name = ch.type === 3
+                ? (ch.name ?? ch.recipients?.map(r => r.username).join(", ") ?? "Group DM")
+                : (recipient?.global_name ?? recipient?.username ?? "Unknown");
+              const initials = name[0]?.toUpperCase() ?? "?";
+              const src = recipient ? avatarUrl(recipient) : null;
+              const isActive = activeDmId === ch.id;
+              return (
+                <button
+                  key={ch.id}
+                  onClick={() => handleDm(ch.id)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
+                    isActive
+                      ? "bg-[#404249] text-[#f2f3f5]"
+                      : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                  )}
+                  style={{ animationDelay: `${i * 30}ms` }}
+                >
+                  <Avatar
+                    initials={initials}
+                    src={src}
+                    color="#5865f2"
+                    size="sm"
+                    statusBg={isActive ? "#152438" : "#080f1c"}
+                  />
+                  <span className="truncate text-[14px] font-medium">{name}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* User Profile Bar */}
