@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Heart, ChevronDown, Shuffle, Info } from "lucide-react";
+import { Search, Heart, ChevronDown, Shuffle, Info, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AutomationItem {
@@ -92,22 +92,40 @@ function AutomationCard({ item }: { item: AutomationItem }) {
       <div className="px-3 py-2.5">
         <div className="flex items-center justify-between">
           <span className="text-[14px] font-semibold text-[#f2f3f5]">{item.name}</span>
-          {/* On/Off dot */}
-          <button
-            onClick={(e) => { e.stopPropagation(); setEnabled((v) => !v); }}
-            className="flex items-center gap-1.5 px-2 py-1 rounded-full transition-colors text-[12px] font-semibold"
-            style={{
-              backgroundColor: enabled ? "rgba(35,165,90,0.15)" : "rgba(237,66,69,0.15)",
-              color: enabled ? "#23a55a" : "#ed4245",
-            }}
-            title={enabled ? "Turn off" : "Turn on"}
-          >
-            <div
-              className="w-2.5 h-2.5 rounded-full shrink-0"
-              style={{ backgroundColor: enabled ? "#23a55a" : "#ed4245" }}
-            />
-            {enabled ? "On" : "Off"}
-          </button>
+          {/* On/Off dot + options */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={(e) => { e.stopPropagation(); setEnabled((v) => !v); }}
+              className="flex items-center gap-1.5 px-2 py-1 rounded-full transition-colors text-[12px] font-semibold"
+              style={{
+                backgroundColor: enabled ? "rgba(35,165,90,0.15)" : "rgba(237,66,69,0.15)",
+                color: enabled ? "#23a55a" : "#ed4245",
+              }}
+              title={enabled ? "Turn off" : "Turn on"}
+            >
+              <div
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: enabled ? "#23a55a" : "#ed4245" }}
+              />
+              {enabled ? "On" : "Off"}
+            </button>
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center justify-center w-[26px] h-[26px] rounded-full transition-colors"
+              style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#87898c" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(255,255,255,0.14)";
+                (e.currentTarget as HTMLButtonElement).style.color = "#dbdee1";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "rgba(255,255,255,0.08)";
+                (e.currentTarget as HTMLButtonElement).style.color = "#87898c";
+              }}
+              title="More options"
+            >
+              <MoreHorizontal className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
