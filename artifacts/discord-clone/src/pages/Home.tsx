@@ -24,11 +24,19 @@ export default function Home() {
         <Shop />
       ) : view === "quests" ? (
         <Quests />
-      ) : (
+      ) : view === "friends" || view === "dm" ? (
         <>
           <FriendsList />
           <ActiveNow />
         </>
+      ) : (
+        <div
+          className="flex-1 h-full flex flex-col items-center justify-center gap-3"
+          style={{ backgroundColor: "#313338" }}
+        >
+          <p className="text-[#949ba4] text-[16px] font-semibold">Coming soon...</p>
+          <p className="text-[#6d6f78] text-[14px]">This section isn't available yet.</p>
+        </div>
       )}
 
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />

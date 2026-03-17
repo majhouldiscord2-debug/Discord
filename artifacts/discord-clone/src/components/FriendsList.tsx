@@ -30,7 +30,6 @@ export function FriendsList() {
     f.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const onlineCount = friendsOnline.length;
   const pendingCount = pendingFriends.length;
 
   return (

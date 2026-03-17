@@ -418,7 +418,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                     </button>
                   )
                 )}
-              {si < navSections.length - 2 && (
+              {si < navSections.length - 1 && (
                 <div className="my-2 mx-2 h-px" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
               )}
             </div>

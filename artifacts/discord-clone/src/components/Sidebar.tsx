@@ -11,20 +11,19 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: SidebarProps) {
-  const [activeItem, setActiveItem] = useState<string>("friends");
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
   const [activeDm, setActiveDm] = useState<number | null>(null);
 
+  const activeItem = activeView === "dm" ? "" : activeView;
+
   const handleNav = (key: string) => {
-    setActiveItem(key);
     setActiveDm(null);
     onNavigate?.(key);
   };
 
   const handleDm = (id: number) => {
     setActiveDm(id);
-    setActiveItem("");
     onNavigate?.("dm");
   };
 
