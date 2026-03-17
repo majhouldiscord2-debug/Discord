@@ -28,16 +28,21 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
   };
 
   return (
-    <div className="w-[240px] h-full flex flex-col shrink-0" style={{ backgroundColor: "#2b2d31" }}>
+    <div
+      className="w-[240px] h-full flex flex-col shrink-0"
+      style={{
+        background: "linear-gradient(180deg, #28292e 0%, #2b2d31 60%, #272930 100%)",
+      }}
+    >
       {/* Top Search Button */}
       <button
-        className="h-12 shrink-0 flex items-center px-3 mx-0 border-b border-black/25 hover:bg-white/5 transition-colors"
-        style={{ borderBottomColor: "rgba(0,0,0,0.3)" }}
+        className="h-12 shrink-0 flex items-center px-3 gap-2 transition-colors hover:bg-white/5"
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.25)" }}
       >
-        <span className="flex-1 text-left text-[14px] font-medium text-[#949ba4] hover:text-[#dbdee1] transition-colors truncate">
+        <span className="flex-1 text-left text-[13px] font-medium text-[#87898c] hover:text-[#dbdee1] transition-colors truncate">
           Find or start a conversation
         </span>
-        <Search className="w-4 h-4 text-[#949ba4] shrink-0" />
+        <Search className="w-4 h-4 text-[#5e6068] shrink-0" />
       </button>
 
       {/* Scrollable Content */}
@@ -45,41 +50,41 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
         {/* Nav Items */}
         <div className="space-y-[2px] mb-1">
           <NavItem
-            icon={<Users className="w-5 h-5" />}
+            icon={<Users className="w-[18px] h-[18px]" />}
             label="Friends"
             isActive={activeItem === "friends"}
             onClick={() => handleNav("friends")}
           />
           <NavItem
-            icon={<MailCheck className="w-5 h-5" />}
+            icon={<MailCheck className="w-[18px] h-[18px]" />}
             label="Message Requests"
             isActive={activeItem === "requests"}
             onClick={() => handleNav("requests")}
           />
           <NavItem
-            icon={<Zap className="w-5 h-5" />}
+            icon={<Zap className="w-[18px] h-[18px]" />}
             label="Nitro"
             isActive={activeItem === "nitro"}
             onClick={() => handleNav("nitro")}
             badge={
-              <span className="ml-auto bg-[#5865f2] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+              <span className="ml-auto bg-[#5865f2] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none tracking-wide">
                 NEW
               </span>
             }
           />
           <NavItem
-            icon={<ShoppingBag className="w-5 h-5" />}
+            icon={<ShoppingBag className="w-[18px] h-[18px]" />}
             label="Shop"
             isActive={activeItem === "shop"}
             onClick={() => handleNav("shop")}
             badge={
-              <span className="ml-auto bg-[#23a55a] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+              <span className="ml-auto bg-[#23a55a] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none tracking-wide">
                 NEW
               </span>
             }
           />
           <NavItem
-            icon={<Target className="w-5 h-5" />}
+            icon={<Target className="w-[18px] h-[18px]" />}
             label="Quests"
             isActive={activeItem === "quests"}
             onClick={() => handleNav("quests")}
@@ -88,35 +93,36 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
 
         {/* DMs Header */}
         <div className="mt-4 mb-1 px-2 flex items-center justify-between group cursor-pointer">
-          <span className="text-[11px] font-semibold text-[#949ba4] group-hover:text-[#dbdee1] uppercase tracking-wider transition-colors select-none">
+          <span className="text-[10px] font-bold text-[#6d6f76] group-hover:text-[#c0c3c9] uppercase tracking-widest transition-colors select-none">
             Direct Messages
           </span>
-          <button className="opacity-0 group-hover:opacity-100 text-[#949ba4] hover:text-[#dbdee1] transition-all p-0.5 rounded">
-            <Plus className="w-4 h-4" />
+          <button className="opacity-0 group-hover:opacity-100 text-[#6d6f76] hover:text-[#dbdee1] transition-all p-0.5 rounded">
+            <Plus className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* DM Contacts */}
-        <div className="space-y-[2px] pb-2">
-          {dmContacts.map((contact) => (
+        <div className="space-y-[1px] pb-2">
+          {dmContacts.map((contact, i) => (
             <button
               key={contact.id}
               onClick={() => handleDm(contact.id)}
               className={cn(
-                "w-full flex items-center gap-3 px-2 py-[6px] rounded-[4px] transition-colors group",
+                "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
                 activeDm === contact.id
                   ? "bg-[#404249] text-[#f2f3f5]"
-                  : "text-[#949ba4] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                  : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
               )}
+              style={{ animationDelay: `${i * 30}ms` }}
             >
               <Avatar
                 initials={contact.initials}
                 color={contact.avatarColor}
                 status={contact.status}
                 size="sm"
-                statusBg="#2b2d31"
+                statusBg={activeDm === contact.id ? "#404249" : "#2b2d31"}
               />
-              <span className="truncate text-[15px] font-medium">{contact.name}</span>
+              <span className="truncate text-[14px] font-medium">{contact.name}</span>
             </button>
           ))}
         </div>
@@ -125,22 +131,25 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
       {/* User Profile Bar */}
       <div
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
-        style={{ backgroundColor: "#232428" }}
+        style={{
+          background: "linear-gradient(180deg, #1e1f22 0%, #202225 100%)",
+          borderTop: "1px solid rgba(0,0,0,0.2)",
+        }}
       >
-        <button className="flex items-center flex-1 hover:bg-white/10 p-1 rounded-[4px] transition-colors min-w-0 mr-1">
+        <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
           <Avatar
             initials={currentUser.initials}
             color={currentUser.avatarColor}
             status={currentUser.status}
             size="sm"
-            statusBg="#232428"
+            statusBg="#1e2022"
             className="mr-2"
           />
           <div className="flex flex-col text-left min-w-0">
             <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">
               {currentUser.name}
             </span>
-            <span className="text-[11px] text-[#949ba4] leading-tight truncate">
+            <span className="text-[11px] text-[#6d6f76] leading-tight truncate">
               {currentUser.statusText}
             </span>
           </div>
@@ -152,17 +161,17 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
             onClick={() => setMicMuted(!micMuted)}
             danger={micMuted}
           >
-            {micMuted ? <MicOff className="w-[18px] h-[18px]" /> : <Mic className="w-[18px] h-[18px]" />}
+            {micMuted ? <MicOff className="w-[17px] h-[17px]" /> : <Mic className="w-[17px] h-[17px]" />}
           </IconBtn>
           <IconBtn
             title={deafened ? "Undeafen" : "Deafen"}
             onClick={() => setDeafened(!deafened)}
             danger={deafened}
           >
-            <Headphones className="w-[18px] h-[18px]" />
+            <Headphones className="w-[17px] h-[17px]" />
           </IconBtn>
           <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
-            <Settings className="w-[18px] h-[18px]" />
+            <Settings className="w-[17px] h-[17px]" />
           </IconBtn>
         </div>
       </div>
@@ -187,14 +196,16 @@ function NavItem({
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-center px-2 py-[7px] rounded-[4px] transition-colors gap-3",
+        "w-full flex items-center px-2 py-[7px] rounded-[6px] transition-all duration-150 gap-3",
         isActive
           ? "bg-[#404249] text-[#f2f3f5]"
-          : "text-[#949ba4] hover:bg-[#35373c] hover:text-[#dbdee1]"
+          : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
       )}
     >
-      <span className="shrink-0">{icon}</span>
-      <span className="font-medium text-[16px] flex-1 text-left">{label}</span>
+      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76] group-hover:text-[#dbdee1]")}>
+        {icon}
+      </span>
+      <span className="font-medium text-[15px] flex-1 text-left tracking-[-0.01em]">{label}</span>
       {badge}
     </button>
   );
@@ -216,10 +227,10 @@ function IconBtn({
       title={title}
       onClick={onClick}
       className={cn(
-        "w-8 h-8 rounded-[4px] flex items-center justify-center transition-colors",
+        "w-8 h-8 rounded-[6px] flex items-center justify-center transition-all duration-150",
         danger
-          ? "text-[#f23f43] hover:bg-white/10"
-          : "text-[#b5bac1] hover:bg-white/10 hover:text-[#dbdee1]"
+          ? "text-[#f23f43] hover:bg-white/8"
+          : "text-[#87898c] hover:bg-white/8 hover:text-[#dbdee1]"
       )}
     >
       {children}

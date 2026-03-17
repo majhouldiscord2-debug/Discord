@@ -20,7 +20,7 @@ const sizeMap = {
   lg: { avatar: "w-12 h-12 text-base", dot: "w-5 h-5 border-[3px]", offset: "bottom-[-3px] right-[-3px]" },
 };
 
-const statusBgColors: Record<Status, string> = {
+const statusColors: Record<Status, string> = {
   online: "#23a55a",
   idle: "#f0b232",
   dnd: "#f23f43",
@@ -44,7 +44,7 @@ export function Avatar({
       <div
         className={cn(
           s.avatar,
-          "rounded-full flex items-center justify-center font-semibold text-white select-none",
+          "rounded-full flex items-center justify-center font-semibold text-white select-none transition-transform duration-150",
           colorClass
         )}
         style={color ? { backgroundColor: color } : undefined}
@@ -58,11 +58,13 @@ export function Avatar({
             s.dot,
             "absolute rounded-full flex items-center justify-center",
             s.offset,
-            statusBgClass
+            statusBgClass,
+            status === "online" ? "online-pulse" : ""
           )}
           style={{
-            backgroundColor: statusBgColors[status],
+            backgroundColor: statusColors[status],
             borderColor: statusBgClass ? undefined : statusBg,
+            borderStyle: "solid",
           }}
         >
           {status === "dnd" && (
@@ -70,7 +72,7 @@ export function Avatar({
           )}
           {status === "idle" && (
             <div
-              className="absolute rounded-full bg-inherit"
+              className="absolute rounded-full"
               style={{
                 width: "45%",
                 height: "45%",

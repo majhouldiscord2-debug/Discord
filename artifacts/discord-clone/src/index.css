@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme inline {
@@ -16,30 +16,24 @@
   --color-warning: hsl(var(--warning));
   --color-danger: hsl(var(--danger));
   --color-border: hsl(var(--border));
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
 }
 
 :root {
-  /* Core Discord Colors mapped to HSL for Tailwind 4 compatibility */
-  --background: 223 7% 21%;          /* #313338 - Main Content */
-  --foreground: 220 13% 95%;         /* #f2f3f5 - Primary Text */
-  
-  --sidebar: 220 6% 18%;             /* #2b2d31 - DM Sidebar & Active Panel */
-  --sidebar-dark: 225 6% 13%;        /* #1e1f22 - Server List */
-  --sidebar-darker: 226 6% 15%;      /* #232428 - User Profile Bottom Bar */
-  
-  --primary: 235 86% 65%;            /* #5865f2 - Blurple */
-  --primary-foreground: 0 0% 100%;   /* White */
-  
-  --accent: 227 6% 27%;              /* #404249 - Hover / Selected States */
-  --muted: 214 9% 61%;               /* #949ba4 - Muted Text / Inactive Icons */
+  --background: 223 7% 21%;
+  --foreground: 220 13% 95%;
+  --sidebar: 220 6% 18%;
+  --sidebar-dark: 225 6% 13%;
+  --sidebar-darker: 226 6% 15%;
+  --primary: 235 86% 65%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 227 6% 27%;
+  --muted: 214 9% 61%;
   --muted-foreground: 214 9% 61%;
-  
-  --success: 145 65% 39%;            /* #23a55a - Online Status / Success */
-  --warning: 38 95% 54%;             /* #f0b232 - Idle Status */
-  --danger: 359 82% 60%;             /* #f23f43 - DND Status / Notifications */
-  
-  --border: 225 6% 13%;              /* Subtle borders matching dark sidebar */
+  --success: 145 65% 39%;
+  --warning: 38 95% 54%;
+  --danger: 359 82% 60%;
+  --border: 225 6% 13%;
 }
 
 @layer base {
@@ -48,34 +42,70 @@
   }
 }
 
-/* Custom utility to hide scrollbars but maintain scrollability */
+/* ── Keyframe animations ───────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes onlinePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(35,165,90,0.5); }
+  50%      { box-shadow: 0 0 0 3px rgba(35,165,90,0); }
+}
+
+@keyframes subtleFloat {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-3px); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Animation utilities ─────────────────────────────────────── */
 @layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  .animate-fade-slide-up {
+    animation: fadeSlideUp 0.3s ease both;
   }
+  .animate-scale-in {
+    animation: scaleIn 0.25s ease both;
+  }
+  .online-pulse {
+    animation: onlinePulse 2.4s ease-in-out infinite;
+  }
+
+  /* Staggered delay helpers */
+  .delay-50  { animation-delay: 50ms; }
+  .delay-100 { animation-delay: 100ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-250 { animation-delay: 250ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-350 { animation-delay: 350ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-450 { animation-delay: 450ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* Hidden scrollbar */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
-  /* Discord-style thin scrollbar */
-  .discord-scrollbar::-webkit-scrollbar {
-    width: 8px;
-  }
-  .discord-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
+  /* Discord-style refined scrollbar */
+  .discord-scrollbar::-webkit-scrollbar { width: 6px; }
+  .discord-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .discord-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #1a1b1e;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    background-color: rgba(255,255,255,0.07);
+    border-radius: 3px;
   }
   .discord-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #111214;
+    background-color: rgba(255,255,255,0.14);
   }
   .discord-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #1a1b1e transparent;
+    scrollbar-color: rgba(255,255,255,0.07) transparent;
   }
 }

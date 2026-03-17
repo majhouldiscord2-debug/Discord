@@ -11,53 +11,63 @@ function DiscordLogo() {
   );
 }
 
-interface TooltipServerProps {
+interface ServerButtonProps {
   name: string;
   children: React.ReactNode;
   isActive: boolean;
   hasNotification?: boolean;
   notificationCount?: number;
   onClick: () => void;
+  glowColor?: string;
 }
 
-function ServerButton({ name, children, isActive, hasNotification, notificationCount, onClick }: TooltipServerProps) {
+function ServerButton({ name, children, isActive, hasNotification, notificationCount, onClick, glowColor }: ServerButtonProps) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="relative group flex items-center justify-center w-full"
+      className="relative flex items-center justify-center w-full"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Active pill */}
       <div
         className={cn(
-          "absolute left-0 bg-white rounded-r-full transition-all duration-200",
-          isActive ? "w-1 h-10" : hovered ? "w-1 h-5" : hasNotification ? "w-1 h-2" : "w-0 h-0"
+          "absolute left-0 rounded-r-full transition-all duration-200",
+          "bg-white"
         )}
+        style={{
+          width: isActive ? 4 : hovered ? 4 : hasNotification ? 4 : 0,
+          height: isActive ? 40 : hovered ? 20 : hasNotification ? 8 : 0,
+          opacity: (isActive || hovered || hasNotification) ? 1 : 0,
+        }}
       />
 
       {/* Notification badge */}
       {!isActive && notificationCount && notificationCount > 0 && (
-        <div className="absolute bottom-0 right-1 min-w-[18px] h-[18px] bg-[#ed4245] rounded-full flex items-center justify-center z-20 px-1">
+        <div className="absolute bottom-0 right-1 min-w-[18px] h-[18px] bg-[#ed4245] rounded-full flex items-center justify-center z-20 px-1 shadow-lg">
           <span className="text-[10px] text-white font-bold leading-none">{notificationCount}</span>
         </div>
       )}
 
       <button
         onClick={onClick}
-        className={cn(
-          "w-12 h-12 flex items-center justify-center text-white font-bold text-[18px] transition-all duration-200 overflow-hidden",
-          isActive ? "rounded-[16px]" : "rounded-[24px] hover:rounded-[16px]"
-        )}
+        className="w-12 h-12 flex items-center justify-center text-white font-bold text-[18px] transition-all duration-200 overflow-hidden"
+        style={{
+          borderRadius: isActive || hovered ? 16 : 24,
+          boxShadow: isActive && glowColor ? `0 4px 20px ${glowColor}55` : undefined,
+        }}
       >
         {children}
       </button>
 
       {/* Tooltip */}
       {hovered && (
-        <div className="absolute left-[68px] z-50 pointer-events-none">
-          <div className="bg-[#111214] text-white text-sm font-semibold px-3 py-2 rounded-md shadow-xl whitespace-nowrap">
+        <div className="absolute left-[68px] z-50 pointer-events-none animate-scale-in">
+          <div
+            className="text-white text-[13px] font-semibold px-3 py-2 rounded-lg shadow-2xl whitespace-nowrap"
+            style={{ background: "#111214", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
             {name}
             <div className="absolute left-[-6px] top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#111214]" />
           </div>
@@ -71,24 +81,33 @@ export function ServerList() {
   const [activeServer, setActiveServer] = useState<number | "dms">("dms");
 
   return (
-    <div className="w-[72px] h-full bg-[#1e1f22] flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0">
+    <div
+      className="w-[72px] h-full flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0"
+      style={{
+        background: "linear-gradient(180deg, #17181c 0%, #1e1f22 50%, #1a1b1f 100%)",
+      }}
+    >
       {/* Home / DMs Button */}
       <ServerButton
         name="Direct Messages"
         isActive={activeServer === "dms"}
         onClick={() => setActiveServer("dms")}
+        glowColor="#5865f2"
       >
-        <div className={cn(
-          "w-12 h-12 flex items-center justify-center transition-all duration-200",
-          activeServer === "dms"
-            ? "rounded-[16px] bg-[#5865f2]"
-            : "rounded-[24px] bg-[#313338] hover:rounded-[16px] hover:bg-[#5865f2]"
-        )}>
+        <div
+          className="w-12 h-12 flex items-center justify-center transition-all duration-200"
+          style={{
+            borderRadius: activeServer === "dms" ? 16 : 24,
+            background: activeServer === "dms"
+              ? "linear-gradient(135deg, #5865f2 0%, #7289da 100%)"
+              : "#2e3035",
+          }}
+        >
           <DiscordLogo />
         </div>
       </ServerButton>
 
-      <div className="w-8 h-[2px] bg-[#35363c] rounded-full shrink-0" />
+      <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
       {/* Server List */}
       {servers.map((server) => (
@@ -99,40 +118,81 @@ export function ServerList() {
           hasNotification={server.hasNotification}
           notificationCount={server.notificationCount}
           onClick={() => setActiveServer(server.id)}
+          glowColor={server.color}
         >
           <div
-            className={cn(
-              "w-12 h-12 flex items-center justify-center transition-all duration-200 text-[18px]",
-              activeServer === server.id ? "rounded-[16px]" : "rounded-[24px] hover:rounded-[16px]"
-            )}
-            style={{ backgroundColor: server.color }}
+            className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[18px] font-bold"
+            style={{
+              borderRadius: activeServer === server.id ? 16 : 24,
+              backgroundColor: server.color,
+              boxShadow: activeServer === server.id ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
+            }}
           >
             {server.initials}
           </div>
         </ServerButton>
       ))}
 
-      <div className="w-8 h-[2px] bg-[#35363c] rounded-full shrink-0 mt-1" />
+      <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
       {/* Add Server */}
       <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
-        <div className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#313338] hover:bg-[#23a55a] flex items-center justify-center text-[#23a55a] hover:text-white transition-all duration-200">
+        <div
+          className="w-12 h-12 flex items-center justify-center text-[#23a55a] transition-all duration-200 group"
+          style={{ borderRadius: 24, background: "#2e3035" }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+            (e.currentTarget as HTMLDivElement).style.background = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
+            (e.currentTarget as HTMLDivElement).style.color = "#23a55a";
+          }}
+        >
           <Plus className="w-6 h-6" />
         </div>
       </ServerButton>
 
       {/* Explore */}
       <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
-        <div className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#313338] hover:bg-[#23a55a] flex items-center justify-center text-[#23a55a] hover:text-white transition-all duration-200">
+        <div
+          className="w-12 h-12 flex items-center justify-center text-[#23a55a] transition-all duration-200"
+          style={{ borderRadius: 24, background: "#2e3035" }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+            (e.currentTarget as HTMLDivElement).style.background = "#23a55a";
+            (e.currentTarget as HTMLDivElement).style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
+            (e.currentTarget as HTMLDivElement).style.color = "#23a55a";
+          }}
+        >
           <Compass className="w-6 h-6" />
         </div>
       </ServerButton>
 
-      <div className="w-8 h-[2px] bg-[#35363c] rounded-full shrink-0" />
+      <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
       {/* Download */}
       <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
-        <div className="w-12 h-12 rounded-[24px] hover:rounded-[16px] bg-[#313338] hover:bg-[#5865f2] flex items-center justify-center text-[#5865f2] hover:text-white transition-all duration-200">
+        <div
+          className="w-12 h-12 flex items-center justify-center text-[#5865f2] transition-all duration-200"
+          style={{ borderRadius: 24, background: "#2e3035" }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+            (e.currentTarget as HTMLDivElement).style.background = "#5865f2";
+            (e.currentTarget as HTMLDivElement).style.color = "white";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+            (e.currentTarget as HTMLDivElement).style.background = "#2e3035";
+            (e.currentTarget as HTMLDivElement).style.color = "#5865f2";
+          }}
+        >
           <Download className="w-[22px] h-[22px]" />
         </div>
       </ServerButton>

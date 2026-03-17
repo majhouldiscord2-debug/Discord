@@ -36,15 +36,18 @@ export function FriendsList() {
     <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
       {/* Top Header */}
       <div
-        className="h-12 shrink-0 flex items-center px-4 gap-3 shadow-sm"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}
+        className="h-12 shrink-0 flex items-center px-4 gap-3"
+        style={{
+          borderBottom: "1px solid rgba(0,0,0,0.28)",
+          background: "linear-gradient(180deg, #33353a 0%, #313338 100%)",
+        }}
       >
         <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-[#949ba4]" />
-          <span className="text-[#f2f3f5] font-semibold text-[16px]">Friends</span>
+          <Users className="w-5 h-5 text-[#7d8188]" />
+          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Friends</span>
         </div>
 
-        <div className="w-px h-6 bg-white/10 mx-1" />
+        <div className="w-px h-5 bg-white/10 mx-1" />
 
         <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
           <TabBtn label="Online" isActive={activeTab === "online"} onClick={() => setActiveTab("online")} />
@@ -59,10 +62,10 @@ export function FriendsList() {
           <button
             onClick={() => setActiveTab("add")}
             className={cn(
-              "px-3 py-1 text-[14px] font-medium rounded-[4px] transition-colors whitespace-nowrap",
+              "px-3 py-1 text-[13px] font-semibold rounded-[5px] transition-all duration-150 whitespace-nowrap",
               activeTab === "add"
                 ? "text-[#dbdee1] bg-[#404249]"
-                : "bg-[#23a55a] text-white hover:bg-[#1f9350]"
+                : "bg-[#23a55a] text-white hover:bg-[#1f9350] hover:shadow-[0_2px_12px_rgba(35,165,90,0.35)]"
             )}
           >
             Add Friend
@@ -70,15 +73,15 @@ export function FriendsList() {
         </div>
 
         <div className="flex items-center gap-2 ml-2 shrink-0">
-          <button className="text-[#b5bac1] hover:text-[#dbdee1] p-1 rounded transition-colors" title="New Group DM">
-            <Video className="w-5 h-5" />
+          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="New Group DM">
+            <Video className="w-[18px] h-[18px]" />
           </button>
           <div className="w-px h-5 bg-white/10" />
-          <button className="text-[#b5bac1] hover:text-[#dbdee1] p-1 rounded transition-colors" title="Inbox">
-            <MessageCircle className="w-5 h-5" />
+          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
+            <MessageCircle className="w-[18px] h-[18px]" />
           </button>
-          <button className="text-[#b5bac1] hover:text-[#dbdee1] p-1 rounded transition-colors" title="Help">
-            <span className="w-5 h-5 flex items-center justify-center text-[16px] font-bold">?</span>
+          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Help">
+            <span className="w-[18px] h-[18px] flex items-center justify-center text-[15px] font-bold">?</span>
           </button>
         </div>
       </div>
@@ -96,14 +99,14 @@ export function FriendsList() {
                 placeholder="Search"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full text-[#dbdee1] placeholder:text-[#87898c] text-[14px] py-[6px] pl-3 pr-9 rounded-[4px] outline-none"
+                className="w-full text-[#dbdee1] placeholder:text-[#5e6068] text-[14px] py-[7px] pl-3 pr-9 rounded-[6px] outline-none transition-all duration-150 focus:ring-1 focus:ring-white/10"
                 style={{ backgroundColor: "#1e1f22" }}
               />
-              <Search className="absolute right-2.5 top-[7px] w-4 h-4 text-[#87898c]" />
+              <Search className="absolute right-3 top-[8px] w-[15px] h-[15px] text-[#5e6068]" />
             </div>
 
             {/* Section label */}
-            <div className="text-xs font-semibold text-[#949ba4] uppercase tracking-wider mb-3">
+            <div className="text-[10px] font-bold text-[#6d6f76] uppercase tracking-widest mb-3">
               {activeTab === "online"
                 ? `Online — ${displayFriends.length}`
                 : activeTab === "pending"
@@ -114,11 +117,12 @@ export function FriendsList() {
             </div>
 
             {/* Friend Rows */}
-            <div>
-              {displayFriends.map((friend) => (
+            <div className="space-y-[1px]">
+              {displayFriends.map((friend, i) => (
                 <div
                   key={friend.id}
-                  className="flex items-center justify-between py-3 px-3 rounded-lg cursor-pointer group transition-colors hover:bg-[#3c3f45] border-t border-[#3c3f45]"
+                  className="flex items-center justify-between py-[10px] px-3 rounded-[8px] cursor-pointer group transition-all duration-150 hover:bg-[#35373c] border-t border-[rgba(255,255,255,0.04)] first:border-t-0 animate-fade-slide-up"
+                  style={{ animationDelay: `${i * 40}ms` }}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <Avatar
@@ -127,19 +131,19 @@ export function FriendsList() {
                       status={friend.status}
                       size="md"
                       statusBg="#313338"
-                      className="group-hover:[--status-bg:#3c3f45]"
+                      className="group-hover:[--status-bg:#35373c] transition-transform duration-150 group-hover:scale-105"
                     />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-[15px] font-semibold text-[#f2f3f5] leading-tight truncate">
+                      <span className="text-[14px] font-semibold text-[#f2f3f5] leading-tight truncate tracking-[-0.01em]">
                         {friend.name}
                       </span>
-                      <span className="text-[13px] text-[#949ba4] leading-tight truncate">
+                      <span className="text-[12px] text-[#7d8188] leading-tight truncate mt-[1px]">
                         {friend.statusText || statusLabels[friend.status]}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-150 shrink-0">
                     {activeTab === "pending" ? (
                       <>
                         <ActionBtn title="Accept">
@@ -152,10 +156,10 @@ export function FriendsList() {
                     ) : (
                       <>
                         <ActionBtn title="Message">
-                          <MessageCircle className="w-[18px] h-[18px]" />
+                          <MessageCircle className="w-[17px] h-[17px]" />
                         </ActionBtn>
                         <ActionBtn title="More">
-                          <MoreVertical className="w-[18px] h-[18px]" />
+                          <MoreVertical className="w-[17px] h-[17px]" />
                         </ActionBtn>
                       </>
                     )}
@@ -164,15 +168,15 @@ export function FriendsList() {
               ))}
 
               {displayFriends.length === 0 && activeTab !== "add" && (
-                <div className="flex flex-col items-center justify-center py-16 select-none">
-                  <div className="w-[220px] h-[220px] mb-4 opacity-25 flex items-center justify-center">
-                    <Users className="w-32 h-32 text-[#949ba4]" />
+                <div className="flex flex-col items-center justify-center py-20 select-none animate-fade-slide-up">
+                  <div className="w-[180px] h-[180px] mb-5 flex items-center justify-center rounded-full" style={{ background: "rgba(255,255,255,0.03)" }}>
+                    <Users className="w-24 h-24 text-[#3e4147]" />
                   </div>
-                  <p className="text-[#949ba4] font-medium text-[16px]">
+                  <p className="text-[#5e6068] font-medium text-[15px] max-w-[280px] text-center leading-relaxed">
                     {activeTab === "blocked"
-                      ? "You can't unblock the block!"
+                      ? "You haven't blocked anyone."
                       : activeTab === "pending"
-                      ? "There are no pending friend requests. Here's Wumpus for now."
+                      ? "No pending friend requests."
                       : "Wumpus is waiting on friends. You don't have to though!"}
                   </p>
                 </div>
@@ -200,15 +204,15 @@ function TabBtn({
     <button
       onClick={onClick}
       className={cn(
-        "px-3 py-1 text-[15px] font-medium rounded-[4px] transition-colors relative whitespace-nowrap",
+        "px-3 py-1 text-[13px] font-medium rounded-[5px] transition-all duration-150 relative whitespace-nowrap",
         isActive
           ? "bg-[#404249] text-[#f2f3f5]"
-          : "text-[#949ba4] hover:bg-[#35373c] hover:text-[#dbdee1]"
+          : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
       )}
     >
       {label}
       {badge !== undefined && (
-        <span className="ml-1.5 bg-[#ed4245] text-white text-[11px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+        <span className="ml-1.5 bg-[#ed4245] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
           {badge}
         </span>
       )}
@@ -229,10 +233,10 @@ function ActionBtn({
     <button
       title={title}
       className={cn(
-        "w-9 h-9 rounded-full flex items-center justify-center transition-colors",
+        "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150",
         danger
-          ? "bg-[#1e1f22] text-[#ed4245] hover:text-white hover:bg-[#ed4245]"
-          : "bg-[#1e1f22] text-[#b5bac1] hover:text-[#f2f3f5]"
+          ? "bg-[#1e1f22] text-[#ed4245] hover:text-white hover:bg-[#ed4245] hover:shadow-[0_2px_8px_rgba(237,66,69,0.4)]"
+          : "bg-[#1e1f22] text-[#87898c] hover:text-[#f2f3f5] hover:bg-[#35373c]"
       )}
     >
       {children}
@@ -243,13 +247,13 @@ function ActionBtn({
 function AddFriendView() {
   const [value, setValue] = useState("");
   return (
-    <div className="max-w-[680px]">
-      <h2 className="text-[20px] font-semibold text-[#f2f3f5] mb-2">Add Friend</h2>
-      <p className="text-[#949ba4] text-[14px] mb-4">
+    <div className="max-w-[640px] animate-fade-slide-up">
+      <h2 className="text-[18px] font-bold text-[#f2f3f5] mb-1 tracking-[-0.02em]">Add Friend</h2>
+      <p className="text-[#87898c] text-[14px] mb-5">
         You can add friends with their Discord username.
       </p>
       <div
-        className="flex items-center rounded-lg px-4 py-3 gap-3"
+        className="flex items-center rounded-[8px] px-4 py-3 gap-3 transition-all duration-150 focus-within:ring-1 focus-within:ring-[#5865f2]/40"
         style={{ backgroundColor: "#1e1f22" }}
       >
         <input
@@ -257,14 +261,14 @@ function AddFriendView() {
           placeholder="You can add friends with their Discord username."
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="flex-1 bg-transparent text-[#dbdee1] placeholder:text-[#87898c] text-[16px] outline-none"
+          className="flex-1 bg-transparent text-[#dbdee1] placeholder:text-[#5e6068] text-[15px] outline-none"
         />
         <button
           className={cn(
-            "px-4 py-1.5 rounded-[4px] text-[14px] font-medium transition-colors",
+            "px-4 py-1.5 rounded-[5px] text-[13px] font-semibold transition-all duration-150",
             value.length > 0
-              ? "bg-[#5865f2] hover:bg-[#4752c4] text-white"
-              : "bg-[#5865f2]/40 text-white/40 cursor-not-allowed"
+              ? "bg-[#5865f2] hover:bg-[#4752c4] text-white hover:shadow-[0_2px_12px_rgba(88,101,242,0.4)]"
+              : "bg-[#5865f2]/30 text-white/30 cursor-not-allowed"
           )}
           disabled={value.length === 0}
         >
