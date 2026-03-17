@@ -162,7 +162,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
             style={{ background: `linear-gradient(135deg, ${item.glowColor}, #9b59b6)` }}
           >
             <Zap className="w-4 h-4" />
-            Try for Free
+            Edit
           </button>
         </div>
       </div>
