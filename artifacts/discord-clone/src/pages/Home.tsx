@@ -12,18 +12,44 @@ import { SettingsModal } from "@/components/SettingsModal";
 import { useDiscord } from "@/hooks/useDiscord";
 import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
 
+// Profile 1 = Discord app (discord icon)
+// Profile 2 = Dev dashboard (bot icon)
+// Stored in memory only — not shown on the dashboard
+
 export default function Home() {
   const { user, guilds, channels } = useDiscord();
 
   const [isBotMode, setIsBotMode] = useState(false);
-
-  const [activeServer, setActiveServer] = useState<"dms" | string>("dms");
-  const [view, setView] = useState<string>("friends");
-  const [activeDmId, setActiveDmId] = useState<string | null>(null);
-  const [activeGuild, setActiveGuild] = useState<DiscordGuild | null>(null);
-  const [activeChannel, setActiveChannel] = useState<GuildChannel | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
+  // ── Profile 1 state ─────────────────────────────────────────
+  const [p1View, setP1View] = useState<string>("friends");
+  const [p1ActiveDmId, setP1ActiveDmId] = useState<string | null>(null);
+  const [p1ActiveServer, setP1ActiveServer] = useState<"dms" | string>("dms");
+  const [p1ActiveGuild, setP1ActiveGuild] = useState<DiscordGuild | null>(null);
+  const [p1ActiveChannel, setP1ActiveChannel] = useState<GuildChannel | null>(null);
+
+  // ── Profile 2 state ─────────────────────────────────────────
+  const [p2View, setP2View] = useState<string>("friends");
+  const [p2ActiveDmId, setP2ActiveDmId] = useState<string | null>(null);
+  const [p2ActiveServer, setP2ActiveServer] = useState<"dms" | string>("dms");
+  const [p2ActiveGuild, setP2ActiveGuild] = useState<DiscordGuild | null>(null);
+  const [p2ActiveChannel, setP2ActiveChannel] = useState<GuildChannel | null>(null);
+
+  // ── Active profile aliases ───────────────────────────────────
+  const view         = isBotMode ? p2View         : p1View;
+  const activeDmId   = isBotMode ? p2ActiveDmId   : p1ActiveDmId;
+  const activeServer = isBotMode ? p2ActiveServer  : p1ActiveServer;
+  const activeGuild  = isBotMode ? p2ActiveGuild   : p1ActiveGuild;
+  const activeChannel= isBotMode ? p2ActiveChannel : p1ActiveChannel;
+
+  const setView          = isBotMode ? setP2View          : setP1View;
+  const setActiveDmId    = isBotMode ? setP2ActiveDmId    : setP1ActiveDmId;
+  const setActiveServer  = isBotMode ? setP2ActiveServer  : setP1ActiveServer;
+  const setActiveGuild   = isBotMode ? setP2ActiveGuild   : setP1ActiveGuild;
+  const setActiveChannel = isBotMode ? setP2ActiveChannel : setP1ActiveChannel;
+
+  // ── Handlers ────────────────────────────────────────────────
   function handleSelectServer(serverId: "dms" | string) {
     setActiveServer(serverId);
     if (serverId === "dms") {
@@ -86,7 +112,10 @@ export default function Home() {
       )}
 
       {/* Main content area */}
-      <div key={activeServer + activeDmId + activeChannel?.id + view} className="flex flex-1 h-full overflow-hidden animate-view-fade">
+      <div
+        key={`${isBotMode ? "p2" : "p1"}-${activeServer}-${activeDmId}-${activeChannel?.id}-${view}`}
+        className="flex flex-1 h-full overflow-hidden animate-view-fade"
+      >
         {showGuildSidebar ? (
           activeChannel ? (
             <ChatView
