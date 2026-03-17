@@ -16,7 +16,7 @@ interface AutomationItem {
 const automationItems: AutomationItem[] = [
   {
     id: 1,
-    name: "mentionitor",
+    name: "Mentio",
     gradient: "from-[#001a3a] via-[#004695] to-[#002855]",
     glowColor: "#1CF8FF",
     ring: "border-cyan-400",
@@ -24,8 +24,8 @@ const automationItems: AutomationItem[] = [
     icon: "mentionitor",
     darkBg: "#001a3a",
   },
-  { id: 2,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
-  { id: 3,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
+  { id: 2,  name: "Inboxer",    gradient: "from-[#3a0000] via-[#7a0a0a] to-[#1a0000]", glowColor: "#ff4444", ring: "border-red-500", darkBg: "#3a0000" },
+  { id: 3,  name: "Questor",   gradient: "from-[#002a00] via-[#0a5a0a] to-[#001800]", glowColor: "#22c55e", ring: "border-green-500", darkBg: "#002a00" },
   { id: 4,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 5,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 6,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
