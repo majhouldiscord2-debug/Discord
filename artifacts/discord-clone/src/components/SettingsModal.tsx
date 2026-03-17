@@ -341,7 +341,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
   })).filter((section) => section.items.length > 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex" style={{ backgroundColor: "#313338" }}>
+    <div className="fixed inset-y-0 right-0 z-50 flex" style={{ left: 72, backgroundColor: "#313338" }}>
       {/* ── Left sidebar ── */}
       <div
         className="flex-shrink-0 flex flex-col items-end overflow-y-auto discord-scrollbar py-[60px]"
