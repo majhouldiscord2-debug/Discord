@@ -149,7 +149,7 @@ function MyAccountPage() {
   return (
     <>
       {/* fixed page header */}
-      <div className="px-10 pt-[60px] pb-0 shrink-0">
+      <div className="px-10 pt-[72px] pb-0 shrink-0">
         <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-4">My Account</h2>
         <div className="flex items-end gap-0 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
           <TabBtn label="Security" isActive={activeTab === "security"} onClick={() => setActiveTab("security")} />
@@ -258,7 +258,7 @@ function MyAccountPage() {
 function PlaceholderPage({ title }: { title: string }) {
   return (
     <>
-      <div className="px-10 pt-[60px] pb-0 shrink-0">
+      <div className="px-10 pt-[72px] pb-0 shrink-0">
         <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-4">{title}</h2>
         <div className="border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }} />
       </div>
@@ -302,7 +302,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
       {/* ── Sidebar ── */}
       <div
-        className="shrink-0 h-full flex flex-col items-end overflow-y-auto discord-scrollbar py-14"
+        className="shrink-0 h-full flex flex-col items-end overflow-y-auto discord-scrollbar pt-[72px] pb-[20px]"
         style={{ width: 232, backgroundColor: "#2b2d31" }}
       >
         {/* inner column — right-justified to sit flush against content */}
@@ -385,7 +385,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                 )
               )}
               {si < filteredSections.length - 1 && (
-                <div className="my-1 mx-2 h-px" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
+                <div className="mt-3 mb-3 mx-2 h-px" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
               )}
             </div>
           ))}
@@ -415,7 +415,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
         </div>
 
         {/* close button */}
-        <div className="shrink-0 flex flex-col items-center pt-[60px] px-5">
+        <div className="shrink-0 flex flex-col items-center pt-[72px] px-5">
           <button
             onClick={onClose}
             className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
