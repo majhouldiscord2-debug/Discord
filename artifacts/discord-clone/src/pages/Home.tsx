@@ -3,7 +3,7 @@ import { ServerList } from "@/components/ServerList";
 import { Sidebar } from "@/components/Sidebar";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
-import Shop from "@/pages/Shop";
+import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
 import LogsPage from "@/pages/Logs";
 import { SettingsModal } from "@/components/SettingsModal";
@@ -22,11 +22,11 @@ export default function Home() {
       />
 
       <div key={view} className="flex flex-1 h-full overflow-hidden animate-view-fade">
-        {view === "shop" ? (
-          <Shop />
-        ) : view === "quests" ? (
+        {view === "tools" ? (
+          <Tools />
+        ) : view === "servers" ? (
           <Quests />
-        ) : view === "nitro" ? (
+        ) : view === "logs" ? (
           <LogsPage />
         ) : view === "friends" || view === "dm" ? (
           <>

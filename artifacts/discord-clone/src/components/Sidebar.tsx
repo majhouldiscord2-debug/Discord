@@ -64,20 +64,20 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
           <NavItem
             icon={<Zap className="w-[18px] h-[18px]" />}
             label="Logs"
-            isActive={activeItem === "nitro"}
-            onClick={() => handleNav("nitro")}
+            isActive={activeItem === "logs"}
+            onClick={() => handleNav("logs")}
           />
           <NavItem
             icon={<ShoppingBag className="w-[18px] h-[18px]" />}
             label="Tools"
-            isActive={activeItem === "shop"}
-            onClick={() => handleNav("shop")}
+            isActive={activeItem === "tools"}
+            onClick={() => handleNav("tools")}
           />
           <NavItem
             icon={<Target className="w-[18px] h-[18px]" />}
             label="Servers"
-            isActive={activeItem === "quests"}
-            onClick={() => handleNav("quests")}
+            isActive={activeItem === "servers"}
+            onClick={() => handleNav("servers")}
           />
         </div>
 
