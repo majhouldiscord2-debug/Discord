@@ -73,10 +73,27 @@ export function guildIconUrl(guild: DiscordGuild): string | null {
   return `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=64`;
 }
 
+async function fetchWithRetry(url: string, options?: RequestInit, retries = 4, baseDelay = 600): Promise<Response> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+      return res;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((r) => setTimeout(r, baseDelay * Math.pow(1.8, attempt)));
+    }
+  }
+  throw new Error("fetchWithRetry: unreachable");
+}
+
 export async function getAuthStatus(): Promise<AuthStatus> {
-  const res = await fetch(`${API_BASE}/auth/status`);
-  if (!res.ok) return { authenticated: false };
-  return res.json();
+  try {
+    const res = await fetchWithRetry(`${API_BASE}/auth/status`);
+    if (!res.ok) return { authenticated: false };
+    return res.json();
+  } catch {
+    return { authenticated: false };
+  }
 }
 
 export async function loginWithToken(token: string, tokenType: "user" | "bot"): Promise<{ success: boolean; user?: DiscordUser; error?: string }> {
