@@ -3,7 +3,8 @@ import { cn } from "@/lib/utils";
 type Status = "online" | "idle" | "dnd" | "offline";
 
 interface AvatarProps {
-  initials: string;
+  initials?: string;
+  src?: string | null;
   colorClass?: string;
   color?: string;
   status?: Status;
@@ -28,7 +29,8 @@ const statusColors: Record<Status, string> = {
 };
 
 export function Avatar({
-  initials,
+  initials = "?",
+  src,
   colorClass,
   color,
   status,
@@ -41,16 +43,20 @@ export function Avatar({
 
   return (
     <div className={cn("relative inline-flex items-center justify-center shrink-0", className)}>
-      <div
-        className={cn(
-          s.avatar,
-          "rounded-full flex items-center justify-center font-semibold text-white select-none transition-transform duration-150",
-          colorClass
-        )}
-        style={color ? { backgroundColor: color } : undefined}
-      >
-        {initials}
-      </div>
+      {src ? (
+        <img src={src} alt={initials} className={cn(s.avatar, "rounded-full object-cover")} />
+      ) : (
+        <div
+          className={cn(
+            s.avatar,
+            "rounded-full flex items-center justify-center font-semibold text-white select-none transition-transform duration-150",
+            colorClass
+          )}
+          style={color ? { backgroundColor: color } : undefined}
+        >
+          {initials}
+        </div>
+      )}
 
       {status && (
         <div

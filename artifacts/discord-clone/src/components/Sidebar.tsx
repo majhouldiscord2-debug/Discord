@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search } from "lucide-react";
-import { dmContacts, currentUser } from "@/lib/mock-data";
+import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, LogOut } from "lucide-react";
+import { useDiscord } from "@/hooks/useDiscord";
+import { avatarUrl } from "@/lib/api";
 import { Avatar } from "./Avatar";
 import { cn } from "@/lib/utils";
 
@@ -11,21 +12,28 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: SidebarProps) {
+  const { user, channels, logout } = useDiscord();
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
-  const [activeDm, setActiveDm] = useState<number | null>(null);
+  const [activeDm, setActiveDm] = useState<string | null>(null);
 
   const activeItem = activeView === "dm" ? "" : activeView;
+
+  const dmChannels = channels.filter((c) => c.type === 1 || c.type === 3).slice(0, 12);
 
   const handleNav = (key: string) => {
     setActiveDm(null);
     onNavigate?.(key);
   };
 
-  const handleDm = (id: number) => {
+  const handleDm = (id: string) => {
     setActiveDm(id);
     onNavigate?.("dm");
   };
+
+  const userAvatar = user ? avatarUrl(user) : null;
+  const displayName = user?.global_name ?? user?.username ?? "Unknown";
+  const tag = user?.discriminator && user.discriminator !== "0" ? `#${user.discriminator}` : "";
 
   return (
     <div
@@ -93,28 +101,39 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
 
         {/* DM Contacts */}
         <div className="space-y-[1px] pb-2">
-          {dmContacts.map((contact, i) => (
-            <button
-              key={contact.id}
-              onClick={() => handleDm(contact.id)}
-              className={cn(
-                "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
-                activeDm === contact.id
-                  ? "bg-[#404249] text-[#f2f3f5]"
-                  : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
-              )}
-              style={{ animationDelay: `${i * 30}ms` }}
-            >
-              <Avatar
-                initials={contact.initials}
-                color={contact.avatarColor}
-                status={contact.status}
-                size="sm"
-                statusBg={activeDm === contact.id ? "#404249" : "#2b2d31"}
-              />
-              <span className="truncate text-[14px] font-medium">{contact.name}</span>
-            </button>
-          ))}
+          {dmChannels.length === 0 && (
+            <p className="text-[12px] text-[#4e5058] px-2 py-2">No recent DMs</p>
+          )}
+          {dmChannels.map((ch, i) => {
+            const recipient = ch.recipients?.[0];
+            const name = ch.type === 3
+              ? (ch.name ?? ch.recipients?.map(r => r.username).join(", ") ?? "Group DM")
+              : (recipient?.global_name ?? recipient?.username ?? "Unknown");
+            const initials = name[0]?.toUpperCase() ?? "?";
+            const src = recipient ? avatarUrl(recipient) : null;
+            return (
+              <button
+                key={ch.id}
+                onClick={() => handleDm(ch.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
+                  activeDm === ch.id
+                    ? "bg-[#404249] text-[#f2f3f5]"
+                    : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                )}
+                style={{ animationDelay: `${i * 30}ms` }}
+              >
+                <Avatar
+                  initials={initials}
+                  src={src}
+                  color="#5865f2"
+                  size="sm"
+                  statusBg={activeDm === ch.id ? "#404249" : "#2b2d31"}
+                />
+                <span className="truncate text-[14px] font-medium">{name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -128,19 +147,20 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
       >
         <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
           <Avatar
-            initials={currentUser.initials}
-            color={currentUser.avatarColor}
-            status={currentUser.status}
+            initials={(displayName[0] ?? "?").toUpperCase()}
+            src={userAvatar}
+            color="#5865f2"
+            status="online"
             size="sm"
             statusBg="#1e2022"
             className="mr-2"
           />
           <div className="flex flex-col text-left min-w-0">
             <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">
-              {currentUser.name}
+              {displayName}
             </span>
             <span className="text-[11px] text-[#6d6f76] leading-tight truncate">
-              {currentUser.statusText}
+              {user?.username}{tag}
             </span>
           </div>
         </button>
@@ -165,6 +185,9 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
               <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
             </IconBtn>
           </div>
+          <IconBtn title="Log out" onClick={() => logout()} danger>
+            <LogOut className="w-[17px] h-[17px]" />
+          </IconBtn>
         </div>
       </div>
     </div>

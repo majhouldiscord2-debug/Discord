@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Users, MessageCircle, MoreVertical, Search, Video, UserPlus } from "lucide-react";
-import { allFriends, friendsOnline, pendingFriends } from "@/lib/mock-data";
+import { useDiscord } from "@/hooks/useDiscord";
+import { avatarUrl } from "@/lib/api";
 import { Avatar } from "./Avatar";
 import { cn } from "@/lib/utils";
 
@@ -14,23 +15,28 @@ const statusLabels: Record<string, string> = {
 };
 
 export function FriendsList() {
+  const { relationships } = useDiscord();
   const [activeTab, setActiveTab] = useState<Tab>("online");
   const [search, setSearch] = useState("");
 
-  const rawFriends =
-    activeTab === "online"
-      ? friendsOnline
-      : activeTab === "pending"
-      ? pendingFriends
-      : activeTab === "blocked"
-      ? []
-      : allFriends;
+  const friends = relationships.filter((r) => r.type === 1);
+  const pending = relationships.filter((r) => r.type === 3 || r.type === 4);
+  const blocked = relationships.filter((r) => r.type === 2);
 
-  const displayFriends = rawFriends.filter((f) =>
-    f.name.toLowerCase().includes(search.toLowerCase())
+  const rawRels =
+    activeTab === "online" || activeTab === "all"
+      ? friends
+      : activeTab === "pending"
+      ? pending
+      : activeTab === "blocked"
+      ? blocked
+      : [];
+
+  const displayRels = rawRels.filter((r) =>
+    (r.user.global_name ?? r.user.username).toLowerCase().includes(search.toLowerCase())
   );
 
-  const pendingCount = pendingFriends.length;
+  const pendingCount = pending.length;
 
   return (
     <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
@@ -108,66 +114,74 @@ export function FriendsList() {
             {/* Section label */}
             <div className="text-[10px] font-bold text-[#6d6f76] uppercase tracking-widest mb-3">
               {activeTab === "online"
-                ? `Online — ${displayFriends.length}`
+                ? `Friends — ${displayRels.length}`
                 : activeTab === "pending"
-                ? `Pending — ${displayFriends.length}`
+                ? `Pending — ${displayRels.length}`
                 : activeTab === "blocked"
-                ? `Blocked — ${displayFriends.length}`
-                : `All Friends — ${displayFriends.length}`}
+                ? `Blocked — ${displayRels.length}`
+                : `All Friends — ${displayRels.length}`}
             </div>
 
             {/* Friend Rows */}
             <div className="space-y-[1px]">
-              {displayFriends.map((friend, i) => (
-                <div
-                  key={friend.id}
-                  className="flex items-center justify-between py-[10px] px-3 rounded-[8px] cursor-pointer group transition-all duration-150 hover:bg-[#35373c] border-t border-[rgba(255,255,255,0.04)] first:border-t-0 animate-fade-slide-up"
-                  style={{ animationDelay: `${i * 40}ms` }}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Avatar
-                      initials={friend.initials}
-                      color={friend.avatarColor}
-                      status={friend.status}
-                      size="md"
-                      statusBg="#313338"
-                      className="group-hover:[--status-bg:#35373c] transition-transform duration-150 group-hover:scale-105"
-                    />
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-semibold text-[#f2f3f5] leading-tight truncate tracking-[-0.01em]">
-                        {friend.name}
-                      </span>
-                      <span className="text-[12px] text-[#7d8188] leading-tight truncate mt-[1px]">
-                        {friend.statusText || statusLabels[friend.status]}
-                      </span>
+              {displayRels.map((rel, i) => {
+                const u = rel.user;
+                const name = rel.nickname ?? u.global_name ?? u.username;
+                const src = avatarUrl(u);
+                const initials = name[0]?.toUpperCase() ?? "?";
+                const isPending = rel.type === 3 || rel.type === 4;
+                const typeLabel = rel.type === 3 ? "Incoming request" : rel.type === 4 ? "Outgoing request" : rel.type === 2 ? "Blocked" : u.username;
+                return (
+                  <div
+                    key={rel.id}
+                    className="flex items-center justify-between py-[10px] px-3 rounded-[8px] cursor-pointer group transition-all duration-150 hover:bg-[#35373c] border-t border-[rgba(255,255,255,0.04)] first:border-t-0 animate-fade-slide-up"
+                    style={{ animationDelay: `${i * 40}ms` }}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar
+                        initials={initials}
+                        src={src}
+                        color="#5865f2"
+                        size="md"
+                        statusBg="#313338"
+                        className="transition-transform duration-150 group-hover:scale-105"
+                      />
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[14px] font-semibold text-[#f2f3f5] leading-tight truncate tracking-[-0.01em]">
+                          {name}
+                        </span>
+                        <span className="text-[12px] text-[#7d8188] leading-tight truncate mt-[1px]">
+                          {typeLabel}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-150 shrink-0">
+                      {isPending ? (
+                        <>
+                          <ActionBtn title="Accept">
+                            <UserPlus className="w-4 h-4" />
+                          </ActionBtn>
+                          <ActionBtn title="Ignore" danger>
+                            <MoreVertical className="w-4 h-4" />
+                          </ActionBtn>
+                        </>
+                      ) : (
+                        <>
+                          <ActionBtn title="Message">
+                            <MessageCircle className="w-[17px] h-[17px]" />
+                          </ActionBtn>
+                          <ActionBtn title="More">
+                            <MoreVertical className="w-[17px] h-[17px]" />
+                          </ActionBtn>
+                        </>
+                      )}
                     </div>
                   </div>
+                );
+              })}
 
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-150 shrink-0">
-                    {activeTab === "pending" ? (
-                      <>
-                        <ActionBtn title="Accept">
-                          <UserPlus className="w-4 h-4" />
-                        </ActionBtn>
-                        <ActionBtn title="Ignore" danger>
-                          <MoreVertical className="w-4 h-4" />
-                        </ActionBtn>
-                      </>
-                    ) : (
-                      <>
-                        <ActionBtn title="Message">
-                          <MessageCircle className="w-[17px] h-[17px]" />
-                        </ActionBtn>
-                        <ActionBtn title="More">
-                          <MoreVertical className="w-[17px] h-[17px]" />
-                        </ActionBtn>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {displayFriends.length === 0 && activeTab !== "add" && (
+              {displayRels.length === 0 && activeTab !== "add" && (
                 <div className="flex flex-col items-center justify-center py-20 select-none animate-fade-slide-up">
                   <div className="w-[180px] h-[180px] mb-5 flex items-center justify-center rounded-full" style={{ background: "rgba(255,255,255,0.03)" }}>
                     <Users className="w-24 h-24 text-[#3e4147]" />

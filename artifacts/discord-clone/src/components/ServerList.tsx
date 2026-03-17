@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, Compass, Download } from "lucide-react";
-import { servers } from "@/lib/mock-data";
+import { useDiscord } from "@/hooks/useDiscord";
+import { guildIconUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 function DiscordLogo() {
@@ -78,7 +79,8 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
 }
 
 export function ServerList() {
-  const [activeServer, setActiveServer] = useState<number | "dms">("dms");
+  const { guilds } = useDiscord();
+  const [activeServer, setActiveServer] = useState<string | "dms">("dms");
 
   return (
     <div
@@ -109,29 +111,40 @@ export function ServerList() {
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {/* Server List */}
-      {servers.map((server) => (
-        <ServerButton
-          key={server.id}
-          name={server.name}
-          isActive={activeServer === server.id}
-          hasNotification={server.hasNotification}
-          notificationCount={server.notificationCount}
-          onClick={() => setActiveServer(server.id)}
-          glowColor={server.color}
-        >
-          <div
-            className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[18px] font-bold"
-            style={{
-              borderRadius: activeServer === server.id ? 16 : 24,
-              backgroundColor: server.color,
-              boxShadow: activeServer === server.id ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
-            }}
+      {/* Server List — real guilds */}
+      {guilds.map((guild) => {
+        const iconSrc = guildIconUrl(guild);
+        const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+        const isActive = activeServer === guild.id;
+        return (
+          <ServerButton
+            key={guild.id}
+            name={guild.name}
+            isActive={isActive}
+            onClick={() => setActiveServer(guild.id)}
           >
-            {server.initials}
-          </div>
-        </ServerButton>
-      ))}
+            {iconSrc ? (
+              <img
+                src={iconSrc}
+                alt={guild.name}
+                className="w-12 h-12 object-cover transition-all duration-200"
+                style={{ borderRadius: isActive ? 16 : 24 }}
+              />
+            ) : (
+              <div
+                className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[13px] font-bold text-white"
+                style={{
+                  borderRadius: isActive ? 16 : 24,
+                  backgroundColor: "#5865f2",
+                  boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
+                }}
+              >
+                {initials}
+              </div>
+            )}
+          </ServerButton>
+        );
+      })}
 
       <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
