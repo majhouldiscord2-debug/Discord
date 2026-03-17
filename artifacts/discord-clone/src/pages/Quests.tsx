@@ -24,17 +24,6 @@ function PokemonBanner() {
         className="absolute inset-0"
         style={{ background: "linear-gradient(135deg, #1a6b3c 0%, #2d8a5c 30%, #89c7e0 70%, #b8dfef 100%)" }}
       />
-      <div className="absolute inset-0 flex items-end justify-start p-3 gap-1">
-        {["🦆","🐉","🦎","🐸","⚡","🔥"].map((e, i) => (
-          <span key={i} className="text-2xl drop-shadow-lg opacity-90" style={{ transform: `translateY(${i % 2 === 0 ? -4 : 0}px)` }}>{e}</span>
-        ))}
-      </div>
-      <div className="absolute top-3 left-3">
-        <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-full px-2 py-0.5">
-          <span className="text-lg">🎮</span>
-          <span className="text-white font-black text-[15px] tracking-tight">GO</span>
-        </div>
-      </div>
     </div>
   );
 }
