@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 interface SidebarProps {
   activeView?: string;
   onNavigate?: (view: string) => void;
+  onOpenSettings?: () => void;
 }
 
-export function Sidebar({ activeView = "friends", onNavigate }: SidebarProps) {
+export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: SidebarProps) {
   const [activeItem, setActiveItem] = useState<string>("friends");
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
@@ -161,7 +162,7 @@ export function Sidebar({ activeView = "friends", onNavigate }: SidebarProps) {
           >
             <Headphones className="w-[18px] h-[18px]" />
           </IconBtn>
-          <IconBtn title="User Settings" onClick={() => {}}>
+          <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
             <Settings className="w-[18px] h-[18px]" />
           </IconBtn>
         </div>
