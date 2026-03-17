@@ -98,6 +98,16 @@
   to   { transform: rotate(90deg); }
 }
 
+@keyframes logEntryIn {
+  from { opacity: 0; transform: translateX(-6px); background-color: rgba(255,255,255,0.04); }
+  to   { opacity: 1; transform: translateX(0); background-color: transparent; }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
 /* ── Animation utilities ─────────────────────────────────────── */
 @layer utilities {
   .animate-fade-slide-up {
@@ -126,6 +136,12 @@
   }
   .online-pulse {
     animation: onlinePulse 2.4s ease-in-out infinite;
+  }
+  .animate-log-entry {
+    animation: logEntryIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
   }
 
   /* Staggered delay helpers */
@@ -160,5 +176,28 @@
   .discord-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.07) transparent;
+  }
+
+  /* GPU-composited layers for smoother animation */
+  .animate-fade-slide-up,
+  .animate-scale-in,
+  .animate-modal-slide-in,
+  .animate-sidebar-slide-in,
+  .animate-page-slide-right,
+  .animate-page-slide-left,
+  .animate-view-fade,
+  .animate-log-entry {
+    will-change: transform, opacity;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

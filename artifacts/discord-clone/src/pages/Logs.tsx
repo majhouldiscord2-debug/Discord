@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Search, Trash2, Download, RefreshCw, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -70,15 +70,16 @@ export default function Logs() {
   const [streaming, setStreaming] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const streamRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const newestIdRef = useRef<number | null>(null);
 
-  const filtered = logs.filter((l) => {
+  const filtered = useMemo(() => logs.filter((l) => {
     const matchLevel = activeLevel === "ALL" || l.level === activeLevel;
     const matchSearch =
       search === "" ||
       l.message.toLowerCase().includes(search.toLowerCase()) ||
       l.source.toLowerCase().includes(search.toLowerCase());
     return matchLevel && matchSearch;
-  });
+  }), [logs, activeLevel, search]);
 
   useEffect(() => {
     if (autoScroll) {
@@ -94,7 +95,9 @@ export default function Logs() {
     } else {
       setStreaming(true);
       streamRef.current = setInterval(() => {
-        setLogs((prev) => [...prev.slice(-200), makeNewLog()]);
+        const entry = makeNewLog();
+        newestIdRef.current = entry.id;
+        setLogs((prev) => [...prev.slice(-200), entry]);
       }, 1400);
     }
   };
@@ -105,13 +108,13 @@ export default function Logs() {
     };
   }, []);
 
-  const counts = {
+  const counts = useMemo(() => ({
     ALL: logs.length,
     INFO: logs.filter((l) => l.level === "INFO").length,
     WARN: logs.filter((l) => l.level === "WARN").length,
     ERROR: logs.filter((l) => l.level === "ERROR").length,
     DEBUG: logs.filter((l) => l.level === "DEBUG").length,
-  };
+  }), [logs]);
 
   return (
     <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
@@ -272,10 +275,11 @@ export default function Logs() {
             ) : (
               filtered.map((log) => {
                 const m = levelMeta[log.level];
+                const isNew = streaming && log.id === newestIdRef.current;
                 return (
                   <div
                     key={log.id}
-                    className="grid px-4 py-[5px] transition-colors duration-75 hover:bg-white/[0.025] group cursor-default"
+                    className={cn("grid px-4 py-[5px] transition-colors duration-75 hover:bg-white/[0.025] group cursor-default", isNew && "animate-log-entry")}
                     style={{
                       gridTemplateColumns: "200px 56px 80px 1fr",
                       background: m.bg,

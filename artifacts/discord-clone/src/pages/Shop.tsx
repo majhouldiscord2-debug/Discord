@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Search, Heart, ChevronDown, Shuffle, Info, ChevronLeft, Zap, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,29 +35,25 @@ const automationItems: AutomationItem[] = [
 ];
 
 function MentionitorAvatar({ size = 72 }: { size?: number }) {
+  const uid = useId().replace(/:/g, "m");
+  const bgId = `${uid}bg`;
+  const glowId = `${uid}glow`;
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+        <radialGradient id={bgId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#004695" />
           <stop offset="100%" stopColor="#001a3a" />
         </radialGradient>
-        <filter id="glow">
+        <filter id={glowId}>
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
           <feMerge>
             <feMergeNode in="coloredBlur" />
             <feMergeNode in="SourceGraphic" />
           </feMerge>
         </filter>
-        <filter id="softGlow">
-          <feGaussianBlur stdDeviation="1.2" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
       </defs>
-      <circle cx="50" cy="50" r="48" fill="url(#bgGrad)" />
+      <circle cx="50" cy="50" r="48" fill={`url(#${bgId})`} />
       <circle cx="50" cy="50" r="44" stroke="#1CF8FF" strokeWidth="0.4" strokeOpacity="0.3" />
       <line x1="50" y1="6" x2="50" y2="14" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
       <line x1="94" y1="50" x2="86" y2="50" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
@@ -76,7 +72,7 @@ function MentionitorAvatar({ size = 72 }: { size?: number }) {
       <circle cx="78" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
       <circle cx="22" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
       <circle cx="50" cy="50" r="26" fill="#002855" fillOpacity="0.8" />
-      <circle cx="50" cy="50" r="26" stroke="#1CF8FF" strokeWidth="1.5" strokeOpacity="0.8" filter="url(#glow)" />
+      <circle cx="50" cy="50" r="26" stroke="#1CF8FF" strokeWidth="1.5" strokeOpacity="0.8" filter={`url(#${glowId})`} />
       <text
         x="50"
         y="57"
@@ -85,7 +81,7 @@ function MentionitorAvatar({ size = 72 }: { size?: number }) {
         fontFamily="Arial, sans-serif"
         fontWeight="bold"
         fill="#1CF8FF"
-        filter="url(#glow)"
+        filter={`url(#${glowId})`}
       >@</text>
       <circle cx="30" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
       <circle cx="70" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
@@ -254,13 +250,20 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
   );
 }
 
-function AutomationCard({ item, onOpen }: { item: AutomationItem; onOpen?: () => void }) {
+function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onOpen?: () => void; index?: number }) {
   const [hovered, setHovered] = useState(false);
+  const delay = Math.min(index * 40, 320);
 
   return (
     <div
-      className="relative rounded-lg overflow-hidden cursor-pointer transition-all duration-200 group ring-1 ring-white/10 hover:ring-white/25"
-      style={{ backgroundColor: "#111114" }}
+      className="relative rounded-lg overflow-hidden cursor-pointer group ring-1 ring-white/10 hover:ring-white/30 animate-fade-slide-up"
+      style={{
+        backgroundColor: "#111114",
+        animationDelay: `${delay}ms`,
+        transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease, ring 0.2s ease",
+        transform: hovered ? "translateY(-3px) scale(1.02)" : "translateY(0) scale(1)",
+        boxShadow: hovered ? `0 8px 32px ${item.glowColor}25` : "0 2px 8px rgba(0,0,0,0.3)",
+      }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onOpen}
@@ -269,19 +272,17 @@ function AutomationCard({ item, onOpen }: { item: AutomationItem; onOpen?: () =>
       <div
         className={cn("relative h-[188px] overflow-hidden", `bg-gradient-to-br ${item.gradient}`)}
       >
-        {hovered && (
-          <div
-            className="absolute inset-0 transition-opacity duration-300"
-            style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}20 0%, transparent 70%)` }}
-          />
-        )}
+        <div
+          className="absolute inset-0 transition-opacity duration-300"
+          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}20 0%, transparent 70%)`, opacity: hovered ? 1 : 0 }}
+        />
         <WumpusIcon item={item} />
       </div>
 
       {/* Card footer */}
       <div className="px-3 py-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[14px] font-semibold text-[#f2f3f5]">{item.name}</span>
+          <span className="text-[14px] font-semibold text-[#f2f3f5] transition-colors duration-150 group-hover:text-white">{item.name}</span>
         </div>
       </div>
     </div>
@@ -433,10 +434,11 @@ export default function Shop() {
             .filter((item) =>
               searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase())
             )
-            .map((item) => (
+            .map((item, i) => (
               <AutomationCard
                 key={item.id}
                 item={item}
+                index={i}
                 onOpen={() => setSelectedItem(item)}
               />
             ))}

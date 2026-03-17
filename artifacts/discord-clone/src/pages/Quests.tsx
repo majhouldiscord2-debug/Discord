@@ -226,8 +226,14 @@ function QuestCard({ quest }: { quest: Quest }) {
 
   return (
     <div
-      className="rounded-xl overflow-hidden flex flex-col"
-      style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.08)" }}
+      className="rounded-xl overflow-hidden flex flex-col transition-all duration-200"
+      style={{
+        backgroundColor: "#1e1f22",
+        border: "1px solid rgba(255,255,255,0.08)",
+        willChange: "transform",
+      }}
+      onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 6px 24px rgba(0,0,0,0.4)"; }}
+      onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = ""; (e.currentTarget as HTMLDivElement).style.boxShadow = ""; }}
     >
       {/* Banner */}
       <div className="relative h-[150px]">
@@ -375,8 +381,10 @@ export default function Quests() {
 
             {/* Quest grid */}
             <div className="grid grid-cols-2 gap-3 pb-4">
-              {quests.map((quest) => (
-                <QuestCard key={quest.id} quest={quest} />
+              {quests.map((quest, i) => (
+                <div key={quest.id} className="animate-fade-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+                  <QuestCard quest={quest} />
+                </div>
               ))}
             </div>
           </>
