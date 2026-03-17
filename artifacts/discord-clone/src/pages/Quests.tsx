@@ -249,39 +249,12 @@ function QuestCard({ quest }: { quest: Quest }) {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-3 flex flex-col gap-3">
-        <div className="flex items-start gap-3">
-          {/* Quest icon */}
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-            style={{ background: "linear-gradient(135deg, #3a3dc4 0%, #1d6ef5 50%, #7b68ee 100%)", border: "2px solid rgba(88,101,242,0.4)" }}
-          >
-            <OrbsIcon size={20} />
-          </div>
-
-          {/* Text */}
-          <div className="flex-1 min-w-0">
-            <div
-              className="text-[10px] font-bold tracking-wider mb-0.5 uppercase"
-              style={{ color: quest.questColor }}
-            >
-              {quest.questTitle}
-            </div>
-            <div className="flex items-center gap-1.5 text-[14px] font-bold text-[#f2f3f5] leading-tight">
-              <span>Claim</span>
-              <OrbsIcon size={14} />
-              <span>{quest.reward} Discord Orbs</span>
-            </div>
-            <div className="text-[12px] text-[#949ba4] mt-0.5 leading-tight">{quest.description}</div>
-          </div>
-        </div>
-
-        {/* CTA Button */}
+      {/* CTA Button */}
+      <div className="p-3">
         {quest.status === "watching" ? (
           <button
             className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#1d6ef5" }}
+            style={{ backgroundColor: "#1db954" }}
           >
             <Play className="w-4 h-4 fill-white" />
             Watch ({quest.timeLeft} left)
@@ -289,7 +262,7 @@ function QuestCard({ quest }: { quest: Quest }) {
         ) : accepted ? (
           <button
             className="w-full py-2 rounded-md text-[14px] font-semibold transition-all flex items-center justify-center gap-2"
-            style={{ backgroundColor: "#1db954", color: "white" }}
+            style={{ backgroundColor: "#1a9e47", color: "white" }}
           >
             <Check className="w-4 h-4" />
             Quest Accepted!
@@ -298,7 +271,7 @@ function QuestCard({ quest }: { quest: Quest }) {
           <button
             onClick={() => setAccepted(true)}
             className="w-full py-2 rounded-md text-[14px] font-semibold text-white transition-all hover:brightness-110"
-            style={{ backgroundColor: "#1d6ef5" }}
+            style={{ backgroundColor: "#23a55a" }}
           >
             Accept Quest
           </button>
