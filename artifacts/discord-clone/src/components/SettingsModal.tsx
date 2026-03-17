@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { X, Search, User, Globe, Shield, Users, Cpu, Link2, Bell, Zap, Rocket, CreditCard, Gift, Palette, Accessibility, Mic, MessageSquare, Keyboard, Clock, Tv, MoreHorizontal, Activity, LogOut, ChevronRight, Pencil, Eye } from "lucide-react";
+import { X, Search, User, Globe, Shield, Users, Cpu, Link2, Bell, Zap, Rocket, CreditCard, Gift, Palette, Accessibility, Mic, MessageSquare, Keyboard, Clock, Tv, MoreHorizontal, Activity, LogOut, Pencil, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { currentUser } from "@/lib/mock-data";
-import { Avatar } from "./Avatar";
 
 interface SettingsModalProps {
   open: boolean;
@@ -105,11 +104,61 @@ const navSections: NavSection[] = [
   },
 ];
 
-function Badge({ icon }: { icon: string }) {
+function TabBtn({ label, isActive, onClick }: { label: string; isActive: boolean; onClick: () => void }) {
   return (
-    <span className="text-[16px]" title="Badge">
-      {icon}
-    </span>
+    <button
+      onClick={onClick}
+      className={cn(
+        "px-1 pb-3 mr-6 text-[15px] font-medium transition-colors border-b-2",
+        isActive
+          ? "text-[#f2f3f5] border-[#5865f2]"
+          : "text-[#949ba4] border-transparent hover:text-[#dbdee1]"
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+function AccountField({
+  label,
+  value,
+  onEdit,
+  editLabel = "Edit",
+}: {
+  label: string;
+  value: React.ReactNode;
+  onEdit: () => void;
+  editLabel?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between px-4 py-4">
+      <div className="min-w-0 flex-1 pr-4">
+        <div className="text-[12px] font-bold text-[#b5bac1] uppercase tracking-wide mb-1">{label}</div>
+        <div className="text-[15px] text-[#dbdee1]">{value}</div>
+      </div>
+      <button
+        onClick={onEdit}
+        className="shrink-0 px-4 py-[6px] rounded-[3px] text-[14px] font-medium text-[#dbdee1] hover:bg-[#4e5058] transition-colors"
+        style={{ backgroundColor: "#4e5058" }}
+      >
+        {editLabel}
+      </button>
+    </div>
+  );
+}
+
+function StandingPage() {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "#23a55a22" }}>
+        <span className="text-4xl">✅</span>
+      </div>
+      <h3 className="text-[20px] font-bold text-[#f2f3f5] mb-2">Your account is in good standing!</h3>
+      <p className="text-[#949ba4] text-[15px] max-w-xs">
+        You have no active restrictions, warnings, or bans applied to your account.
+      </p>
+    </div>
   );
 }
 
@@ -118,97 +167,86 @@ function MyAccountPage() {
   const [showEmail, setShowEmail] = useState(false);
 
   return (
-    <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-8 max-w-[740px]">
-      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-6">My Account</h2>
+    <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-10 min-w-0">
+      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-5">My Account</h2>
 
       {/* Tabs */}
-      <div className="flex items-end gap-0 border-b mb-6" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
+      <div className="flex items-end gap-0 border-b mb-6" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
         <TabBtn label="Security" isActive={activeTab === "security"} onClick={() => setActiveTab("security")} />
         <TabBtn label="Standing" isActive={activeTab === "standing"} onClick={() => setActiveTab("standing")} />
       </div>
 
       {activeTab === "security" ? (
-        <div className="space-y-0">
+        <div className="max-w-[660px] space-y-3">
           {/* Profile card */}
-          <div className="rounded-lg overflow-hidden mb-4" style={{ backgroundColor: "#1e1f22" }}>
-            {/* Banner — pure black */}
-            <div
-              className="h-[100px] relative"
-              style={{ background: "#000000" }}
-            >
-              {/* Subtle noise grain overlay */}
+          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#111214" }}>
+            {/* Banner */}
+            <div className="h-[100px] relative" style={{ background: "#000000" }}>
               <div
-                className="absolute inset-0 opacity-20"
+                className="absolute inset-0 opacity-10"
                 style={{
-                  backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")",
+                  backgroundImage:
+                    "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")",
                   backgroundSize: "150px 150px",
                 }}
               />
             </div>
-            {/* Avatar + name row */}
+
+            {/* Avatar + actions row */}
             <div className="px-4 pb-4">
-              <div className="flex items-end justify-between -mt-8 mb-3">
+              <div className="flex items-end justify-between -mt-10 mb-3">
+                {/* Avatar */}
                 <div className="relative">
                   <div
-                    className="w-[80px] h-[80px] rounded-full flex items-center justify-center text-[28px] font-bold text-white border-[6px]"
-                    style={{
-                      backgroundColor: "#000000",
-                      borderColor: "#1e1f22",
-                      boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
-                    }}
+                    className="w-[80px] h-[80px] rounded-full flex items-center justify-center font-bold text-white border-[6px]"
+                    style={{ backgroundColor: "#000", borderColor: "#111214" }}
                   >
-                    <span className="text-[22px] font-black tracking-tight" style={{ color: "#fff" }}>
+                    <span className="text-[22px] font-black" style={{ color: "#fff" }}>
                       {currentUser.initials}
                     </span>
                   </div>
-                  {/* DND indicator */}
+                  {/* Status dot — DND */}
                   <div
                     className="absolute bottom-1 right-1 w-[18px] h-[18px] rounded-full border-[3px] flex items-center justify-center"
-                    style={{ backgroundColor: "#f23f43", borderColor: "#1e1f22" }}
+                    style={{ backgroundColor: "#f23f43", borderColor: "#111214" }}
                   >
                     <div className="w-[8px] h-[2px] bg-white rounded-full" />
                   </div>
                 </div>
+
+                {/* Edit User Profile button */}
                 <button
-                  className="px-4 py-[7px] rounded-[4px] text-[13px] font-semibold text-white transition-all hover:brightness-110"
+                  className="px-4 py-[7px] rounded-[4px] text-[13px] font-semibold text-white hover:brightness-110 transition-all"
                   style={{ backgroundColor: "#5865f2" }}
                 >
                   Edit User Profile
                 </button>
               </div>
-              <div className="flex items-center gap-2">
+
+              {/* Name + badges */}
+              <div className="flex items-center gap-2 mb-1">
                 <span className="text-[20px] font-bold text-[#f2f3f5] tracking-tight">{currentUser.name}</span>
-                <span className="text-[#5e6068] text-[16px]">···</span>
+                <span className="text-[#5e6068] text-[16px] leading-none">···</span>
               </div>
-              {/* Badges */}
-              <div className="flex items-center gap-1 mt-1">
-                <Badge icon="🔵" />
-                <Badge icon="🔺" />
-                <Badge icon="⭕" />
-                <Badge icon="💠" />
+              <div className="flex items-center gap-1">
+                {["🔵", "🔺", "⭕", "💠"].map((icon, i) => (
+                  <span key={i} className="text-[16px]">{icon}</span>
+                ))}
               </div>
             </div>
           </div>
 
           {/* Account fields */}
-          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#1e1f22" }}>
-            <AccountField
-              label="Display Name"
-              value={currentUser.name}
-              onEdit={() => {}}
-            />
+          <div className="rounded-lg overflow-hidden" style={{ backgroundColor: "#111214" }}>
+            <AccountField label="Display Name" value={currentUser.name} onEdit={() => {}} />
             <div className="h-px mx-4" style={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
-            <AccountField
-              label="Username"
-              value={currentUser.username}
-              onEdit={() => {}}
-            />
+            <AccountField label="Username" value={currentUser.username} onEdit={() => {}} />
             <div className="h-px mx-4" style={{ backgroundColor: "rgba(255,255,255,0.06)" }} />
             <AccountField
               label="Email"
               value={
                 <div className="flex items-center gap-2">
-                  <span>{showEmail ? "majhoul@gmail.com" : "m•••••••@gmail.com"}</span>
+                  <span>{showEmail ? "majhoul@gmail.com" : "***********@gmail.com"}</span>
                   <button
                     className="text-[#00b0f4] text-[13px] font-medium hover:underline"
                     onClick={() => setShowEmail(!showEmail)}
@@ -235,55 +273,13 @@ function MyAccountPage() {
   );
 }
 
-function AccountField({
-  label,
-  value,
-  onEdit,
-  editLabel = "Edit",
-}: {
-  label: string;
-  value: React.ReactNode;
-  onEdit: () => void;
-  editLabel?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between px-4 py-4 group">
-      <div>
-        <div className="text-[12px] font-bold text-[#b5bac1] uppercase tracking-wide mb-1">{label}</div>
-        <div className="text-[15px] text-[#dbdee1]">{value}</div>
-      </div>
-      <button
-        onClick={onEdit}
-        className="px-4 py-[6px] rounded-[3px] text-[14px] font-medium text-[#dbdee1] hover:bg-white/10 transition-colors shrink-0"
-        style={{ backgroundColor: "#313338", border: "1px solid rgba(255,255,255,0.1)" }}
-      >
-        {editLabel}
-      </button>
-    </div>
-  );
-}
-
-function StandingPage() {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="w-20 h-20 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "#23a55a22" }}>
-        <span className="text-4xl">✅</span>
-      </div>
-      <h3 className="text-[20px] font-bold text-[#f2f3f5] mb-2">Your account is in good standing!</h3>
-      <p className="text-[#949ba4] text-[15px] max-w-xs">
-        You have no active restrictions, warnings, or bans applied to your account.
-      </p>
-    </div>
-  );
-}
-
 function PlaceholderPage({ title }: { title: string }) {
   return (
-    <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-8 max-w-[740px]">
-      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-6 tracking-tight">{title}</h2>
+    <div className="flex-1 overflow-y-auto discord-scrollbar px-10 py-10 min-w-0">
+      <h2 className="text-[20px] font-bold text-[#f2f3f5] mb-6">{title}</h2>
       <div
-        className="rounded-lg flex flex-col items-center justify-center py-16 text-center"
-        style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.04)" }}
+        className="max-w-[660px] rounded-lg flex flex-col items-center justify-center py-16 text-center"
+        style={{ backgroundColor: "#111214" }}
       >
         <div
           className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
@@ -298,43 +294,27 @@ function PlaceholderPage({ title }: { title: string }) {
   );
 }
 
-function TabBtn({ label, isActive, onClick }: { label: string; isActive: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "px-1 pb-3 mr-6 text-[15px] font-medium transition-colors",
-        isActive
-          ? "text-[#f2f3f5] border-b-2 border-white"
-          : "text-[#949ba4] hover:text-[#dbdee1]"
-      )}
-    >
-      {label}
-    </button>
-  );
-}
-
 const pageTitles: Record<string, string> = {
   "content-social": "Content & Social",
   "data-privacy": "Data & Privacy",
   "family-center": "Family Center",
   "authorized-apps": "Authorized Apps",
-  "devices": "Devices",
-  "connections": "Connections",
-  "notifications": "Notifications",
-  "nitro": "Nitro",
+  devices: "Devices",
+  connections: "Connections",
+  notifications: "Notifications",
+  nitro: "Nitro",
   "server-boost": "Server Boost",
-  "subscriptions": "Subscriptions",
+  subscriptions: "Subscriptions",
   "gift-inventory": "Gift Inventory",
-  "billing": "Billing",
-  "appearance": "Appearance",
-  "accessibility": "Accessibility",
+  billing: "Billing",
+  appearance: "Appearance",
+  accessibility: "Accessibility",
   "voice-video": "Voice & Video",
-  "chat": "Chat",
-  "keybinds": "Keybinds",
+  chat: "Chat",
+  keybinds: "Keybinds",
   "language-time": "Language & Time",
   "streamer-mode": "Streamer Mode",
-  "advanced": "Advanced",
+  advanced: "Advanced",
   "activity-privacy": "Activity Privacy",
 };
 
@@ -352,45 +332,58 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
   if (!open) return null;
 
+  const filteredSections = navSections.map((section) => ({
+    ...section,
+    items: section.items.filter(
+      (item) =>
+        search === "" || item.label.toLowerCase().includes(search.toLowerCase())
+    ),
+  })).filter((section) => section.items.length > 0);
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex"
-      style={{ backgroundColor: "#313338" }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      {/* Left sidebar */}
+    <div className="fixed inset-0 z-50 flex" style={{ backgroundColor: "#313338" }}>
+      {/* ── Left sidebar ── */}
       <div
-        className="w-[232px] h-full flex flex-col items-end shrink-0 pr-2 py-[60px] overflow-y-auto discord-scrollbar"
-        style={{ backgroundColor: "#2b2d31", minWidth: 180 }}
+        className="flex-shrink-0 flex flex-col items-end overflow-y-auto discord-scrollbar py-[60px]"
+        style={{ width: 240, backgroundColor: "#2b2d31" }}
       >
-        <div className="w-[192px]">
+        <div style={{ width: 218 }}>
           {/* User header */}
-          <div className="px-2 pb-4">
-            <div className="flex items-center gap-3 mb-1">
-              <Avatar
-                initials={currentUser.initials}
-                color={currentUser.avatarColor}
-                status={currentUser.status}
-                size="sm"
-                statusBg="#2b2d31"
-              />
-              <div>
-                <div className="text-[14px] font-bold text-[#f2f3f5] leading-tight">{currentUser.name}</div>
-                <button className="text-[12px] text-[#6d6f76] hover:text-[#dbdee1] transition-colors flex items-center gap-1">
-                  Edit Profile <Pencil className="w-3 h-3" />
+          <div className="px-[10px] pb-3">
+            <div className="flex items-center gap-3">
+              {/* Mini avatar */}
+              <div className="relative shrink-0">
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                  style={{ backgroundColor: currentUser.avatarColor || "#5865f2" }}
+                >
+                  {currentUser.initials}
+                </div>
+                <div
+                  className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2"
+                  style={{ backgroundColor: "#23a55a", borderColor: "#2b2d31" }}
+                />
+              </div>
+              <div className="min-w-0">
+                <div className="text-[14px] font-bold text-[#f2f3f5] leading-tight truncate">
+                  {currentUser.name}
+                </div>
+                <button className="flex items-center gap-1 text-[12px] text-[#6d6f76] hover:text-[#dbdee1] transition-colors">
+                  Edit Profiles <Pencil className="w-3 h-3" />
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Search */}
+          {/* Search bar */}
           <div
-            className="flex items-center gap-2 px-2 py-[6px] rounded-[4px] mb-4"
+            className="flex items-center gap-2 mx-[10px] px-3 py-[6px] rounded-[4px] mb-4"
             style={{ backgroundColor: "#1e1f22" }}
           >
-            <Search className="w-3.5 h-3.5 text-[#949ba4] shrink-0" />
+            <Search className="w-3.5 h-3.5 shrink-0" style={{ color: "#949ba4" }} />
             <input
-              className="flex-1 bg-transparent text-[13px] text-[#f2f3f5] placeholder:text-[#949ba4] outline-none"
+              className="flex-1 bg-transparent text-[13px] placeholder:text-[#949ba4] outline-none"
+              style={{ color: "#f2f3f5" }}
               placeholder="Search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -398,85 +391,117 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
           </div>
 
           {/* Nav sections */}
-          {navSections.map((section, si) => (
-            <div key={si} className="mb-1">
+          {filteredSections.map((section, si) => (
+            <div key={si}>
               {section.label && (
-                <div className="px-2 py-1.5 text-[11px] font-bold text-[#949ba4] uppercase tracking-wider">
+                <div
+                  className="px-[10px] pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider"
+                  style={{ color: "#949ba4" }}
+                >
                   {section.label}
                 </div>
               )}
-              {section.items
-                .filter((item) =>
-                  search === "" || item.label.toLowerCase().includes(search.toLowerCase())
+              {section.items.map((item) =>
+                item.id === "logout" ? (
+                  <button
+                    key={item.id}
+                    onClick={onClose}
+                    className="w-full flex items-center gap-2 px-[10px] py-[7px] rounded-[4px] transition-colors"
+                    style={{ color: "#ed4245" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#ed424522";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <span className="shrink-0">{item.icon}</span>
+                    <span className="text-[15px] font-medium">{item.label}</span>
+                  </button>
+                ) : (
+                  <button
+                    key={item.id}
+                    onClick={() => setActivePage(item.id as SettingsPage)}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-[10px] py-[7px] rounded-[4px] transition-colors text-left"
+                    )}
+                    style={{
+                      backgroundColor: activePage === item.id ? "#404249" : "transparent",
+                      color: activePage === item.id ? "#f2f3f5" : "#949ba4",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (activePage !== item.id) {
+                        e.currentTarget.style.backgroundColor = "#35373c";
+                        e.currentTarget.style.color = "#dbdee1";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (activePage !== item.id) {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#949ba4";
+                      }
+                    }}
+                  >
+                    <span className="shrink-0">{item.icon}</span>
+                    <span className="text-[15px] font-medium flex-1 text-left">{item.label}</span>
+                    {item.badge}
+                  </button>
                 )
-                .map((item) =>
-                  item.id === "logout" ? (
-                    <button
-                      key={item.id}
-                      onClick={onClose}
-                      className="w-full flex items-center gap-2 px-2 py-[7px] rounded-[4px] transition-colors text-[#ed4245] hover:bg-[#ed424520] hover:text-[#ed4245]"
-                    >
-                      <span className="shrink-0">{item.icon}</span>
-                      <span className="text-[15px] font-medium">{item.label}</span>
-                    </button>
-                  ) : (
-                    <button
-                      key={item.id}
-                      onClick={() => setActivePage(item.id as SettingsPage)}
-                      className={cn(
-                        "w-full flex items-center gap-2 px-2 py-[7px] rounded-[4px] transition-colors",
-                        activePage === item.id
-                          ? "bg-[#404249] text-[#f2f3f5]"
-                          : "text-[#949ba4] hover:bg-[#35373c] hover:text-[#dbdee1]"
-                      )}
-                    >
-                      <span className="shrink-0">{item.icon}</span>
-                      <span className="text-[15px] font-medium flex-1 text-left">{item.label}</span>
-                      {item.badge}
-                    </button>
-                  )
-                )}
-              {si < navSections.length - 1 && (
-                <div className="my-2 mx-2 h-px" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+              )}
+              {/* Divider between sections */}
+              {si < filteredSections.length - 1 && (
+                <div
+                  className="my-2 mx-[10px] h-px"
+                  style={{ backgroundColor: "rgba(255,255,255,0.08)" }}
+                />
               )}
             </div>
           ))}
 
           {/* Version footer */}
-          <div className="mt-4 px-2">
-            <div className="text-[11px] text-[#949ba4] leading-relaxed">
+          <div className="mt-4 px-[10px]">
+            <p className="text-[11px]" style={{ color: "#6d6f76" }}>
               stable 511379 (2376a86)
-            </div>
+            </p>
             <div className="flex items-center gap-1 flex-wrap mt-1">
-              <button className="text-[11px] text-[#00b0f4] hover:underline">Privacy Policy</button>
-              <span className="text-[#949ba4] text-[11px]">•</span>
-              <button className="text-[11px] text-[#00b0f4] hover:underline">Terms of Service</button>
-              <span className="text-[#949ba4] text-[11px]">•</span>
-              <button className="text-[11px] text-[#00b0f4] hover:underline">More</button>
+              <button className="text-[11px] hover:underline" style={{ color: "#00b0f4" }}>
+                Privacy Policy
+              </button>
+              <span className="text-[11px]" style={{ color: "#6d6f76" }}>•</span>
+              <button className="text-[11px] hover:underline" style={{ color: "#00b0f4" }}>
+                Terms of Service
+              </button>
+              <span className="text-[11px]" style={{ color: "#6d6f76" }}>•</span>
+              <button className="text-[11px] hover:underline" style={{ color: "#00b0f4" }}>
+                More
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Right content */}
-      <div className="flex-1 h-full flex overflow-hidden" style={{ backgroundColor: "#313338" }}>
+      {/* ── Right content ── */}
+      <div className="flex-1 flex overflow-hidden" style={{ backgroundColor: "#313338" }}>
+        {/* Page content */}
         {activePage === "my-account" ? (
           <MyAccountPage />
         ) : (
           <PlaceholderPage title={pageTitles[activePage] ?? activePage} />
         )}
 
-        {/* Close button */}
-        <div className="pt-[60px] px-6 shrink-0">
+        {/* Close button column */}
+        <div className="shrink-0 flex flex-col items-center pt-[60px] px-6">
           <button
             onClick={onClose}
             className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
             style={{ border: "2px solid #4e5058" }}
             title="Close (Esc)"
           >
-            <X className="w-5 h-5 text-[#b5bac1]" />
+            <X className="w-5 h-5" style={{ color: "#b5bac1" }} />
           </button>
-          <div className="text-[11px] text-[#4e5058] text-center mt-1 font-medium">ESC</div>
+          <span className="text-[11px] mt-1 font-medium" style={{ color: "#4e5058" }}>
+            ESC
+          </span>
         </div>
       </div>
     </div>
