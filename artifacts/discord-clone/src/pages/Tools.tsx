@@ -1,5 +1,5 @@
 import { useState, useId } from "react";
-import { Search, Heart, ChevronDown, Shuffle, Info, ChevronLeft, Zap, Star } from "lucide-react";
+import { Search, Heart, ChevronDown, Shuffle, Info, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight, Clock, MessageSquare, Server, AtSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AutomationItem {
@@ -139,11 +139,213 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
   );
 }
 
+function SettingRow({ icon, label, description, children }: { icon: React.ReactNode; label: string; description?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.07)" }}>
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <div className="text-[13px] font-semibold text-[#f2f3f5]">{label}</div>
+          {description && <div className="text-[11px] text-[#949ba4] mt-0.5 truncate">{description}</div>}
+        </div>
+      </div>
+      <div className="shrink-0">{children}</div>
+    </div>
+  );
+}
+
+function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+  return (
+    <button
+      onClick={onToggle}
+      className="transition-all duration-200"
+      style={{ color: on ? "#23a55a" : "#4e5058" }}
+    >
+      {on ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
+    </button>
+  );
+}
+
+function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: () => void; glowColor: string }) {
+  const [autoJoin, setAutoJoin] = useState(true);
+  const [smartMention, setSmartMention] = useState(true);
+  const [dmMode, setDmMode] = useState(false);
+  const [delay, setDelay] = useState("3");
+  const [servers, setServers] = useState(["Chill Zone", "Gaming HQ"]);
+  const [newServer, setNewServer] = useState("");
+  const [messages, setMessages] = useState(["Hey! Check this out 👋", "Join us for some fun!"]);
+  const [newMessage, setNewMessage] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  function handleSave() {
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  }
+
+  return (
+    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#0d0d10" }}>
+      {/* Header */}
+      <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 text-[#949ba4] hover:text-[#f2f3f5] transition-colors group"
+        >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5" />
+          </div>
+        </button>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: glowColor, boxShadow: `0 0 6px ${glowColor}` }} />
+          <span className="text-[15px] font-bold text-[#f2f3f5]">{item.name} — Settings</span>
+        </div>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto discord-scrollbar px-5 py-4">
+
+        {/* Behaviour section */}
+        <div className="mb-1">
+          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Behaviour</p>
+          <div className="rounded-xl px-3" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <SettingRow icon={<AtSign className="w-4 h-4 text-[#949ba4]" />} label="Smart Mentions" description="Target active members only">
+              <ToggleSwitch on={smartMention} onToggle={() => setSmartMention(v => !v)} />
+            </SettingRow>
+            <SettingRow icon={<Server className="w-4 h-4 text-[#949ba4]" />} label="Auto-Join Servers" description="Join servers before mentioning">
+              <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin(v => !v)} />
+            </SettingRow>
+            <SettingRow icon={<MessageSquare className="w-4 h-4 text-[#949ba4]" />} label="DM Mode" description="Send via direct messages">
+              <ToggleSwitch on={dmMode} onToggle={() => setDmMode(v => !v)} />
+            </SettingRow>
+            <div className="flex items-center justify-between gap-4 py-3.5">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.07)" }}>
+                  <Clock className="w-4 h-4 text-[#949ba4]" />
+                </div>
+                <div>
+                  <div className="text-[13px] font-semibold text-[#f2f3f5]">Delay (seconds)</div>
+                  <div className="text-[11px] text-[#949ba4] mt-0.5">Pause between each action</div>
+                </div>
+              </div>
+              <input
+                type="number"
+                min="1"
+                max="60"
+                value={delay}
+                onChange={e => setDelay(e.target.value)}
+                className="w-16 text-center text-[13px] font-semibold rounded-lg py-1.5 outline-none text-[#f2f3f5]"
+                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.12)" }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Target Servers */}
+        <div className="mt-4 mb-1">
+          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Target Servers</p>
+          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+            {servers.map((s, i) => (
+              <div key={i} className="flex items-center justify-between py-2.5" style={{ borderBottom: i < servers.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: glowColor }} />
+                  <span className="text-[13px] text-[#dbdee1]">{s}</span>
+                </div>
+                <button onClick={() => setServers(servers.filter((_, j) => j !== i))} className="text-[#4e5058] hover:text-[#ed4245] transition-colors">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="text"
+                placeholder="Add server name…"
+                value={newServer}
+                onChange={e => setNewServer(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
+                className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
+                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.08)" }}
+              />
+              <button
+                onClick={() => { if (newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors hover:brightness-110"
+                style={{ backgroundColor: glowColor + "cc" }}
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Message Templates */}
+        <div className="mt-4 mb-1">
+          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Message Templates</p>
+          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#111114", border: "1px solid rgba(255,255,255,0.07)" }}>
+            {messages.map((m, i) => (
+              <div key={i} className="flex items-start gap-2 py-2.5" style={{ borderBottom: i < messages.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
+                <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: glowColor }} />
+                <span className="flex-1 text-[12px] text-[#dbdee1] leading-relaxed">{m}</span>
+                <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#4e5058] hover:text-[#ed4245] transition-colors shrink-0">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="text"
+                placeholder="Add message template…"
+                value={newMessage}
+                onChange={e => setNewMessage(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+                className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
+                style={{ backgroundColor: "#1e1f22", border: "1px solid rgba(255,255,255,0.08)" }}
+              />
+              <button
+                onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors hover:brightness-110"
+                style={{ backgroundColor: glowColor + "cc" }}
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Save bar */}
+      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#111114" }}>
+        <button
+          onClick={handleSave}
+          className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+          style={{ background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${glowColor})` }}
+        >
+          {saved ? (
+            <>
+              <Star className="w-4 h-4 fill-white" />
+              Saved!
+            </>
+          ) : (
+            <>
+              <Zap className="w-4 h-4" />
+              Save Changes
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () => void }) {
   const [enabled, setEnabled] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   return (
     <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#0d0d10" }}>
+      {editing && (
+        <EditPanel item={item} onBack={() => setEditing(false)} glowColor={item.glowColor} />
+      )}
+
       {/* Back button */}
       <div className="shrink-0 flex items-center px-4 pt-4 pb-2">
         <button
@@ -238,6 +440,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
           </p>
 
           <button
+            onClick={() => setEditing(true)}
             className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
             style={{ background: `linear-gradient(135deg, ${item.darkBg ?? "#5865f2"}, ${item.glowColor})` }}
           >
