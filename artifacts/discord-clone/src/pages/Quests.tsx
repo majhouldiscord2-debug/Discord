@@ -36,13 +36,6 @@ function EveBanner() {
         style={{ background: "linear-gradient(135deg, #1a0505 0%, #3d0808 40%, #6b1010 70%, #1a0505 100%)" }}
       />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 70% 40%, rgba(180,20,20,0.4) 0%, transparent 60%)" }} />
-      <div className="absolute top-3 right-3 opacity-80">
-        <div className="text-white font-black tracking-widest">
-          <div className="text-[18px] leading-none" style={{ fontFamily: "serif", letterSpacing: "0.2em" }}>EVE</div>
-          <div className="text-[8px] tracking-[0.4em] mt-0.5">FRONTIER</div>
-        </div>
-      </div>
-      <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: "linear-gradient(to top, rgba(26,5,5,0.8), transparent)" }} />
     </div>
   );
 }
@@ -55,12 +48,6 @@ function ArknightsBanner() {
         style={{ background: "linear-gradient(135deg, #1a2540 0%, #253a6b 40%, #6b8fcc 70%, #f0d060 100%)" }}
       />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 60% 30%, rgba(240,208,96,0.2) 0%, transparent 50%)" }} />
-      <div className="absolute bottom-3 left-3">
-        <div className="text-white">
-          <div className="font-black text-[16px] tracking-tight">ENDFIELD</div>
-          <div className="w-16 h-[2px] bg-white/40 mt-0.5" />
-        </div>
-      </div>
     </div>
   );
 }
@@ -73,13 +60,6 @@ function WweBanner() {
         style={{ background: "linear-gradient(135deg, #0a0a0a 0%, #1a0505 30%, #2d0505 60%, #1a0a0a 100%)" }}
       />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 50%, rgba(180,10,10,0.3) 0%, transparent 60%)" }} />
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="text-white font-black">
-          <span className="text-[28px] italic" style={{ color: "#e8c800", textShadow: "0 0 20px rgba(232,200,0,0.5)" }}>W</span>
-          <span className="text-[20px] text-white/80">2K</span>
-          <span className="text-[28px] italic" style={{ color: "#e8c800", textShadow: "0 0 20px rgba(232,200,0,0.5)" }}>26</span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -88,10 +68,6 @@ function ValheimBanner() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1a2010 0%, #2d4020 40%, #4a6030 70%, #1a3010 100%)" }} />
-      <div className="absolute inset-0 flex items-center justify-center opacity-30">
-        <span className="text-[60px]">⚔️</span>
-      </div>
-      <div className="absolute bottom-3 left-3 text-white font-black text-[14px] tracking-wider">VALHEIM</div>
     </div>
   );
 }
@@ -101,10 +77,6 @@ function ThunderBanner() {
     <div className="absolute inset-0 overflow-hidden">
       <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 40%, #2a2a8a 70%, #0a0a2a 100%)" }} />
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 30%, rgba(100,100,255,0.3) 0%, transparent 60%)" }} />
-      <div className="absolute inset-0 flex items-center justify-center opacity-50">
-        <span className="text-[50px]">⚡</span>
-      </div>
-      <div className="absolute bottom-3 left-3 text-white font-black text-[12px] tracking-widest">WAR THUNDER</div>
     </div>
   );
 }
@@ -236,16 +208,6 @@ function QuestCard({ quest }: { quest: Quest }) {
           <button className="w-7 h-7 rounded-full bg-black/60 flex items-center justify-center text-white hover:bg-black/80 transition-colors">
             <MoreHorizontal className="w-4 h-4" />
           </button>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 px-3 py-2 flex items-center justify-between"
-          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)" }}
-        >
-          <div className="flex items-center gap-1.5 text-[12px] text-white/90">
-            <Check className="w-3 h-3 text-[#1db954]" />
-            <span>Promoted by</span>
-            <span className="font-semibold">{quest.developer}</span>
-          </div>
-          <span className="text-[12px] text-white/70">Ends {quest.endsDate}</span>
         </div>
       </div>
 
