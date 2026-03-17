@@ -21,7 +21,7 @@ const automationItems: AutomationItem[] = [
     glowColor: "#1CF8FF",
     ring: "border-cyan-400",
     description: "Grow your Discord server FAST with active joins and smart @ mentions\nPerfect adversting services — start boosting your members instantly!",
-    icon: "/mentionitor-icon.png",
+    icon: "mentionitor",
     darkBg: "#001a3a",
   },
   { id: 2,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
@@ -33,6 +33,69 @@ const automationItems: AutomationItem[] = [
   { id: 8,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 9,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
 ];
+
+function MentionitorAvatar({ size = 72 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#004695" />
+          <stop offset="100%" stopColor="#001a3a" />
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+        <filter id="softGlow">
+          <feGaussianBlur stdDeviation="1.2" result="coloredBlur" />
+          <feMerge>
+            <feMergeNode in="coloredBlur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <circle cx="50" cy="50" r="48" fill="url(#bgGrad)" />
+      <circle cx="50" cy="50" r="44" stroke="#1CF8FF" strokeWidth="0.4" strokeOpacity="0.3" />
+      <line x1="50" y1="6" x2="50" y2="14" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
+      <line x1="94" y1="50" x2="86" y2="50" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
+      <line x1="6" y1="50" x2="14" y2="50" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
+      <line x1="50" y1="94" x2="50" y2="86" stroke="#1CF8FF" strokeWidth="1" strokeOpacity="0.4" />
+      <circle cx="50" cy="6" r="1.5" fill="#1CF8FF" fillOpacity="0.6" />
+      <circle cx="94" cy="50" r="1.5" fill="#1CF8FF" fillOpacity="0.6" />
+      <circle cx="6" cy="50" r="1.5" fill="#1CF8FF" fillOpacity="0.6" />
+      <circle cx="50" cy="94" r="1.5" fill="#1CF8FF" fillOpacity="0.6" />
+      <line x1="78" y1="22" x2="72" y2="28" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
+      <line x1="22" y1="22" x2="28" y2="28" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
+      <line x1="78" y1="78" x2="72" y2="72" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
+      <line x1="22" y1="78" x2="28" y2="72" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
+      <circle cx="78" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="22" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="78" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="22" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="50" cy="50" r="26" fill="#002855" fillOpacity="0.8" />
+      <circle cx="50" cy="50" r="26" stroke="#1CF8FF" strokeWidth="1.5" strokeOpacity="0.8" filter="url(#glow)" />
+      <text
+        x="50"
+        y="57"
+        textAnchor="middle"
+        fontSize="28"
+        fontFamily="Arial, sans-serif"
+        fontWeight="bold"
+        fill="#1CF8FF"
+        filter="url(#glow)"
+      >@</text>
+      <circle cx="30" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
+      <circle cx="70" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
+      <circle cx="20" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+      <circle cx="80" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+      <circle cx="20" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+      <circle cx="80" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+    </svg>
+  );
+}
 
 function WumpusFace({ size = "md" }: { size?: "xs" | "sm" | "md" }) {
   const s = size === "xs" ? 18 : size === "sm" ? 24 : 36;
@@ -60,13 +123,18 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
       />
       <div className="relative flex flex-col items-center gap-1">
         <div
-          className="w-20 h-20 rounded-full border-4 flex items-center justify-center bg-[#1a1b1e]"
+          className="w-20 h-20 rounded-full border-4 flex items-center justify-center overflow-hidden"
           style={{
             borderColor: item.glowColor,
+            backgroundColor: item.darkBg ?? "#1a1b1e",
             boxShadow: `0 0 20px ${item.glowColor}50`,
           }}
         >
-          <WumpusFace size="md" />
+          {item.icon === "mentionitor" ? (
+            <MentionitorAvatar size={56} />
+          ) : (
+            <WumpusFace size="md" />
+          )}
         </div>
         <div className="w-16 h-2 bg-white/15 rounded-full" />
         <div className="w-12 h-1.5 bg-white/10 rounded-full" />
@@ -122,8 +190,8 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
                 boxShadow: `0 0 40px ${item.glowColor}60, inset 0 0 20px ${item.glowColor}15`,
               }}
             >
-              {item.icon ? (
-                <img src={item.icon} alt={item.name} className="w-full h-full object-cover rounded-full" />
+              {item.icon === "mentionitor" ? (
+                <MentionitorAvatar size={144} />
               ) : (
                 <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
                   <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
