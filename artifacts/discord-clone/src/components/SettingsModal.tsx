@@ -351,7 +351,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
           {/* Nav */}
           {filteredSections.map((section, si) => (
-            <div key={si}>
+            <div key={section.label ?? "section-logout"}>
               {section.label && (
                 <div className="px-2 pt-3 pb-[2px] text-[11px] font-bold uppercase tracking-wider" style={{ color: "#949ba4" }}>
                   {section.label}
