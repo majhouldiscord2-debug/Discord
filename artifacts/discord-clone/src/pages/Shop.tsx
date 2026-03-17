@@ -8,10 +8,20 @@ interface AutomationItem {
   gradient: string;
   glowColor: string;
   ring?: string;
+  description?: string;
+  icon?: string;
 }
 
 const automationItems: AutomationItem[] = [
-  { id: 1,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
+  {
+    id: 1,
+    name: "mentionitor",
+    gradient: "from-[#001a3a] via-[#004695] to-[#002855]",
+    glowColor: "#1CF8FF",
+    ring: "border-cyan-400",
+    description: "Grow your Discord server FAST with active joins and smart @ mentions\nPerfect adversting services — start boosting your members instantly!",
+    icon: "/mentionitor-icon.png",
+  },
   { id: 2,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 3,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 4,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
