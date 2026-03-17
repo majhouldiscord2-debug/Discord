@@ -15,17 +15,12 @@ function DiscordLogo() {
 function BotIcon() {
   return (
     <svg viewBox="0 0 100 100" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Antenna */}
       <line x1="50" y1="8" x2="50" y2="22" stroke="white" strokeWidth="5" strokeLinecap="round" />
       <circle cx="50" cy="6" r="5" fill="white" />
-      {/* Ears */}
       <rect x="7" y="40" width="10" height="20" rx="5" fill="white" />
       <rect x="83" y="40" width="10" height="20" rx="5" fill="white" />
-      {/* Head */}
       <rect x="18" y="24" width="64" height="54" rx="18" fill="white" />
-      {/* Face screen */}
       <rect x="26" y="32" width="48" height="38" rx="10" fill="#1d6ef5" />
-      {/* Eyes */}
       <rect x="34" y="43" width="12" height="16" rx="4" fill="white" />
       <rect x="54" y="43" width="12" height="16" rx="4" fill="white" />
     </svg>
@@ -95,11 +90,12 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
 interface ServerListProps {
   activeServer: "dms" | string;
   onSelectServer: (serverId: "dms" | string) => void;
+  isBotMode: boolean;
+  onToggleBotMode: () => void;
 }
 
-export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
+export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBotMode }: ServerListProps) {
   const { guilds } = useDiscord();
-  const [isBotMode, setIsBotMode] = useState(false);
 
   return (
     <div
@@ -109,19 +105,21 @@ export function ServerList({ activeServer, onSelectServer }: ServerListProps) {
       }}
     >
       <ServerButton
-        name={isBotMode ? "Bot Mode" : "Direct Messages"}
-        isActive={activeServer === "dms"}
+        name={isBotMode ? "Switch to Discord" : "Switch to Bot Mode"}
+        isActive={activeServer === "dms" && !isBotMode}
         onClick={() => {
-          setIsBotMode(v => !v);
-          onSelectServer("dms");
+          if (!isBotMode) onSelectServer("dms");
+          onToggleBotMode();
         }}
         glowColor="#1d6ef5"
       >
         <div
           className="w-12 h-12 flex items-center justify-center transition-all duration-200"
           style={{
-            borderRadius: activeServer === "dms" ? 16 : 24,
-            background: activeServer === "dms"
+            borderRadius: (!isBotMode && activeServer === "dms") ? 16 : 24,
+            background: (!isBotMode && activeServer === "dms")
+              ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
+              : isBotMode
               ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
               : "#0a1420",
           }}

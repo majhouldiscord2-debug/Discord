@@ -5,15 +5,21 @@ import { GuildChannelList } from "@/components/GuildChannelList";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
+import { BotSidebar } from "@/components/BotSidebar";
+import type { BotView } from "@/components/BotSidebar";
 import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
 import LogsPage from "@/pages/Logs";
+import Stats from "@/pages/Stats";
 import { SettingsModal } from "@/components/SettingsModal";
 import { useDiscord } from "@/hooks/useDiscord";
 import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
 
 export default function Home() {
   const { user, guilds, channels } = useDiscord();
+
+  const [isBotMode, setIsBotMode] = useState(false);
+  const [botView, setBotView] = useState<BotView>("stats");
 
   const [activeServer, setActiveServer] = useState<"dms" | string>("dms");
   const [view, setView] = useState<string>("friends");
@@ -51,13 +57,45 @@ export default function Home() {
 
   const activeDmChannel: DiscordChannel | undefined = channels.find((c) => c.id === activeDmId);
   const dmRecipient = activeDmChannel?.recipients?.[0] ?? null;
-
   const showGuildSidebar = activeServer !== "dms" && activeGuild !== null;
+
+  function renderBotContent() {
+    switch (botView) {
+      case "stats":    return <Stats />;
+      case "requests": return <FriendsList />;
+      case "logs":     return <LogsPage />;
+      case "activity": return <LogsPage />;
+      case "tools":    return <Tools />;
+      case "servers":  return <Quests />;
+      default:         return <Stats />;
+    }
+  }
+
+  if (isBotMode) {
+    return (
+      <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
+        <BotSidebar
+          activeView={botView}
+          onNavigate={setBotView}
+          onToggleBotMode={() => setIsBotMode(false)}
+        />
+        <div key={botView} className="flex flex-1 h-full overflow-hidden animate-view-fade">
+          {renderBotContent()}
+        </div>
+        <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
       {/* Server list (left rail) */}
-      <ServerList activeServer={activeServer} onSelectServer={handleSelectServer} />
+      <ServerList
+        activeServer={activeServer}
+        onSelectServer={handleSelectServer}
+        isBotMode={isBotMode}
+        onToggleBotMode={() => setIsBotMode(true)}
+      />
 
       {/* Sidebar: DM nav or guild channels */}
       {showGuildSidebar ? (
