@@ -54,7 +54,28 @@
     display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Discord-style thin scrollbar */
+  .discord-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  .discord-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .discord-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #1a1b1e;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .discord-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #111214;
+  }
+  .discord-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #1a1b1e transparent;
   }
 }

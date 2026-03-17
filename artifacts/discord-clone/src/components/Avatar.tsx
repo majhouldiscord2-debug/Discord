@@ -1,56 +1,87 @@
 import { cn } from "@/lib/utils";
 
+type Status = "online" | "idle" | "dnd" | "offline";
+
 interface AvatarProps {
   initials: string;
   colorClass?: string;
-  status?: "online" | "idle" | "dnd" | "offline";
-  size?: "sm" | "md" | "lg";
-  statusBgClass?: string; // Tailwind class for the border color around the status dot
+  color?: string;
+  status?: Status;
+  size?: "xs" | "sm" | "md" | "lg";
   className?: string;
+  statusBg?: string;
+  statusBgClass?: string;
 }
 
-export function Avatar({ 
-  initials, 
-  colorClass = "bg-primary", 
-  status, 
-  size = "md", 
-  statusBgClass = "border-sidebar", // Defaults to the DM sidebar background
-  className 
-}: AvatarProps) {
-  const sizeClasses = {
-    sm: "w-8 h-8 text-xs",
-    md: "w-10 h-10 text-sm",
-    lg: "w-12 h-12 text-base"
-  };
+const sizeMap = {
+  xs: { avatar: "w-6 h-6 text-[10px]", dot: "w-3 h-3 border-[2px]", offset: "bottom-[-3px] right-[-3px]" },
+  sm: { avatar: "w-8 h-8 text-xs", dot: "w-[14px] h-[14px] border-[2px]", offset: "bottom-[-2px] right-[-2px]" },
+  md: { avatar: "w-10 h-10 text-sm", dot: "w-[16px] h-[16px] border-[3px]", offset: "bottom-[-3px] right-[-3px]" },
+  lg: { avatar: "w-12 h-12 text-base", dot: "w-5 h-5 border-[3px]", offset: "bottom-[-3px] right-[-3px]" },
+};
 
-  const statusColors = {
-    online: "bg-success",
-    idle: "bg-warning",
-    dnd: "bg-danger",
-    offline: "bg-muted"
-  };
+const statusBgColors: Record<Status, string> = {
+  online: "#23a55a",
+  idle: "#f0b232",
+  dnd: "#f23f43",
+  offline: "#80848e",
+};
+
+export function Avatar({
+  initials,
+  colorClass,
+  color,
+  status,
+  size = "md",
+  className,
+  statusBg = "#2b2d31",
+  statusBgClass,
+}: AvatarProps) {
+  const s = sizeMap[size];
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center shrink-0", sizeClasses[size], className)}>
-      <div className={cn("w-full h-full rounded-full flex items-center justify-center text-white font-medium overflow-hidden select-none", colorClass)}>
+    <div className={cn("relative inline-flex items-center justify-center shrink-0", className)}>
+      <div
+        className={cn(
+          s.avatar,
+          "rounded-full flex items-center justify-center font-semibold text-white select-none",
+          colorClass
+        )}
+        style={color ? { backgroundColor: color } : undefined}
+      >
         {initials}
       </div>
-      
+
       {status && (
-        <div className={cn(
-          "absolute -bottom-1 -right-1 rounded-full border-[3px] z-10 flex items-center justify-center",
-          size === "lg" ? "w-5 h-5 border-[4px]" : "w-[18px] h-[18px]",
-          statusBgClass,
-          statusColors[status]
-        )}>
-          {status === "idle" && (
-            <div className="w-[6px] h-[6px] bg-sidebar rounded-full -translate-x-[2px] -translate-y-[2px]" />
+        <div
+          className={cn(
+            s.dot,
+            "absolute rounded-full flex items-center justify-center",
+            s.offset,
+            statusBgClass
           )}
+          style={{
+            backgroundColor: statusBgColors[status],
+            borderColor: statusBgClass ? undefined : statusBg,
+          }}
+        >
           {status === "dnd" && (
-            <div className="w-[8px] h-[2px] bg-sidebar rounded-full" />
+            <div className="w-[55%] h-[2px] bg-white rounded-full" />
+          )}
+          {status === "idle" && (
+            <div
+              className="absolute rounded-full bg-inherit"
+              style={{
+                width: "45%",
+                height: "45%",
+                top: "0px",
+                right: "0px",
+                backgroundColor: statusBgClass ? undefined : statusBg,
+              }}
+            />
           )}
           {status === "offline" && (
-            <div className="w-[8px] h-[8px] bg-sidebar rounded-full" />
+            <div className="w-[40%] h-[40%] rounded-full bg-white opacity-90" />
           )}
         </div>
       )}
