@@ -66,22 +66,12 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenSettings }: 
             label="Logs"
             isActive={activeItem === "nitro"}
             onClick={() => handleNav("nitro")}
-            badge={
-              <span className="ml-auto bg-[#5865f2] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none tracking-wide">
-                NEW
-              </span>
-            }
           />
           <NavItem
             icon={<ShoppingBag className="w-[18px] h-[18px]" />}
             label="Tools"
             isActive={activeItem === "shop"}
             onClick={() => handleNav("shop")}
-            badge={
-              <span className="ml-auto bg-[#23a55a] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none tracking-wide">
-                NEW
-              </span>
-            }
           />
           <NavItem
             icon={<Target className="w-[18px] h-[18px]" />}
