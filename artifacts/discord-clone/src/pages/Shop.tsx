@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, Heart, ChevronDown, Shuffle, Info, MoreHorizontal } from "lucide-react";
+import { Search, Heart, ChevronDown, Shuffle, Info, MoreHorizontal, ChevronLeft, Zap, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AutomationItem {
@@ -64,7 +64,114 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
   );
 }
 
-function AutomationCard({ item }: { item: AutomationItem }) {
+function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () => void }) {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#0d0d10" }}>
+      {/* Back button */}
+      <div className="shrink-0 flex items-center px-4 pt-4 pb-2">
+        <button
+          onClick={onClose}
+          className="flex items-center gap-1.5 text-[#949ba4] hover:text-[#f2f3f5] transition-colors group"
+        >
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5" />
+          </div>
+          <span className="text-[14px] font-medium">Back</span>
+        </button>
+      </div>
+
+      {/* Full-screen preview */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Large preview image area */}
+        <div
+          className="flex-1 relative flex items-center justify-center"
+          style={{
+            background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, #1a0a2e 45%, #0d0d10 100%)`,
+          }}
+        >
+          {/* Outer glow rings */}
+          <div
+            className="absolute rounded-full opacity-10"
+            style={{ width: 340, height: 340, border: `1px solid ${item.glowColor}`, boxShadow: `0 0 60px ${item.glowColor}40` }}
+          />
+          <div
+            className="absolute rounded-full opacity-20"
+            style={{ width: 240, height: 240, border: `1px solid ${item.glowColor}` }}
+          />
+
+          {/* Main wumpus */}
+          <div className="relative flex flex-col items-center gap-3">
+            <div
+              className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center"
+              style={{
+                borderColor: item.glowColor,
+                backgroundColor: "#1a1b1e",
+                boxShadow: `0 0 40px ${item.glowColor}60, inset 0 0 20px ${item.glowColor}15`,
+              }}
+            >
+              <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
+                <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
+                <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
+                <ellipse cx="14" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+                <ellipse cx="26" cy="16" rx="4" ry="5" fill="#5865f2" opacity="0.8" />
+                <ellipse cx="14" cy="16" rx="2" ry="2.5" fill="white" />
+                <ellipse cx="26" cy="16" rx="2" ry="2.5" fill="white" />
+                <path d="M16 26 Q20 29 24 26" stroke="#5865f2" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.6" />
+              </svg>
+            </div>
+            <div className="w-24 h-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.15)" }} />
+            <div className="w-16 h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
+          </div>
+        </div>
+
+        {/* Info panel */}
+        <div className="shrink-0 px-6 py-5" style={{ backgroundColor: "#111114", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h2 className="text-[22px] font-bold text-[#f2f3f5] mb-0.5">{item.name}</h2>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(i => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />
+                  ))}
+                </div>
+                <span className="text-[12px] text-[#949ba4]">4.8 · 2.3k reviews</span>
+              </div>
+            </div>
+            <button
+              onClick={() => setEnabled(v => !v)}
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold transition-all"
+              style={{
+                backgroundColor: enabled ? "rgba(35,165,90,0.15)" : "rgba(237,66,69,0.15)",
+                color: enabled ? "#23a55a" : "#ed4245",
+                border: `1px solid ${enabled ? "rgba(35,165,90,0.3)" : "rgba(237,66,69,0.3)"}`,
+              }}
+            >
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: enabled ? "#23a55a" : "#ed4245" }} />
+              {enabled ? "On" : "Off"}
+            </button>
+          </div>
+
+          <p className="text-[#949ba4] text-[13px] leading-relaxed mb-4">
+            A sleek animated avatar style inspired by futuristic AI companions. Comes with a glowing ring effect that reacts to your voice activity.
+          </p>
+
+          <button
+            className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+            style={{ background: `linear-gradient(135deg, ${item.glowColor}, #9b59b6)` }}
+          >
+            <Zap className="w-4 h-4" />
+            Try for Free
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AutomationCard({ item, onOpen }: { item: AutomationItem; onOpen?: () => void }) {
   const [hovered, setHovered] = useState(false);
   const [enabled, setEnabled] = useState(false);
 
@@ -74,6 +181,7 @@ function AutomationCard({ item }: { item: AutomationItem }) {
       style={{ backgroundColor: "#111114" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={onOpen}
     >
       {/* Card preview area */}
       <div
@@ -141,9 +249,13 @@ export default function Shop() {
   const [showSort, setShowSort] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [wishlist, setWishlist] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<AutomationItem | null>(null);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0d0d10" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#0d0d10" }}>
+      {selectedItem && (
+        <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      )}
       {/* Top Navigation Bar */}
       <div
         className="shrink-0 flex items-center px-5 gap-6 h-14 border-b"
@@ -274,7 +386,11 @@ export default function Shop() {
               searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase())
             )
             .map((item) => (
-              <AutomationCard key={item.id} item={item} />
+              <AutomationCard
+                key={item.id}
+                item={item}
+                onOpen={item.id === 1 ? () => setSelectedItem(item) : undefined}
+              />
             ))}
         </div>
 
