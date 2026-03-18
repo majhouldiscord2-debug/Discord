@@ -130,13 +130,7 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {isBotMode ? (
-        <div className="flex flex-col items-center gap-2 px-1 py-2">
-          <div className="w-8 h-8 rounded-full border-2 border-[#1d6ef5]/40 border-t-[#1d6ef5] animate-spin" />
-          <span className="text-[8px] font-bold text-[#4e5058] uppercase tracking-wider text-center leading-tight">In<br/>Progress</span>
-        </div>
-      ) : (
-        guilds.map((guild) => {
+      {guilds.map((guild) => {
           const iconSrc = guildIconUrl(guild);
           const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
           const isActive = activeServer === guild.id;
@@ -168,8 +162,7 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
               )}
             </ServerButton>
           );
-        })
-      )}
+        })}
 
       <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
