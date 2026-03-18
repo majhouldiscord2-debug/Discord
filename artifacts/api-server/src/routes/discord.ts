@@ -157,11 +157,22 @@ async function countAllMessagesInChannel(
 }
 // ────────────────────────────────────────────────────────────────────────────
 
+async function searchMessageCount(
+  path: string,
+  userId: string,
+  token: string,
+  tokenType: string,
+): Promise<number> {
+  const result = await discordFetchWithRetry(`${path}?author_id=${userId}`, token, tokenType);
+  if (!result.ok) return 0;
+  const data = result.data as { total_results?: number };
+  return data.total_results ?? 0;
+}
+
 router.get("/discord/message-stats", async (_req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
 
-  // Give this endpoint a very long socket timeout
   res.socket?.setTimeout(0);
 
   try {
@@ -178,43 +189,29 @@ router.get("/discord/message-stats", async (_req, res) => {
     const guilds: Array<{ id: string }> = Array.isArray(guildsResult.data) ? guildsResult.data : [];
     const dmChannels = allChannels.filter((c) => c.type === 1 || c.type === 3);
 
-    // ── Full-paginate all DM channels (up to 8 concurrent) ───────────────
-    let dmMessages = 0;
-    let dmTotal = 0;
-
-    const dmResults = await runWithConcurrency(
-      dmChannels.map((ch) => () => countAllMessagesInChannel(ch.id, me.id, auth.token, auth.tokenType).catch(() => ({ mine: 0, total: 0 }))),
-      8,
+    // ── Use Discord's search API to count user's messages in DM channels ─
+    const dmCounts = await runWithConcurrency(
+      dmChannels.map((ch) => () =>
+        searchMessageCount(`/channels/${ch.id}/messages/search`, me.id, auth.token, auth.tokenType).catch(() => 0)
+      ),
+      5,
     );
-    for (const r of dmResults) { dmMessages += r.mine; dmTotal += r.total; }
+    const dmMessages = dmCounts.reduce((a, b) => a + b, 0);
 
-    // ── Full-paginate server text channels (up to 5 guilds concurrent) ───
-    let serverMessages = 0;
-    let serverTotal = 0;
-
-    const guildChannelTasks = guilds.map((g) => async () => {
-      try {
-        const chRes = await discordFetchWithRetry(`/guilds/${g.id}/channels`, auth.token, auth.tokenType);
-        if (!chRes.ok || !Array.isArray(chRes.data)) return;
-        const textChannels = (chRes.data as Array<{ id: string; type: number }>).filter((c) => c.type === 0);
-
-        const chResults = await runWithConcurrency(
-          textChannels.map((ch) => () =>
-            countAllMessagesInChannel(ch.id, me.id, auth.token, auth.tokenType).catch(() => ({ mine: 0, total: 0 })),
-          ),
-          4,
-        );
-        for (const r of chResults) { serverMessages += r.mine; serverTotal += r.total; }
-      } catch { /* skip inaccessible guild */ }
-    });
-
-    await runWithConcurrency(guildChannelTasks, 5);
+    // ── Use Discord's search API to count user's messages per guild ───────
+    const guildCounts = await runWithConcurrency(
+      guilds.map((g) => () =>
+        searchMessageCount(`/guilds/${g.id}/messages/search`, me.id, auth.token, auth.tokenType).catch(() => 0)
+      ),
+      5,
+    );
+    const serverMessages = guildCounts.reduce((a, b) => a + b, 0);
 
     return res.json({
       dmMessages,
-      dmTotal,
+      dmTotal: dmMessages,
       serverMessages,
-      serverTotal,
+      serverTotal: serverMessages,
       totalMessages: dmMessages + serverMessages,
       channelsSampled: dmChannels.length,
       guildsSampled: guilds.length,

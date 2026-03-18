@@ -302,7 +302,7 @@ export default function Stats() {
               icon={<MessageCircle className="w-5 h-5" />}
               label="In Direct Messages"
               value={msgStats ? fmt(msgStats.dmMessages) : "—"}
-              sub={msgStats ? `${fmt(msgStats.dmTotal)} messages visible` : undefined}
+              sub={msgStats ? `across ${msgStats.channelsSampled} DM chats` : undefined}
               color="#06b6d4"
               loading={msgLoading}
             />
@@ -310,7 +310,7 @@ export default function Stats() {
               icon={<SendHorizonal className="w-5 h-5" />}
               label="In Servers"
               value={msgStats ? fmt(msgStats.serverMessages) : "—"}
-              sub={msgStats ? `${fmt(msgStats.serverTotal)} messages visible` : undefined}
+              sub={msgStats ? `across ${msgStats.guildsSampled} servers` : undefined}
               color="#23a55a"
               loading={msgLoading}
             />
