@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Compass, Download } from "lucide-react";
+import { Plus, Compass, Download, Clock } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
 import { guildIconUrl } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -130,100 +130,119 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {guilds.map((guild) => {
-          const iconSrc = guildIconUrl(guild);
-          const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-          const isActive = activeServer === guild.id;
-          return (
-            <ServerButton
-              key={guild.id}
-              name={guild.name}
-              isActive={isActive}
-              onClick={() => onSelectServer(guild.id)}
+      {isBotMode ? (
+        <div className="flex flex-col items-center gap-3 flex-1 justify-center py-4">
+          <div
+            className="w-12 h-12 flex items-center justify-center rounded-2xl"
+            style={{ background: "linear-gradient(135deg, #f59e0b22, #f59e0b11)", border: "1px solid #f59e0b44" }}
+          >
+            <Clock className="w-5 h-5 text-[#f59e0b]" />
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f59e0b] opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#f59e0b]" />
+            </span>
+          </div>
+        </div>
+      ) : (
+        <>
+          {guilds.map((guild) => {
+            const iconSrc = guildIconUrl(guild);
+            const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+            const isActive = activeServer === guild.id;
+            return (
+              <ServerButton
+                key={guild.id}
+                name={guild.name}
+                isActive={isActive}
+                onClick={() => onSelectServer(guild.id)}
+              >
+                {iconSrc ? (
+                  <img
+                    src={iconSrc}
+                    alt={guild.name}
+                    className="w-12 h-12 object-cover transition-all duration-200"
+                    style={{ borderRadius: isActive ? 16 : 24 }}
+                  />
+                ) : (
+                  <div
+                    className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[13px] font-bold text-white"
+                    style={{
+                      borderRadius: isActive ? 16 : 24,
+                      backgroundColor: "#1d6ef5",
+                      boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
+                    }}
+                  >
+                    {initials}
+                  </div>
+                )}
+              </ServerButton>
+            );
+          })}
+
+          <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
+
+          <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
+            <div
+              className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
+              style={{ borderRadius: 24, background: "#0a1420" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+                (e.currentTarget as HTMLDivElement).style.background = "#1db954";
+                (e.currentTarget as HTMLDivElement).style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+                (e.currentTarget as HTMLDivElement).style.color = "#1db954";
+              }}
             >
-              {iconSrc ? (
-                <img
-                  src={iconSrc}
-                  alt={guild.name}
-                  className="w-12 h-12 object-cover transition-all duration-200"
-                  style={{ borderRadius: isActive ? 16 : 24 }}
-                />
-              ) : (
-                <div
-                  className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[13px] font-bold text-white"
-                  style={{
-                    borderRadius: isActive ? 16 : 24,
-                    backgroundColor: "#1d6ef5",
-                    boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
-                  }}
-                >
-                  {initials}
-                </div>
-              )}
-            </ServerButton>
-          );
-        })}
+              <Plus className="w-6 h-6" />
+            </div>
+          </ServerButton>
 
-      <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
+          <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
+            <div
+              className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
+              style={{ borderRadius: 24, background: "#0a1420" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+                (e.currentTarget as HTMLDivElement).style.background = "#1db954";
+                (e.currentTarget as HTMLDivElement).style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+                (e.currentTarget as HTMLDivElement).style.color = "#1db954";
+              }}
+            >
+              <Compass className="w-6 h-6" />
+            </div>
+          </ServerButton>
 
-      <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
-        <div
-          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
-          style={{ borderRadius: 24, background: "#0a1420" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#1db954";
-            (e.currentTarget as HTMLDivElement).style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-            (e.currentTarget as HTMLDivElement).style.color = "#1db954";
-          }}
-        >
-          <Plus className="w-6 h-6" />
-        </div>
-      </ServerButton>
+          <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
-        <div
-          className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
-          style={{ borderRadius: 24, background: "#0a1420" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#1db954";
-            (e.currentTarget as HTMLDivElement).style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-            (e.currentTarget as HTMLDivElement).style.color = "#1db954";
-          }}
-        >
-          <Compass className="w-6 h-6" />
-        </div>
-      </ServerButton>
-
-      <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
-
-      <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
-        <div
-          className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"
-          style={{ borderRadius: 24, background: "#0a1420" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-            (e.currentTarget as HTMLDivElement).style.background = "#1d6ef5";
-            (e.currentTarget as HTMLDivElement).style.color = "white";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-            (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-            (e.currentTarget as HTMLDivElement).style.color = "#1d6ef5";
-          }}
-        >
-          <Download className="w-[22px] h-[22px]" />
-        </div>
-      </ServerButton>
+          <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
+            <div
+              className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"
+              style={{ borderRadius: 24, background: "#0a1420" }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
+                (e.currentTarget as HTMLDivElement).style.background = "#1d6ef5";
+                (e.currentTarget as HTMLDivElement).style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
+                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
+                (e.currentTarget as HTMLDivElement).style.color = "#1d6ef5";
+              }}
+            >
+              <Download className="w-[22px] h-[22px]" />
+            </div>
+          </ServerButton>
+        </>
+      )}
     </div>
   );
 }
