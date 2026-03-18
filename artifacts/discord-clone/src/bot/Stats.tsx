@@ -276,11 +276,27 @@ export default function Stats() {
         </Section>
 
         <Section title="Servers">
-          <Card>
-            <InfoRow label="Total Servers" value={String(guilds.length)} icon={<Server className="w-3.5 h-3.5" />} />
-            <InfoRow label="Owned / Admin" value={String(stats.ownedServers.length)} icon={<Shield className="w-3.5 h-3.5" />} />
-            <InfoRow label="Member Only" value={String(guilds.length - stats.ownedServers.length)} icon={<Globe className="w-3.5 h-3.5" />} />
-          </Card>
+          <div
+            className="rounded-[14px] flex items-center gap-4 px-5 py-4"
+            style={{ background: "linear-gradient(135deg, #5865f215 0%, #080f1c 100%)", border: "1px solid rgba(88,101,242,0.18)" }}
+          >
+            <div className="w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0" style={{ background: "#5865f222" }}>
+              <Server className="w-5 h-5 text-[#5865f2]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-semibold text-[#dbdee1]">Server Stats</span>
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide" style={{ background: "#f59e0b22", color: "#f59e0b", border: "1px solid #f59e0b33" }}>
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f59e0b] opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#f59e0b]" />
+                  </span>
+                  In Progress
+                </span>
+              </div>
+              <p className="text-[11px] text-[#4e5058] mt-0.5">This section is being upgraded and will be available soon.</p>
+            </div>
+          </div>
         </Section>
 
         <Section title="Channels">
