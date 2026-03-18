@@ -60,7 +60,7 @@ function BigStat({ icon, label, value, sub, color, loading }: BigStatProps) {
       {loading ? (
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full border-2 border-white/10 border-t-white/60 animate-spin" />
-          <span className="text-[13px] text-[#6d6f76]">Scanning…</span>
+          <span className="text-[13px] text-[#6d6f76]">Counting all messages…</span>
         </div>
       ) : (
         <div className="text-[32px] font-extrabold tracking-tighter leading-none" style={{ color }}>
@@ -294,7 +294,7 @@ export default function Stats() {
               icon={<TrendingUp className="w-5 h-5" />}
               label="Total Messages Sent"
               value={msgStats ? fmt(totalMsg) : "—"}
-              sub={msgStats ? `across ${msgStats.channelsSampled} DMs + ${msgStats.guildsSampled} servers` : undefined}
+              sub={msgStats ? `${msgStats.channelsSampled} DM chats · ${msgStats.guildsSampled} servers` : "Full scan in progress"}
               color="#5865f2"
               loading={msgLoading}
             />
@@ -302,7 +302,7 @@ export default function Stats() {
               icon={<MessageCircle className="w-5 h-5" />}
               label="In Direct Messages"
               value={msgStats ? fmt(msgStats.dmMessages) : "—"}
-              sub={msgStats ? `of ${fmt(msgStats.dmTotal)} total DM msgs` : undefined}
+              sub={msgStats ? `${fmt(msgStats.dmTotal)} messages visible` : undefined}
               color="#06b6d4"
               loading={msgLoading}
             />
@@ -310,7 +310,7 @@ export default function Stats() {
               icon={<SendHorizonal className="w-5 h-5" />}
               label="In Servers"
               value={msgStats ? fmt(msgStats.serverMessages) : "—"}
-              sub={msgStats ? `of ${fmt(msgStats.serverTotal)} server msgs` : undefined}
+              sub={msgStats ? `${fmt(msgStats.serverTotal)} messages visible` : undefined}
               color="#23a55a"
               loading={msgLoading}
             />
@@ -388,10 +388,9 @@ export default function Stats() {
           </Card>
         </Section>
 
-        {/* Message sampling note */}
         {msgStats && (
           <p className="text-[11px] text-[#3e4147] text-center pb-2 leading-snug">
-            Message counts are sampled from the last 100 messages across {msgStats.channelsSampled} DM channels and {msgStats.guildsSampled} servers.
+            Full scan complete — every message in {msgStats.channelsSampled} DM channels and all accessible channels across {msgStats.guildsSampled} servers.
           </p>
         )}
 

@@ -90,9 +90,79 @@ router.post("/discord/channels/:channelId/messages", async (req, res) => {
   return res.json(result.data);
 });
 
+// ── helpers ────────────────────────────────────────────────────────────────
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+async function runWithConcurrency<T>(
+  tasks: (() => Promise<T>)[],
+  concurrency: number,
+): Promise<T[]> {
+  const results: T[] = new Array(tasks.length);
+  let idx = 0;
+  async function worker() {
+    while (idx < tasks.length) {
+      const i = idx++;
+      results[i] = await tasks[i]();
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, worker));
+  return results;
+}
+
+async function discordFetchWithRetry(
+  path: string,
+  token: string,
+  tokenType: string,
+  maxRetries = 6,
+) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const result = await discordFetch(path, token, tokenType);
+    if (result.status === 429) {
+      const retryAfter = ((result.data as Record<string, unknown>)?.retry_after as number) ?? 1;
+      await sleep(retryAfter * 1000 + 200);
+      continue;
+    }
+    return result;
+  }
+  return { ok: false, status: 429, data: null };
+}
+
+async function countAllMessagesInChannel(
+  channelId: string,
+  userId: string,
+  token: string,
+  tokenType: string,
+): Promise<{ mine: number; total: number }> {
+  let mine = 0;
+  let total = 0;
+  let before: string | undefined;
+
+  while (true) {
+    let url = `/channels/${channelId}/messages?limit=100`;
+    if (before) url += `&before=${before}`;
+
+    const result = await discordFetchWithRetry(url, token, tokenType);
+    if (!result.ok || !Array.isArray(result.data) || result.data.length === 0) break;
+
+    const msgs = result.data as Array<{ id: string; author: { id: string } }>;
+    total += msgs.length;
+    mine += msgs.filter((m) => m.author?.id === userId).length;
+
+    if (msgs.length < 100) break;
+    before = msgs[msgs.length - 1].id;
+    await sleep(150);
+  }
+
+  return { mine, total };
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 router.get("/discord/message-stats", async (_req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
+
+  // Give this endpoint a very long socket timeout
+  res.socket?.setTimeout(0);
 
   try {
     const [meResult, dmResult, guildsResult] = await Promise.all([
@@ -106,51 +176,39 @@ router.get("/discord/message-stats", async (_req, res) => {
     const me = meResult.data as { id: string };
     const allChannels: Array<{ id: string; type: number }> = Array.isArray(dmResult.data) ? dmResult.data : [];
     const guilds: Array<{ id: string }> = Array.isArray(guildsResult.data) ? guildsResult.data : [];
+    const dmChannels = allChannels.filter((c) => c.type === 1 || c.type === 3);
 
-    const dmChannels = allChannels.filter((c) => c.type === 1 || c.type === 3).slice(0, 30);
-
+    // ── Full-paginate all DM channels (up to 8 concurrent) ───────────────
     let dmMessages = 0;
     let dmTotal = 0;
 
-    await Promise.all(
-      dmChannels.map(async (ch) => {
-        try {
-          const r = await discordFetch(`/channels/${ch.id}/messages?limit=100`, auth.token, auth.tokenType);
-          if (!r.ok || !Array.isArray(r.data)) return;
-          const msgs = r.data as Array<{ author: { id: string } }>;
-          dmTotal += msgs.length;
-          dmMessages += msgs.filter((m) => m.author?.id === me.id).length;
-        } catch { /* skip */ }
-      })
+    const dmResults = await runWithConcurrency(
+      dmChannels.map((ch) => () => countAllMessagesInChannel(ch.id, me.id, auth.token, auth.tokenType).catch(() => ({ mine: 0, total: 0 }))),
+      8,
     );
+    for (const r of dmResults) { dmMessages += r.mine; dmTotal += r.total; }
 
+    // ── Full-paginate server text channels (up to 5 guilds concurrent) ───
     let serverMessages = 0;
     let serverTotal = 0;
-    const sampledGuilds = guilds.slice(0, 8);
 
-    await Promise.all(
-      sampledGuilds.map(async (g) => {
-        try {
-          const chRes = await discordFetch(`/guilds/${g.id}/channels`, auth.token, auth.tokenType);
-          if (!chRes.ok || !Array.isArray(chRes.data)) return;
-          const textChannels = (chRes.data as Array<{ id: string; type: number }>)
-            .filter((c) => c.type === 0)
-            .slice(0, 4);
+    const guildChannelTasks = guilds.map((g) => async () => {
+      try {
+        const chRes = await discordFetchWithRetry(`/guilds/${g.id}/channels`, auth.token, auth.tokenType);
+        if (!chRes.ok || !Array.isArray(chRes.data)) return;
+        const textChannels = (chRes.data as Array<{ id: string; type: number }>).filter((c) => c.type === 0);
 
-          await Promise.all(
-            textChannels.map(async (ch) => {
-              try {
-                const r = await discordFetch(`/channels/${ch.id}/messages?limit=100`, auth.token, auth.tokenType);
-                if (!r.ok || !Array.isArray(r.data)) return;
-                const msgs = r.data as Array<{ author: { id: string } }>;
-                serverTotal += msgs.length;
-                serverMessages += msgs.filter((m) => m.author?.id === me.id).length;
-              } catch { /* skip */ }
-            })
-          );
-        } catch { /* skip */ }
-      })
-    );
+        const chResults = await runWithConcurrency(
+          textChannels.map((ch) => () =>
+            countAllMessagesInChannel(ch.id, me.id, auth.token, auth.tokenType).catch(() => ({ mine: 0, total: 0 })),
+          ),
+          4,
+        );
+        for (const r of chResults) { serverMessages += r.mine; serverTotal += r.total; }
+      } catch { /* skip inaccessible guild */ }
+    });
+
+    await runWithConcurrency(guildChannelTasks, 5);
 
     return res.json({
       dmMessages,
@@ -159,7 +217,7 @@ router.get("/discord/message-stats", async (_req, res) => {
       serverTotal,
       totalMessages: dmMessages + serverMessages,
       channelsSampled: dmChannels.length,
-      guildsSampled: sampledGuilds.length,
+      guildsSampled: guilds.length,
     });
   } catch (err) {
     return res.status(500).json({ error: "Failed to fetch message stats" });
