@@ -90,6 +90,82 @@ router.post("/discord/channels/:channelId/messages", async (req, res) => {
   return res.json(result.data);
 });
 
+router.get("/discord/message-stats", async (_req, res) => {
+  const auth = await getStoredAuth();
+  if (!auth) return res.status(401).json({ error: "Not authenticated" });
+
+  try {
+    const [meResult, dmResult, guildsResult] = await Promise.all([
+      discordFetch("/users/@me", auth.token, auth.tokenType),
+      discordFetch("/users/@me/channels", auth.token, auth.tokenType),
+      discordFetch("/users/@me/guilds?limit=100", auth.token, auth.tokenType),
+    ]);
+
+    if (!meResult.ok) return res.status(401).json({ error: "Not authenticated" });
+
+    const me = meResult.data as { id: string };
+    const allChannels: Array<{ id: string; type: number }> = Array.isArray(dmResult.data) ? dmResult.data : [];
+    const guilds: Array<{ id: string }> = Array.isArray(guildsResult.data) ? guildsResult.data : [];
+
+    const dmChannels = allChannels.filter((c) => c.type === 1 || c.type === 3).slice(0, 30);
+
+    let dmMessages = 0;
+    let dmTotal = 0;
+
+    await Promise.all(
+      dmChannels.map(async (ch) => {
+        try {
+          const r = await discordFetch(`/channels/${ch.id}/messages?limit=100`, auth.token, auth.tokenType);
+          if (!r.ok || !Array.isArray(r.data)) return;
+          const msgs = r.data as Array<{ author: { id: string } }>;
+          dmTotal += msgs.length;
+          dmMessages += msgs.filter((m) => m.author?.id === me.id).length;
+        } catch { /* skip */ }
+      })
+    );
+
+    let serverMessages = 0;
+    let serverTotal = 0;
+    const sampledGuilds = guilds.slice(0, 8);
+
+    await Promise.all(
+      sampledGuilds.map(async (g) => {
+        try {
+          const chRes = await discordFetch(`/guilds/${g.id}/channels`, auth.token, auth.tokenType);
+          if (!chRes.ok || !Array.isArray(chRes.data)) return;
+          const textChannels = (chRes.data as Array<{ id: string; type: number }>)
+            .filter((c) => c.type === 0)
+            .slice(0, 4);
+
+          await Promise.all(
+            textChannels.map(async (ch) => {
+              try {
+                const r = await discordFetch(`/channels/${ch.id}/messages?limit=100`, auth.token, auth.tokenType);
+                if (!r.ok || !Array.isArray(r.data)) return;
+                const msgs = r.data as Array<{ author: { id: string } }>;
+                serverTotal += msgs.length;
+                serverMessages += msgs.filter((m) => m.author?.id === me.id).length;
+              } catch { /* skip */ }
+            })
+          );
+        } catch { /* skip */ }
+      })
+    );
+
+    return res.json({
+      dmMessages,
+      dmTotal,
+      serverMessages,
+      serverTotal,
+      totalMessages: dmMessages + serverMessages,
+      channelsSampled: dmChannels.length,
+      guildsSampled: sampledGuilds.length,
+    });
+  } catch (err) {
+    return res.status(500).json({ error: "Failed to fetch message stats" });
+  }
+});
+
 router.get("/discord/relationships", async (_req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });

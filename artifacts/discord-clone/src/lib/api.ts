@@ -187,6 +187,26 @@ export async function getChannelMessages(channelId: string, limit = 50, before?:
   return Array.isArray(data) ? data : [];
 }
 
+export interface MessageStats {
+  dmMessages: number;
+  dmTotal: number;
+  serverMessages: number;
+  serverTotal: number;
+  totalMessages: number;
+  channelsSampled: number;
+  guildsSampled: number;
+}
+
+export async function getMessageStats(): Promise<MessageStats | null> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/message-stats`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
 export async function sendMessage(channelId: string, content: string): Promise<DiscordMessage | null> {
   const res = await fetch(`${API_BASE}/discord/channels/${channelId}/messages`, {
     method: "POST",
