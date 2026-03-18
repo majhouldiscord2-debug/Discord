@@ -214,9 +214,9 @@ function QuestCard({ quest }: { quest: QuestItem }) {
           </div>
           <div>
             <p className="text-[10px] font-bold tracking-widest uppercase leading-tight" style={{ color: quest.accentColor }}>{quest.questTitle}</p>
-            <p className="text-[12px] font-bold text-white flex items-center gap-1">
+            <div className="text-[12px] font-bold text-white flex items-center gap-1">
               Claim <OrbsIcon size={10} /> {quest.reward} Discord Orbs
-            </p>
+            </div>
             <p className="text-[11px] text-[#949ba4]">{quest.description}</p>
           </div>
         </div>
