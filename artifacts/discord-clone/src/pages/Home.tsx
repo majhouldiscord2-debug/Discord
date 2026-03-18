@@ -8,6 +8,7 @@ import { ChatView } from "@/components/ChatView";
 import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
 import LogsPage from "@/pages/Logs";
+import StatsPage from "@/pages/Stats";
 import { SettingsModal } from "@/components/SettingsModal";
 import { useDiscord } from "@/hooks/useDiscord";
 import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
@@ -145,6 +146,8 @@ export default function Home() {
           <Quests />
         ) : view === "logs" ? (
           <LogsPage />
+        ) : view === "friends" && isBotMode ? (
+          <StatsPage />
         ) : view === "friends" || view === "dm" ? (
           <>
             <FriendsList />
