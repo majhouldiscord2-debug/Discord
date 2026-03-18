@@ -30,7 +30,7 @@ const automationItems: AutomationItem[] = [
   { id: 4,  name: "Replify",    gradient: "from-[#1a1000] via-[#3d2a00] to-[#0d0800]", glowColor: "#f59e0b", ring: "border-amber-400", darkBg: "#1a1000" },
   { id: 5,  name: "Msgster",    gradient: "from-[#001a1a] via-[#004040] to-[#000d0d]", glowColor: "#06b6d4", ring: "border-cyan-500", darkBg: "#001a1a" },
   { id: 6,  name: "Bumper",     gradient: "from-[#2e0a0a] via-[#4e0a1a] to-[#1a0d0d]", glowColor: "#f43f5e", ring: "border-rose-500" },
-  { id: 7,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
+  { id: 7,  name: "Messager",   gradient: "from-[#001e2e] via-[#003a52] to-[#000f1a]", glowColor: "#0ea5e9", ring: "border-sky-500" },
   { id: 8,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
   { id: 9,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
 ];
