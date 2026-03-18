@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, MoreHorizontal, Server, ArrowUpRight, X, Users, Circle, ExternalLink } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Server, ArrowUpRight, X, Users, ExternalLink, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DiscordServer {
@@ -26,7 +26,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1313625670026530866/a_7343ae11d606e8f1bf0d93e4f455dec6.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1313625670026530866/3aea8efe6a269342e8f5b90accb9f542.jpg?size=2048",
     serverBannerUrl: "https://tr.rbxcdn.com/180DAY-6d6508475e3ec09d955cc7d8cee0ddf6/500/280/Image/Jpeg/noFilter",
-    tags: ["Blox Fruits", "Blox Fruits Codes", "Blox Fruits Trading", "Blox Fruit", "Blox Fruits Values", "Roblox", "Trading", "Giveaways", "Give-Aways", "Community"],
+    tags: ["Blox Fruits", "Blox Fruits Codes", "Blox Fruits Trading", "Blox Fruit", "Blox Fruits Values", "Roblox", "Trading", "Giveaways", "Community"],
     accentColor: "#f59e0b",
     inviteCode: "bloxfruits",
   },
@@ -122,16 +122,16 @@ function useDiscordWidget(guildId?: string) {
   const [memberCount, setMemberCount] = useState<number | null>(null);
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!guildId) { setLoading(false); return; }
-    let cancelled = false;
 
     async function fetchData() {
       try {
         const widgetRes = await fetch(`https://discord.com/api/guilds/${guildId}/widget.json`);
         const widgetData = await widgetRes.json();
-        if (!cancelled && widgetData.presence_count !== undefined) {
+        if (widgetData.presence_count !== undefined) {
           setOnlineCount(widgetData.presence_count);
         }
       } catch {}
@@ -139,20 +139,20 @@ function useDiscordWidget(guildId?: string) {
       try {
         const previewRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/preview`);
         const previewData = await previewRes.json();
-        if (!cancelled) {
-          if (previewData.approximate_member_count) setMemberCount(previewData.approximate_member_count);
-          if (previewData.approximate_presence_count) setOnlineCount(previewData.approximate_presence_count);
-        }
+        if (previewData.approximate_member_count) setMemberCount(previewData.approximate_member_count);
+        if (previewData.approximate_presence_count) setOnlineCount(previewData.approximate_presence_count);
       } catch {}
 
-      if (!cancelled) setLoading(false);
+      setLoading(false);
+      setLastUpdated(new Date());
     }
 
     fetchData();
-    return () => { cancelled = true; };
+    const interval = setInterval(fetchData, 10000);
+    return () => clearInterval(interval);
   }, [guildId]);
 
-  return { memberCount, onlineCount, loading };
+  return { memberCount, onlineCount, loading, lastUpdated };
 }
 
 function formatCount(n: number): string {
@@ -248,75 +248,128 @@ function TagsDropdown({ selected, onChange }: { selected: Set<string>; onChange:
 }
 
 function ServerCard({ server }: { server: DiscordServer }) {
-  const { memberCount: widgetMembers, onlineCount: widgetOnline, loading } = useDiscordWidget(server.guildId);
+  const { memberCount: widgetMembers, onlineCount: widgetOnline, loading, lastUpdated } = useDiscordWidget(server.guildId);
   const members = widgetMembers ?? server.memberCount ?? null;
   const online = widgetOnline ?? server.onlineCount ?? null;
   const hasBanner = !!server.bannerUrl;
   const hasLogo = !!server.logoUrl;
+  const isLive = !!server.guildId;
 
   return (
     <div
-      className="rounded-xl overflow-hidden flex flex-col transition-all duration-200"
-      style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.08)", willChange: "transform" }}
-      onMouseEnter={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.transform = "translateY(-3px)"; el.style.boxShadow = `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.12)`; }}
-      onMouseLeave={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.transform = ""; el.style.boxShadow = ""; }}
+      className="rounded-xl flex flex-col transition-all duration-200 group"
+      style={{
+        backgroundColor: "#060b14",
+        border: "1px solid rgba(255,255,255,0.08)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.transform = "translateY(-4px)";
+        el.style.boxShadow = `0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.13), 0 0 24px ${server.accentColor}22`;
+        el.style.borderColor = `${server.accentColor}44`;
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLDivElement;
+        el.style.transform = "";
+        el.style.boxShadow = "0 2px 12px rgba(0,0,0,0.3)";
+        el.style.borderColor = "rgba(255,255,255,0.08)";
+      }}
     >
       {/* Banner */}
-      <div className="relative h-[130px] shrink-0 overflow-hidden">
+      <div className="relative rounded-t-xl overflow-hidden shrink-0" style={{ height: 130 }}>
         {hasBanner ? (
           <img src={server.bannerUrl} alt="" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full" style={{ background: GRADIENT_BANNERS[server.id] ?? "linear-gradient(135deg, #1a1f3a, #2a2f5a)" }} />
         )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 30%, rgba(6,11,20,0.9) 100%)" }} />
-        <button className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/80 transition-colors">
-          <MoreHorizontal className="w-4 h-4" />
-        </button>
-        {/* Server icon overlapping banner */}
-        <div className="absolute bottom-0 translate-y-1/2 left-3">
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 20%, rgba(6,11,20,0.85) 100%)" }} />
+
+        {/* Top-right controls */}
+        <div className="absolute top-2 right-2 flex items-center gap-1.5">
+          {isLive && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
+              style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#23a55a] opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#23a55a]" />
+              </span>
+              <span className="text-[9px] font-bold text-[#23a55a] tracking-wide uppercase">Live</span>
+            </div>
+          )}
+          <button className="w-6 h-6 rounded-full flex items-center justify-center text-white transition-colors"
+            style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)" }}>
+            <MoreHorizontal className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* Accent glow at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-12"
+          style={{ background: `linear-gradient(to top, ${server.accentColor}18, transparent)` }} />
+      </div>
+
+      {/* Icon + Content area — icon overlaps banner via negative margin */}
+      <div className="px-3 pb-3 flex flex-col gap-2" style={{ marginTop: -28 }}>
+        {/* Server icon — sits above content, overlapping banner */}
+        <div className="flex items-end justify-between mb-1">
           {hasLogo ? (
-            <img
-              src={server.logoUrl}
-              alt={server.name}
-              className="w-14 h-14 rounded-xl object-cover"
-              style={{ border: "3px solid #060b14", boxShadow: "0 4px 12px rgba(0,0,0,0.6)" }}
-            />
+            <div className="relative shrink-0" style={{ width: 56, height: 56 }}>
+              <img
+                src={server.logoUrl}
+                alt={server.name}
+                className="w-full h-full rounded-xl object-cover"
+                style={{ border: "3px solid #060b14", boxShadow: `0 4px 16px rgba(0,0,0,0.7), 0 0 0 1px ${server.accentColor}55` }}
+              />
+            </div>
           ) : (
             <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-[20px]"
-              style={{ background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})`, border: "3px solid #060b14", boxShadow: "0 4px 12px rgba(0,0,0,0.6)" }}
+              className="shrink-0 rounded-xl flex items-center justify-center text-white font-bold text-[20px]"
+              style={{
+                width: 56, height: 56,
+                background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})`,
+                border: "3px solid #060b14",
+                boxShadow: `0 4px 16px rgba(0,0,0,0.7), 0 0 0 1px ${server.accentColor}55`,
+              }}
             >
               {server.name[0]}
             </div>
           )}
-        </div>
-      </div>
 
-      {/* Content */}
-      <div className="px-3 pt-9 pb-3 flex flex-col gap-2">
+          {/* Member stats pill */}
+          {!loading && members !== null && (
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full mb-1"
+              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+              <Users className="w-2.5 h-2.5 text-[#949ba4]" />
+              <span className="text-[10px] font-semibold text-[#949ba4]">{formatCount(members)}</span>
+            </div>
+          )}
+        </div>
+
         {/* Server name */}
         <p className="text-[13px] font-bold text-[#f2f3f5] leading-tight line-clamp-1">{server.name}</p>
 
-        {/* Members row */}
-        <div className="flex items-center gap-3 min-h-[16px]">
+        {/* Online count row */}
+        <div className="flex items-center gap-2 min-h-[16px]">
           {loading && server.guildId ? (
             <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full border border-[#949ba4]/40 border-t-[#949ba4] animate-spin" />
-              <span className="text-[11px] text-[#4e5058]">Loading...</span>
+              <RefreshCw className="w-2.5 h-2.5 text-[#949ba4] animate-spin" />
+              <span className="text-[10px] text-[#4e5058]">Fetching live data…</span>
             </div>
           ) : (
             <>
-              {members !== null && (
-                <div className="flex items-center gap-1">
-                  <Users className="w-3 h-3 text-[#949ba4]" />
-                  <span className="text-[11px] font-semibold text-[#949ba4]">{formatCount(members)} members</span>
-                </div>
-              )}
               {online !== null && (
                 <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 rounded-full bg-[#23a55a]" style={{ boxShadow: "0 0 4px #23a55a" }} />
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#23a55a] opacity-60" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#23a55a]" />
+                  </span>
                   <span className="text-[11px] font-semibold text-[#23a55a]">{formatCount(online)} online</span>
                 </div>
+              )}
+              {isLive && lastUpdated && (
+                <span className="text-[9px] text-[#4e5058] ml-auto">
+                  Updated {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+                </span>
               )}
             </>
           )}
@@ -327,16 +380,16 @@ function ServerCard({ server }: { server: DiscordServer }) {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1">
-          {server.tags.slice(0, 4).map((tag) => (
-            <span key={tag} className="px-1.5 py-0.5 rounded text-[10px] font-medium"
-              style={{ background: "rgba(255,255,255,0.07)", color: "#b5bac1", border: "1px solid rgba(255,255,255,0.08)" }}>
+          {server.tags.slice(0, 3).map((tag) => (
+            <span key={tag} className="px-1.5 py-0.5 rounded-full text-[9px] font-medium tracking-wide"
+              style={{ background: `${server.accentColor}18`, color: server.accentColor, border: `1px solid ${server.accentColor}30` }}>
               {tag}
             </span>
           ))}
-          {server.tags.length > 4 && (
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+          {server.tags.length > 3 && (
+            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-medium"
               style={{ background: "rgba(255,255,255,0.05)", color: "#5e6068", border: "1px solid rgba(255,255,255,0.06)" }}>
-              +{server.tags.length - 4}
+              +{server.tags.length - 3}
             </span>
           )}
         </div>
@@ -346,10 +399,13 @@ function ServerCard({ server }: { server: DiscordServer }) {
           href={server.inviteCode ? `https://discord.gg/${server.inviteCode}` : undefined}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full py-2 rounded-md text-[13px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-1.5 mt-1"
-          style={{ background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})` }}
+          className="w-full py-2 rounded-lg text-[12px] font-bold text-white transition-all hover:brightness-115 hover:scale-[1.02] flex items-center justify-center gap-1.5 mt-1 active:scale-[0.98]"
+          style={{
+            background: `linear-gradient(135deg, ${server.accentColor}cc, ${server.accentColor})`,
+            boxShadow: `0 4px 16px ${server.accentColor}44`,
+          }}
         >
-          Join Server <ExternalLink className="w-3.5 h-3.5" />
+          Join Server <ExternalLink className="w-3 h-3" />
         </a>
       </div>
     </div>
