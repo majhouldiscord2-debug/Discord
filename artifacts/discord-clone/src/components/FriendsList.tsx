@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, MessageCircle, MoreVertical, Search, Video, UserPlus } from "lucide-react";
+import { Users, MessageCircle, MoreVertical, Search, Video, UserPlus, Inbox } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
 import { avatarUrl } from "@/lib/api";
 import { Avatar } from "./Avatar";
@@ -14,7 +14,11 @@ const statusLabels: Record<string, string> = {
   offline: "Offline",
 };
 
-export function FriendsList() {
+interface FriendsListProps {
+  onInboxToggle?: () => void;
+}
+
+export function FriendsList({ onInboxToggle }: FriendsListProps) {
   const { relationships } = useDiscord();
   const [activeTab, setActiveTab] = useState<Tab>("online");
   const [search, setSearch] = useState("");
@@ -50,7 +54,7 @@ export function FriendsList() {
       >
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-[#7d8188]" />
-          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Stats</span>
+          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Friends</span>
         </div>
 
         <div className="w-px h-5 bg-white/10 mx-1" />
@@ -78,16 +82,20 @@ export function FriendsList() {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 ml-2 shrink-0">
+        <div className="flex items-center gap-1 ml-2 shrink-0">
           <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="New Group DM">
             <Video className="w-[18px] h-[18px]" />
           </button>
-          <div className="w-px h-5 bg-white/10" />
-          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
-            <MessageCircle className="w-[18px] h-[18px]" />
+          <div className="w-px h-5 bg-white/10 mx-1" />
+          <button
+            onClick={onInboxToggle}
+            className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8"
+            title="Inbox"
+          >
+            <Inbox className="w-[18px] h-[18px]" />
           </button>
           <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Help">
-            <span className="w-[18px] h-[18px] flex items-center justify-center text-[15px] font-bold">?</span>
+            <span className="w-[18px] h-[18px] flex items-center justify-center text-[15px] font-bold leading-none">?</span>
           </button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Hash, Phone, Video, Pin, Users, Search, Inbox, HelpCircle, AtSign, Smile, Plus, Gift, Sticker, Send, Image as ImageIcon } from "lucide-react";
-import { getChannelMessages, sendMessage, avatarUrl, type DiscordMessage, type DiscordUser, type DiscordChannel, type GuildChannel } from "@/lib/api";
+import { Hash, Phone, Video, Pin, Users, Search, Inbox, HelpCircle, AtSign, Smile, Plus, Gift, Sticker, Send, Image as ImageIcon, X } from "lucide-react";
+import { getChannelMessages, sendMessage, avatarUrl, getPinnedMessages, type DiscordMessage, type DiscordUser, type DiscordChannel, type GuildChannel } from "@/lib/api";
 import { Avatar } from "./Avatar";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ interface ChatViewProps {
   isDm?: boolean;
   dmRecipient?: DiscordUser | null;
   currentUser: DiscordUser | null;
+  onInboxToggle?: () => void;
 }
 
 function formatTime(iso: string) {
@@ -184,17 +185,23 @@ function groupMessages(messages: DiscordMessage[]): MessageGroup2[] {
   return groups;
 }
 
-export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipient, currentUser }: ChatViewProps) {
+export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipient, currentUser, onInboxToggle }: ChatViewProps) {
   const [messages, setMessages] = useState<DiscordMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [draft, setDraft] = useState("");
   const [sending, setSending] = useState(false);
+  const [showPins, setShowPins] = useState(false);
+  const [pins, setPins] = useState<DiscordMessage[]>([]);
+  const [pinsLoading, setPinsLoading] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const shouldScrollRef = useRef(true);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async (prepend = false, beforeId?: string) => {
     if (prepend) setLoadingMore(true);
@@ -274,7 +281,39 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
     }
   }
 
-  const groups = groupMessages(messages);
+  async function handlePinsToggle() {
+    if (showPins) {
+      setShowPins(false);
+      return;
+    }
+    setShowPins(true);
+    setPinsLoading(true);
+    const pinned = await getPinnedMessages(channelId);
+    setPins(pinned);
+    setPinsLoading(false);
+  }
+
+  function handleSearchToggle() {
+    setSearchOpen((prev) => {
+      if (!prev) {
+        setTimeout(() => searchRef.current?.focus(), 50);
+      } else {
+        setSearchQuery("");
+      }
+      return !prev;
+    });
+  }
+
+  function handleCallClick(video = false) {
+    const url = `https://discord.com/channels/@me/${channelId}`;
+    window.open(url, "_blank");
+  }
+
+  const allGroups = groupMessages(messages);
+  const filteredMessages = searchQuery.trim()
+    ? messages.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()))
+    : null;
+  const groups = filteredMessages ? groupMessages(filteredMessages) : allGroups;
   const displayName = dmRecipient
     ? (dmRecipient.global_name ?? dmRecipient.username)
     : `#${channelName}`;
@@ -304,22 +343,73 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
           <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em] truncate">
             {displayName}
           </span>
-          {channelTopic && (
+          {!isDm && channelTopic && (
             <>
               <div className="w-px h-5 bg-white/10 shrink-0" />
               <span className="text-[#7d8188] text-[13px] truncate">{channelTopic}</span>
             </>
           )}
         </div>
+
         <div className="flex items-center gap-1 shrink-0">
-          {!isDm && <IconBtn title="Threads"><Pin className="w-[18px] h-[18px]" /></IconBtn>}
-          <IconBtn title="Member List"><Users className="w-[18px] h-[18px]" /></IconBtn>
-          <IconBtn title="Search"><Search className="w-[18px] h-[18px]" /></IconBtn>
-          {!isDm && <IconBtn title="Inbox"><Inbox className="w-[18px] h-[18px]" /></IconBtn>}
+          {isDm && (
+            <>
+              <IconBtn title="Start Voice Call" onClick={() => handleCallClick(false)}>
+                <Phone className="w-[18px] h-[18px]" />
+              </IconBtn>
+              <IconBtn title="Start Video Call" onClick={() => handleCallClick(true)}>
+                <Video className="w-[18px] h-[18px]" />
+              </IconBtn>
+            </>
+          )}
+          <IconBtn
+            title="Pinned Messages"
+            active={showPins}
+            onClick={handlePinsToggle}
+          >
+            <Pin className="w-[18px] h-[18px]" />
+          </IconBtn>
+          {!isDm && <IconBtn title="Member List"><Users className="w-[18px] h-[18px]" /></IconBtn>}
+          {searchOpen ? (
+            <div className="flex items-center gap-1 bg-[#0d1525] border border-white/10 rounded-[6px] px-2 h-7">
+              <Search className="w-3.5 h-3.5 text-[#7d8188] shrink-0" />
+              <input
+                ref={searchRef}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search messages…"
+                className="bg-transparent text-[13px] text-[#dbdee1] placeholder-[#5e6068] outline-none w-36"
+              />
+              <button onClick={handleSearchToggle} className="text-[#6d6f76] hover:text-[#dbdee1] transition-colors ml-1">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <IconBtn title="Search" onClick={handleSearchToggle}>
+              <Search className="w-[18px] h-[18px]" />
+            </IconBtn>
+          )}
+          <IconBtn
+            title="Inbox"
+            onClick={isDm ? undefined : onInboxToggle}
+          >
+            <Inbox className="w-[18px] h-[18px]" />
+          </IconBtn>
           <IconBtn title="Help"><HelpCircle className="w-[18px] h-[18px]" /></IconBtn>
         </div>
       </div>
 
+      {/* Search active banner */}
+      {searchOpen && searchQuery.trim() && (
+        <div className="px-4 py-1.5 text-[12px] text-[#87898c] shrink-0 flex items-center gap-2" style={{ background: "#0d1525", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+          <Search className="w-3 h-3" />
+          {filteredMessages?.length ?? 0} result{(filteredMessages?.length ?? 0) !== 1 ? "s" : ""} for
+          <span className="text-[#dbdee1] font-semibold">"{searchQuery}"</span>
+        </div>
+      )}
+
+      {/* Messages + Pins Row */}
+      <div className="flex flex-1 min-h-0">
       {/* Messages Area */}
       <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto discord-scrollbar">
         {loadingMore && (
@@ -388,6 +478,66 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
         <div ref={bottomRef} className="h-4" />
       </div>
 
+      {/* Pins Panel */}
+      {showPins && (
+        <div
+          className="w-[320px] shrink-0 h-full flex flex-col border-l border-white/[0.06]"
+          style={{ background: "#080e1c" }}
+        >
+          <div className="h-12 flex items-center px-4 gap-2 shrink-0 border-b border-white/[0.06]">
+            <Pin className="w-4 h-4 text-[#6d6f76]" />
+            <span className="text-[#f2f3f5] font-semibold text-[15px] flex-1">Pinned Messages</span>
+            <button
+              onClick={() => setShowPins(false)}
+              className="w-8 h-8 rounded-[6px] flex items-center justify-center text-[#6d6f76] hover:text-[#dbdee1] hover:bg-white/8 transition-all"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="flex-1 overflow-y-auto discord-scrollbar py-2">
+            {pinsLoading ? (
+              <div className="flex items-center justify-center py-12 gap-2 text-[#4e5058]">
+                <div className="w-4 h-4 rounded-full border-2 border-white/10 border-t-white/50 animate-spin" />
+                <span className="text-[13px]">Loading…</span>
+              </div>
+            ) : pins.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 gap-3 text-[#4e5058] px-6 text-center">
+                <Pin className="w-10 h-10" />
+                <p className="text-[13px] font-medium">No pins yet</p>
+                <p className="text-[12px] text-[#4e5058] leading-relaxed">Right-click a message and choose Pin to pin it here.</p>
+              </div>
+            ) : (
+              pins.map((msg) => {
+                const name = msg.author.global_name ?? msg.author.username;
+                const src = avatarUrl(msg.author);
+                const time = new Date(msg.timestamp).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+                return (
+                  <div key={msg.id} className="px-3 py-2">
+                    <div className="rounded-[8px] p-3" style={{ background: "#0d1525", border: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div className="flex items-start gap-2">
+                        <Avatar initials={name[0]?.toUpperCase() ?? "?"} src={src} color="#5865f2" size="sm" statusBg="#0d1525" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-baseline gap-1.5 mb-0.5">
+                            <span className="text-[13px] font-semibold text-[#f2f3f5]">{name}</span>
+                            <span className="text-[11px] text-[#5e6068]">{time}</span>
+                          </div>
+                          {msg.content ? (
+                            <p className="text-[13px] text-[#dbdee1] leading-snug break-words">{msg.content}</p>
+                          ) : (
+                            <p className="text-[12px] text-[#5e6068] italic">(attachment or embed)</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+      </div>
+
       {/* Input Bar */}
       <div className="shrink-0 px-4 pb-4 pt-2">
         <div
@@ -444,11 +594,17 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
   );
 }
 
-function IconBtn({ children, title }: { children: React.ReactNode; title: string }) {
+function IconBtn({ children, title, active, onClick }: { children: React.ReactNode; title: string; active?: boolean; onClick?: () => void }) {
   return (
     <button
       title={title}
-      className="w-8 h-8 flex items-center justify-center text-[#87898c] hover:text-[#dbdee1] rounded-[6px] hover:bg-white/5 transition-colors"
+      onClick={onClick}
+      className={cn(
+        "w-8 h-8 flex items-center justify-center rounded-[6px] transition-colors",
+        active
+          ? "text-[#f2f3f5] bg-white/10"
+          : "text-[#87898c] hover:text-[#dbdee1] hover:bg-white/5"
+      )}
     >
       {children}
     </button>

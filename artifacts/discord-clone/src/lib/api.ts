@@ -197,6 +197,30 @@ export interface MessageStats {
   guildsSampled: number;
 }
 
+export async function getPinnedMessages(channelId: string): Promise<DiscordMessage[]> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/channels/${channelId}/pins`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch { return []; }
+}
+
+export interface ChannelPreview {
+  channel: DiscordChannel;
+  lastMsg: { id: string; content: string; author: { id: string; username: string; global_name?: string }; timestamp: string } | null;
+  mentions: Array<{ id: string; content: string; author: { id: string; username: string; global_name?: string }; timestamp: string }>;
+}
+
+export async function getChannelPreviews(): Promise<ChannelPreview[]> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/channel-previews`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch { return []; }
+}
+
 export async function getMessageStats(): Promise<MessageStats | null> {
   try {
     const res = await fetch(`${API_BASE}/discord/message-stats`);

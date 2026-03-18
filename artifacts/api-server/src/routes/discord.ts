@@ -224,6 +224,48 @@ router.get("/discord/message-stats", async (_req, res) => {
   }
 });
 
+router.get("/discord/channels/:channelId/pins", async (req, res) => {
+  const auth = await getStoredAuth();
+  if (!auth) return res.status(401).json({ error: "Not authenticated" });
+  const { channelId } = req.params;
+  const result = await discordFetch(`/channels/${channelId}/pins`, auth.token, auth.tokenType);
+  if (!result.ok) return res.status(result.status).json(result.data);
+  return res.json(result.data);
+});
+
+router.get("/discord/channel-previews", async (_req, res) => {
+  const auth = await getStoredAuth();
+  if (!auth) return res.status(401).json({ error: "Not authenticated" });
+  try {
+    const [meResult, chResult] = await Promise.all([
+      discordFetch("/users/@me", auth.token, auth.tokenType),
+      discordFetch("/users/@me/channels", auth.token, auth.tokenType),
+    ]);
+    if (!meResult.ok) return res.status(401).json({ error: "Not authenticated" });
+    const me = meResult.data as { id: string };
+    const channels: Array<{ id: string; type: number; recipients?: Array<{ id: string; username: string; global_name?: string; avatar?: string }>; name?: string }> =
+      Array.isArray(chResult.data) ? chResult.data : [];
+
+    const previews = await Promise.all(
+      channels.slice(0, 25).map(async (ch) => {
+        try {
+          const r = await discordFetchWithRetry(`/channels/${ch.id}/messages?limit=5`, auth.token, auth.tokenType);
+          const msgs: Array<{ id: string; content: string; author: { id: string; username: string; global_name?: string }; timestamp: string }> =
+            Array.isArray(r.data) ? r.data : [];
+          const lastMsg = msgs[0] ?? null;
+          const mentions = msgs.filter((m) => m.content.includes(`<@${me.id}>`) || m.content.includes(`<@!${me.id}>`));
+          return { channel: ch, lastMsg, mentions };
+        } catch {
+          return { channel: ch, lastMsg: null, mentions: [] };
+        }
+      })
+    );
+    return res.json(previews);
+  } catch {
+    return res.status(500).json({ error: "Failed" });
+  }
+});
+
 router.get("/discord/relationships", async (_req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });

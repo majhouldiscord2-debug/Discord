@@ -5,6 +5,7 @@ import { GuildChannelList } from "@/components/GuildChannelList";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
+import { InboxPanel } from "@/components/InboxPanel";
 import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
 import LogsPage from "@/pages/Logs";
@@ -22,6 +23,7 @@ export default function Home() {
 
   const [isBotMode, setIsBotMode] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [inboxOpen, setInboxOpen] = useState(false);
 
   // ── Profile 1 state ─────────────────────────────────────────
   const [p1View, setP1View] = useState<string>("friends");
@@ -125,6 +127,7 @@ export default function Home() {
               channelTopic={activeChannel.topic}
               isDm={false}
               currentUser={user}
+              onInboxToggle={() => setInboxOpen((v) => !v)}
             />
           ) : (
             <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#0a1220" }}>
@@ -139,6 +142,7 @@ export default function Home() {
             isDm={true}
             dmRecipient={dmRecipient}
             currentUser={user}
+            onInboxToggle={() => setInboxOpen((v) => !v)}
           />
         ) : view === "tools" ? (
           <Tools />
@@ -150,8 +154,8 @@ export default function Home() {
           <StatsPage />
         ) : view === "friends" || view === "dm" ? (
           <>
-            <FriendsList />
-            <ActiveNow />
+            <FriendsList onInboxToggle={() => setInboxOpen((v) => !v)} />
+            {!inboxOpen && <ActiveNow />}
           </>
         ) : (
           <div
@@ -161,6 +165,16 @@ export default function Home() {
             <p className="text-[#87898c] text-[15px] font-semibold">Coming soon...</p>
             <p className="text-[#5e6068] text-[13px]">This section isn't available yet.</p>
           </div>
+        )}
+
+        {!isBotMode && inboxOpen && (
+          <InboxPanel
+            onClose={() => setInboxOpen(false)}
+            onOpenDm={(id) => {
+              setInboxOpen(false);
+              handleOpenDm(id);
+            }}
+          />
         )}
       </div>
 
