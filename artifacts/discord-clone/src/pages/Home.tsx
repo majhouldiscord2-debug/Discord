@@ -8,6 +8,8 @@ import { ChatView } from "@/components/ChatView";
 import { InboxPanel } from "@/components/InboxPanel";
 import Tools from "@/pages/Tools";
 import Quests from "@/pages/Quests";
+import ShopPage from "@/pages/Shop";
+import QuestsPage from "@/pages/QuestsPage";
 import LogsPage from "@/pages/Logs";
 import StatsPage from "@/pages/Stats";
 import { SettingsModal } from "@/components/SettingsModal";
@@ -148,6 +150,10 @@ export default function Home() {
           <Tools />
         ) : view === "servers" ? (
           <Quests />
+        ) : view === "shop" ? (
+          <ShopPage />
+        ) : view === "quests" ? (
+          <QuestsPage />
         ) : view === "logs" ? (
           <LogsPage />
         ) : view === "friends" && isBotMode ? (

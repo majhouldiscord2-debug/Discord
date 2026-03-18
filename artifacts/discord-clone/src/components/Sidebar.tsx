@@ -70,8 +70,8 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
               <NavItem icon={<Users className="w-[18px] h-[18px]" />}      label="Friends"          isActive={activeItem === "friends"}  onClick={() => handleNav("friends")} />
               <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />}  label="Message Requests" isActive={activeItem === "requests"}  onClick={() => handleNav("requests")} />
               <NavItem icon={<Sparkles className="w-[18px] h-[18px]" />}   label="Nitro Home"       isActive={activeItem === "nitro"}    onClick={() => handleNav("nitro")} />
-              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop"            isActive={activeItem === "tools"}    onClick={() => handleNav("tools")} />
-              <NavItem icon={<Target className="w-[18px] h-[18px]" />}     label="Quests"           isActive={activeItem === "servers"}  onClick={() => handleNav("servers")} />
+              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop"            isActive={activeItem === "shop"}     onClick={() => handleNav("shop")} />
+              <NavItem icon={<Target className="w-[18px] h-[18px]" />}     label="Quests"           isActive={activeItem === "quests"}   onClick={() => handleNav("quests")} />
             </>
           )}
         </div>
