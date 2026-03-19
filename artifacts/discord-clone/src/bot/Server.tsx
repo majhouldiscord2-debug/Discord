@@ -26,7 +26,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1313625670026530866/a_7343ae11d606e8f1bf0d93e4f455dec6.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1313625670026530866/3aea8efe6a269342e8f5b90accb9f542.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community", "Values"],
-    accentColor: "#f59e0b",
+    accentColor: "#f97316",
     inviteCode: "bloxfruits",
   },
   {
@@ -37,7 +37,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1027544757037187163/a_834fcd58857a954c7174b568b3aef3ee.gif?size=1024",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1027544757037187163/696d6c009213a2a8627a86c20440014e.jpg?size=2048",
     tags: ["Blox Fruits", "Grow a Garden", "MM2", "Rell Seas", "Trading", "Roblox", "Giveaways"],
-    accentColor: "#a78bfa",
+    accentColor: "#f43f5e",
     inviteCode: "bloxzy",
   },
   {
@@ -48,7 +48,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/832747824209985627/a_059629254114b7902dac38a7dbf6cebb.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/832747824209985627/08857be2502da29471ff4221d585893a.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community"],
-    accentColor: "#06b6d4",
+    accentColor: "#38bdf8",
     inviteCode: "kitt",
   },
   {
@@ -59,7 +59,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1038285058299154442/a_83a67a2e419e7b8d9f11c6e5064df211.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1038285058299154442/f55081c6ed964cf7fd96b0a1d0b00b50.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community", "Stock Notifier"],
-    accentColor: "#7c3aed",
+    accentColor: "#c026d3",
     inviteCode: "tradings",
   },
   {
@@ -70,7 +70,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1319086573077270639/a_52b594a4f04977dca786fa11f80bb485.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1319086573077270639/56ccf77fc2aa7d20f874ac5ae10b4731.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community"],
-    accentColor: "#22c55e",
+    accentColor: "#10b981",
     inviteCode: "bfcs",
   },
   {
@@ -81,7 +81,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/970643838047760384/a_dfde37bbeea4619613be9f22e40a7044.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/970643838047760384/28ac611e27ebeb9dc2f53be25fa11ba1.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community"],
-    accentColor: "#ef4444",
+    accentColor: "#e11d48",
     inviteCode: "bloxtrade",
   },
   {
@@ -92,7 +92,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/586704051148816385/c15726a644529ca99c2052ee4117be73.png?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/586704051148816385/8d9f4e10f9394ee7d8ba90bec94ef2a0.jpg?size=2048",
     tags: ["Blox Fruits", "Official", "Roblox", "Community"],
-    accentColor: "#f59e0b",
+    accentColor: "#4ade80",
     inviteCode: "bloxfruits",
   },
   {
@@ -103,7 +103,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/992282055494881411/20171f8b7fb7fd9897992e223196f93d.png?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/992282055494881411/64094f68f1a456552bc030bd00726fd8.jpg?size=2048",
     tags: ["Blox Fruits", "Dragon Talon", "Roblox", "Trading", "Community"],
-    accentColor: "#f97316",
+    accentColor: "#fb923c",
     inviteCode: "uzoth",
   },
   {
@@ -114,7 +114,7 @@ const SERVERS: DiscordServer[] = [
     logoUrl: "https://cdn.discordapp.com/icons/1137103140496351352/a_2b45cdec63ebc7fc87fbb13e81073aa2.gif?size=2048",
     bannerUrl: "https://cdn.discordapp.com/discovery-splashes/1137103140496351352/4d3cabe3b74368e6b2c9d1a2b85b8407.jpg?size=2048",
     tags: ["Blox Fruits", "Trading", "Roblox", "Giveaways", "Community"],
-    accentColor: "#3b82f6",
+    accentColor: "#6366f1",
     inviteCode: "bloxfruit",
   },
 ];
@@ -294,33 +294,33 @@ function ServerCard({ server }: { server: DiscordServer }) {
     <div
       className="rounded-xl flex flex-col transition-all duration-200"
       style={{
-        backgroundColor: "#060b14",
-        border: `1px solid ${server.accentColor}28`,
-        boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
+        background: `linear-gradient(180deg, ${server.accentColor}18 0%, #060b14 55%)`,
+        border: `1px solid ${server.accentColor}35`,
+        boxShadow: `0 2px 20px rgba(0,0,0,0.4), 0 0 30px ${server.accentColor}0a`,
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "translateY(-3px)";
-        el.style.boxShadow = `0 10px 36px rgba(0,0,0,0.55), 0 0 0 1px ${server.accentColor}44`;
-        el.style.borderColor = `${server.accentColor}55`;
+        el.style.boxShadow = `0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px ${server.accentColor}55, 0 0 40px ${server.accentColor}15`;
+        el.style.borderColor = `${server.accentColor}60`;
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "";
-        el.style.boxShadow = "0 2px 16px rgba(0,0,0,0.35)";
-        el.style.borderColor = `${server.accentColor}28`;
+        el.style.boxShadow = `0 2px 20px rgba(0,0,0,0.4), 0 0 30px ${server.accentColor}0a`;
+        el.style.borderColor = `${server.accentColor}35`;
       }}
     >
-      {/* Banner — taller, no overlaid buttons */}
+      {/* Banner */}
       <div className="relative rounded-t-xl overflow-hidden shrink-0" style={{ height: 150 }}>
         {hasBanner ? (
           <img src={server.bannerUrl} alt="" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full" style={{ background: DEFAULT_BANNER }} />
         )}
-        {/* gradient fade toward bottom */}
+        {/* seamless fade from banner into the tinted card body */}
         <div className="absolute inset-0"
-          style={{ background: `linear-gradient(to bottom, transparent 30%, ${server.accentColor}22 80%, #060b14 100%)` }} />
+          style={{ background: `linear-gradient(to bottom, transparent 35%, ${server.accentColor}30 75%, ${server.accentColor}18 100%)` }} />
       </div>
 
       {/* Icon + Content — icon floats up over banner */}
