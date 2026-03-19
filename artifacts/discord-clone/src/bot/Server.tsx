@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, MoreHorizontal, Server, ArrowUpRight, X, Users, ExternalLink, RefreshCw } from "lucide-react";
+import { ChevronDown, Server, ArrowUpRight, X, Users, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DiscordServer {
@@ -160,7 +160,6 @@ function useDiscordWidget(guildId?: string) {
   const [memberCount, setMemberCount] = useState<number | null>(null);
   const [onlineCount, setOnlineCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!guildId) { setLoading(false); return; }
@@ -182,7 +181,6 @@ function useDiscordWidget(guildId?: string) {
       } catch {}
 
       setLoading(false);
-      setLastUpdated(new Date());
     }
 
     fetchData();
@@ -190,7 +188,7 @@ function useDiscordWidget(guildId?: string) {
     return () => clearInterval(interval);
   }, [guildId]);
 
-  return { memberCount, onlineCount, loading, lastUpdated };
+  return { memberCount, onlineCount, loading };
 }
 
 function formatCount(n: number): string {
@@ -286,79 +284,60 @@ function TagsDropdown({ selected, onChange }: { selected: Set<string>; onChange:
 }
 
 function ServerCard({ server }: { server: DiscordServer }) {
-  const { memberCount: widgetMembers, onlineCount: widgetOnline, loading, lastUpdated } = useDiscordWidget(server.guildId);
+  const { memberCount: widgetMembers, onlineCount: widgetOnline, loading } = useDiscordWidget(server.guildId);
   const members = widgetMembers ?? server.memberCount ?? null;
   const online = widgetOnline ?? server.onlineCount ?? null;
   const hasBanner = !!server.bannerUrl;
   const hasLogo = !!server.logoUrl;
-  const isLive = !!server.guildId;
 
   return (
     <div
-      className="rounded-xl flex flex-col transition-all duration-200 group"
+      className="rounded-xl flex flex-col transition-all duration-200"
       style={{
         backgroundColor: "#060b14",
-        border: "1px solid rgba(255,255,255,0.08)",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.3)",
+        border: `1px solid ${server.accentColor}28`,
+        boxShadow: "0 2px 16px rgba(0,0,0,0.35)",
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement;
-        el.style.transform = "translateY(-4px)";
-        el.style.boxShadow = `0 12px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.13), 0 0 24px ${server.accentColor}22`;
-        el.style.borderColor = `${server.accentColor}44`;
+        el.style.transform = "translateY(-3px)";
+        el.style.boxShadow = `0 10px 36px rgba(0,0,0,0.55), 0 0 0 1px ${server.accentColor}44`;
+        el.style.borderColor = `${server.accentColor}55`;
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "";
-        el.style.boxShadow = "0 2px 12px rgba(0,0,0,0.3)";
-        el.style.borderColor = "rgba(255,255,255,0.08)";
+        el.style.boxShadow = "0 2px 16px rgba(0,0,0,0.35)";
+        el.style.borderColor = `${server.accentColor}28`;
       }}
     >
-      {/* Banner */}
-      <div className="relative rounded-t-xl overflow-hidden shrink-0" style={{ height: 130 }}>
+      {/* Banner — taller, no overlaid buttons */}
+      <div className="relative rounded-t-xl overflow-hidden shrink-0" style={{ height: 150 }}>
         {hasBanner ? (
           <img src={server.bannerUrl} alt="" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full" style={{ background: DEFAULT_BANNER }} />
         )}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, transparent 20%, rgba(6,11,20,0.85) 100%)" }} />
-
-        {/* Top-right controls */}
-        <div className="absolute top-2 right-2 flex items-center gap-1.5">
-          {isLive && (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
-              style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#23a55a] opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#23a55a]" />
-              </span>
-              <span className="text-[9px] font-bold text-[#23a55a] tracking-wide uppercase">Live</span>
-            </div>
-          )}
-          <button className="w-6 h-6 rounded-full flex items-center justify-center text-white transition-colors"
-            style={{ background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)" }}>
-            <MoreHorizontal className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Accent glow at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-12"
-          style={{ background: `linear-gradient(to top, ${server.accentColor}18, transparent)` }} />
+        {/* gradient fade toward bottom */}
+        <div className="absolute inset-0"
+          style={{ background: `linear-gradient(to bottom, transparent 30%, ${server.accentColor}22 80%, #060b14 100%)` }} />
       </div>
 
-      {/* Icon + Content area — icon overlaps banner via negative margin */}
+      {/* Icon + Content — icon floats up over banner */}
       <div className="px-3 pb-3 flex flex-col gap-2" style={{ marginTop: -28 }}>
-        {/* Server icon — sits above content, overlapping banner */}
-        <div className="flex items-end justify-between mb-1">
+        {/* Icon row */}
+        <div className="flex items-end gap-2 mb-1">
           {hasLogo ? (
-            <div className="relative shrink-0" style={{ width: 56, height: 56 }}>
-              <img
-                src={server.logoUrl}
-                alt={server.name}
-                className="w-full h-full rounded-xl object-cover"
-                style={{ border: "3px solid #060b14", boxShadow: `0 4px 16px rgba(0,0,0,0.7), 0 0 0 1px ${server.accentColor}55` }}
-              />
-            </div>
+            <img
+              src={server.logoUrl}
+              alt={server.name}
+              className="rounded-xl object-cover shrink-0"
+              style={{
+                width: 56, height: 56,
+                border: `3px solid #060b14`,
+                boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
+              }}
+            />
           ) : (
             <div
               className="shrink-0 rounded-xl flex items-center justify-center text-white font-bold text-[20px]"
@@ -366,51 +345,35 @@ function ServerCard({ server }: { server: DiscordServer }) {
                 width: 56, height: 56,
                 background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})`,
                 border: "3px solid #060b14",
-                boxShadow: `0 4px 16px rgba(0,0,0,0.7), 0 0 0 1px ${server.accentColor}55`,
+                boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
               }}
             >
               {server.name[0]}
             </div>
           )}
-
-          {/* Member stats pill */}
-          {!loading && members !== null && (
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full mb-1"
-              style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-              <Users className="w-2.5 h-2.5 text-[#949ba4]" />
-              <span className="text-[10px] font-semibold text-[#949ba4]">{formatCount(members)}</span>
-            </div>
-          )}
         </div>
 
         {/* Server name */}
-        <p className="text-[13px] font-bold text-[#f2f3f5] leading-tight line-clamp-1">{server.name}</p>
+        <p className="text-[13px] font-bold text-[#f2f3f5] leading-snug line-clamp-1">{server.name}</p>
 
-        {/* Online count row */}
-        <div className="flex items-center gap-2 min-h-[16px]">
+        {/* Online count */}
+        <div className="flex items-center gap-2 min-h-[14px]">
           {loading && server.guildId ? (
-            <div className="flex items-center gap-1.5">
-              <RefreshCw className="w-2.5 h-2.5 text-[#949ba4] animate-spin" />
-              <span className="text-[10px] text-[#4e5058]">Fetching live data…</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-[#4e5058] animate-pulse" />
+              <span className="text-[10px] text-[#4e5058]">Loading…</span>
             </div>
-          ) : (
-            <>
-              {online !== null && (
-                <div className="flex items-center gap-1">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#23a55a] opacity-60" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#23a55a]" />
-                  </span>
-                  <span className="text-[11px] font-semibold text-[#23a55a]">{formatCount(online)} online</span>
-                </div>
-              )}
-              {isLive && lastUpdated && (
-                <span className="text-[9px] text-[#4e5058] ml-auto">
-                  Updated {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                </span>
-              )}
-            </>
-          )}
+          ) : online !== null ? (
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-[#23a55a]" style={{ boxShadow: "0 0 5px #23a55a" }} />
+              <span className="text-[11px] font-semibold text-[#23a55a]">{formatCount(online)} online</span>
+            </div>
+          ) : members !== null ? (
+            <div className="flex items-center gap-1">
+              <Users className="w-3 h-3 text-[#949ba4]" />
+              <span className="text-[11px] font-semibold text-[#949ba4]">{formatCount(members)} members</span>
+            </div>
+          ) : null}
         </div>
 
         {/* Description */}
@@ -419,28 +382,28 @@ function ServerCard({ server }: { server: DiscordServer }) {
         {/* Tags */}
         <div className="flex flex-wrap gap-1">
           {server.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="px-1.5 py-0.5 rounded-full text-[9px] font-medium tracking-wide"
-              style={{ background: `${server.accentColor}18`, color: server.accentColor, border: `1px solid ${server.accentColor}30` }}>
+            <span key={tag} className="px-1.5 py-0.5 rounded text-[9px] font-medium"
+              style={{ background: `${server.accentColor}18`, color: server.accentColor, border: `1px solid ${server.accentColor}28` }}>
               {tag}
             </span>
           ))}
           {server.tags.length > 3 && (
-            <span className="px-1.5 py-0.5 rounded-full text-[9px] font-medium"
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-medium"
               style={{ background: "rgba(255,255,255,0.05)", color: "#5e6068", border: "1px solid rgba(255,255,255,0.06)" }}>
               +{server.tags.length - 3}
             </span>
           )}
         </div>
 
-        {/* Join button */}
+        {/* Join button — full accent color */}
         <a
           href={server.inviteCode ? `https://discord.gg/${server.inviteCode}` : undefined}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full py-2 rounded-lg text-[12px] font-bold text-white transition-all hover:brightness-115 hover:scale-[1.02] flex items-center justify-center gap-1.5 mt-1 active:scale-[0.98]"
+          className="w-full py-2 rounded-lg text-[12px] font-bold text-white transition-all hover:brightness-110 hover:scale-[1.01] flex items-center justify-center gap-1.5 mt-1 active:scale-[0.98]"
           style={{
-            background: `linear-gradient(135deg, ${server.accentColor}cc, ${server.accentColor})`,
-            boxShadow: `0 4px 16px ${server.accentColor}44`,
+            background: server.accentColor,
+            boxShadow: `0 4px 18px ${server.accentColor}50`,
           }}
         >
           Join Server <ExternalLink className="w-3 h-3" />
