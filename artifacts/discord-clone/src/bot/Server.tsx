@@ -324,7 +324,7 @@ function ServerCard({ server }: { server: DiscordServer }) {
       </div>
 
       {/* Icon + Content — icon floats up over banner */}
-      <div className="px-3 pb-3 flex flex-col gap-2" style={{ marginTop: -28 }}>
+      <div className="px-3 pb-3 flex flex-col gap-2" style={{ marginTop: -28, position: "relative", zIndex: 1 }}>
         {/* Icon row */}
         <div className="flex items-end gap-2 mb-1">
           {hasLogo ? (
@@ -336,6 +336,8 @@ function ServerCard({ server }: { server: DiscordServer }) {
                 width: 56, height: 56,
                 border: `3px solid #060b14`,
                 boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
+                position: "relative",
+                zIndex: 2,
               }}
             />
           ) : (
@@ -346,6 +348,8 @@ function ServerCard({ server }: { server: DiscordServer }) {
                 background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})`,
                 border: "3px solid #060b14",
                 boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
+                position: "relative",
+                zIndex: 2,
               }}
             >
               {server.name[0]}
