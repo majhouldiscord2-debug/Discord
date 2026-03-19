@@ -9,6 +9,7 @@ import ToolsPage from "@/bot/Tools";
 import ServerPage from "@/bot/Server";
 import LogsPage from "@/bot/Logs";
 import StatsPage from "@/bot/Stats";
+import SkillsPage from "@/bot/Skills";
 import type { DiscordGuild, GuildChannel } from "@/lib/api";
 
 interface BotHomeProps {
@@ -97,6 +98,8 @@ export default function BotHome({ onSwitchMode }: BotHomeProps) {
           <ServerPage />
         ) : view === "logs" ? (
           <LogsPage />
+        ) : view === "skills" ? (
+          <SkillsPage />
         ) : view === "friends" ? (
           <StatsPage />
         ) : (

@@ -10,6 +10,7 @@ import { SettingsModal } from "@/components/SettingsModal";
 import { useDiscord } from "@/hooks/useDiscord";
 import ShopPage from "@/discord/Shop";
 import QuestsPage from "@/discord/Quests";
+import MessageRequestsPage from "@/discord/MessageRequests";
 import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
 
 interface DiscordHomeProps {
@@ -118,6 +119,8 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           <ShopPage />
         ) : view === "quests" ? (
           <QuestsPage />
+        ) : view === "requests" ? (
+          <MessageRequestsPage />
         ) : view === "friends" || view === "dm" ? (
           <>
             <FriendsList onInboxToggle={() => setInboxOpen((v) => !v)} />
