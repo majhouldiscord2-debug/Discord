@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Zap, MessageSquare, Users, Shield, Bot, Cpu, Radio, GitBranch, RefreshCw, Globe, Lock, Activity, ChevronRight, Star } from "lucide-react";
+import {
+  Shield, MessageSquare, UserCheck, Bell, BarChart2, Gift,
+  Star, Ticket, Music, Zap, Trophy, BookOpen, Hash, Clock,
+} from "lucide-react";
 
 interface Skill {
   id: number;
@@ -17,163 +20,175 @@ interface Skill {
 const SKILLS: Skill[] = [
   {
     id: 1,
-    name: "Auto Responder",
-    description: "Automatically replies to messages matching custom trigger words or patterns. Supports regex, wildcards, and rich embeds.",
-    category: "Messaging",
+    name: "Auto Moderator",
+    description: "Automatically detects and removes spam, hate speech, and rule-breaking content. Configurable filters with custom word lists, link detection, and invite blocking.",
+    category: "Moderation",
+    level: "Advanced",
+    icon: <Shield className="w-5 h-5" />,
+    accentColor: "#22c55e",
+    enabled: true,
+    tags: ["Spam", "Filter", "Auto-delete"],
+    stats: [{ label: "Messages filtered", value: "2.1K" }, { label: "False positives", value: "0.3%" }],
+  },
+  {
+    id: 2,
+    name: "Welcome Messages",
+    description: "Greets new members with a personalized welcome message in a designated channel or DM. Supports embed formatting, custom images, and member count display.",
+    category: "Onboarding",
     level: "Basic",
     icon: <MessageSquare className="w-5 h-5" />,
     accentColor: "#5865f2",
     enabled: true,
-    tags: ["DM", "Channel", "Regex"],
-    stats: [{ label: "Triggers", value: "12" }, { label: "Fired today", value: "847" }],
-  },
-  {
-    id: 2,
-    name: "Mass DM",
-    description: "Send personalized direct messages to a list of users. Supports variable interpolation, delays, and rate-limit bypassing.",
-    category: "Messaging",
-    level: "Advanced",
-    icon: <Radio className="w-5 h-5" />,
-    accentColor: "#f43f5e",
-    enabled: false,
-    tags: ["DM", "Bulk", "Rate-limit"],
-    stats: [{ label: "Sent", value: "4.2K" }, { label: "Open rate", value: "68%" }],
+    tags: ["Greet", "Embed", "DM"],
+    stats: [{ label: "Members greeted", value: "847" }, { label: "DM open rate", value: "61%" }],
   },
   {
     id: 3,
-    name: "Guild Joiner",
-    description: "Automatically joins Discord servers using invite codes. Supports invite rotation, cooldown management, and join verification bypass.",
-    category: "Servers",
-    level: "Advanced",
-    icon: <Users className="w-5 h-5" />,
+    name: "Reaction Roles",
+    description: "Let members self-assign roles by reacting to designated messages. Supports single-choice or multi-role setups with optional cooldown between changes.",
+    category: "Roles",
+    level: "Basic",
+    icon: <UserCheck className="w-5 h-5" />,
     accentColor: "#06b6d4",
     enabled: true,
-    tags: ["Invite", "Auto-join", "Rotation"],
-    stats: [{ label: "Joined", value: "312" }, { label: "Invites queued", value: "58" }],
+    tags: ["Roles", "Reactions", "Self-assign"],
+    stats: [{ label: "Roles assigned", value: "3.4K" }, { label: "Active menus", value: "5" }],
   },
   {
     id: 4,
-    name: "Anti-Raid Shield",
-    description: "Detects and neutralizes raid patterns in real time. Automatically bans, kicks, or mutes mass-join waves before they cause damage.",
-    category: "Security",
-    level: "Expert",
-    icon: <Shield className="w-5 h-5" />,
-    accentColor: "#22c55e",
-    enabled: true,
-    tags: ["Protection", "Auto-ban", "Detection"],
-    stats: [{ label: "Raids blocked", value: "7" }, { label: "Accounts flagged", value: "1.1K" }],
+    name: "Announcement Scheduler",
+    description: "Schedule messages and announcements to be sent automatically at a specific time. Supports recurring messages, embeds, and role pings.",
+    category: "Messaging",
+    level: "Advanced",
+    icon: <Bell className="w-5 h-5" />,
+    accentColor: "#f59e0b",
+    enabled: false,
+    tags: ["Schedule", "Ping", "Recurring"],
+    stats: [{ label: "Messages sent", value: "128" }, { label: "Scheduled", value: "12" }],
   },
   {
     id: 5,
-    name: "Token Checker",
-    description: "Validates Discord tokens in bulk and returns account info including creation date, Nitro status, phone verification, and guilds.",
-    category: "Tools",
+    name: "Server Analytics",
+    description: "Track member growth, message activity, popular channels, and engagement metrics over time. View trends with daily, weekly, and monthly breakdowns.",
+    category: "Insights",
     level: "Expert",
-    icon: <Lock className="w-5 h-5" />,
-    accentColor: "#f59e0b",
-    enabled: false,
-    tags: ["Token", "Validation", "Nitro"],
-    stats: [{ label: "Checked", value: "9.8K" }, { label: "Valid", value: "3.4K" }],
+    icon: <BarChart2 className="w-5 h-5" />,
+    accentColor: "#8b5cf6",
+    enabled: true,
+    tags: ["Stats", "Growth", "Activity"],
+    stats: [{ label: "Data points", value: "18K" }, { label: "Active since", value: "90d" }],
   },
   {
     id: 6,
-    name: "Webhook Spammer",
-    description: "Delivers high-volume messages through Discord webhooks with custom embed support, avatar cycling, and username rotation.",
-    category: "Messaging",
-    level: "Advanced",
-    icon: <Zap className="w-5 h-5" />,
-    accentColor: "#a855f7",
+    name: "Giveaway Manager",
+    description: "Run fair giveaways with automatic winner selection, role requirements, and re-roll support. Members enter by reacting and winners are announced automatically.",
+    category: "Engagement",
+    level: "Basic",
+    icon: <Gift className="w-5 h-5" />,
+    accentColor: "#ec4899",
     enabled: false,
-    tags: ["Webhook", "Embed", "Rotation"],
-    stats: [{ label: "Messages sent", value: "22K" }, { label: "Webhooks active", value: "14" }],
+    tags: ["Giveaway", "Random", "Reactions"],
+    stats: [{ label: "Giveaways run", value: "14" }, { label: "Unique winners", value: "14" }],
   },
   {
     id: 7,
-    name: "Status Rotator",
-    description: "Cycles through custom statuses and activity types on a timer. Supports custom emoji, Spotify spoofing, and game activity display.",
-    category: "Stealth",
-    level: "Basic",
-    icon: <RefreshCw className="w-5 h-5" />,
-    accentColor: "#10b981",
+    name: "Leveling & XP",
+    description: "Reward active members with XP for sending messages. Display leaderboards, assign level-up roles automatically, and customize XP multipliers per channel.",
+    category: "Engagement",
+    level: "Advanced",
+    icon: <Trophy className="w-5 h-5" />,
+    accentColor: "#f97316",
     enabled: true,
-    tags: ["Status", "Activity", "Stealth"],
-    stats: [{ label: "Statuses", value: "8" }, { label: "Cycle interval", value: "30s" }],
+    tags: ["XP", "Levels", "Leaderboard"],
+    stats: [{ label: "Active users", value: "312" }, { label: "Top level", value: "47" }],
   },
   {
     id: 8,
-    name: "Scraper",
-    description: "Extracts member lists, message history, and metadata from any accessible server. Exports to JSON or CSV with filtering options.",
-    category: "Tools",
-    level: "Expert",
-    icon: <GitBranch className="w-5 h-5" />,
-    accentColor: "#fb923c",
+    name: "Ticket System",
+    description: "Create a private support ticket channel for each user request. Includes staff assignment, transcripts, category routing, and auto-close on inactivity.",
+    category: "Support",
+    level: "Advanced",
+    icon: <Ticket className="w-5 h-5" />,
+    accentColor: "#14b8a6",
     enabled: false,
-    tags: ["Members", "Export", "History"],
-    stats: [{ label: "Records scraped", value: "180K" }, { label: "Last run", value: "2h ago" }],
+    tags: ["Support", "Tickets", "Staff"],
+    stats: [{ label: "Tickets opened", value: "203" }, { label: "Avg. resolution", value: "4h" }],
   },
   {
     id: 9,
-    name: "AI Chat Agent",
-    description: "Runs a local AI persona inside any channel or DM. Generates context-aware replies, bypasses spam filters, and mimics human typing patterns.",
-    category: "AI",
-    level: "Expert",
-    icon: <Cpu className="w-5 h-5" />,
-    accentColor: "#6366f1",
-    enabled: false,
-    tags: ["AI", "ChatBot", "Human-like"],
-    stats: [{ label: "Messages handled", value: "5.6K" }, { label: "Avg response", value: "1.2s" }],
+    name: "Starboard",
+    description: "Highlight the best messages in a dedicated channel when they reach a configurable number of ⭐ reactions. Encourages quality content from your community.",
+    category: "Engagement",
+    level: "Basic",
+    icon: <Star className="w-5 h-5" />,
+    accentColor: "#eab308",
+    enabled: true,
+    tags: ["Stars", "Highlight", "Content"],
+    stats: [{ label: "Posts starred", value: "89" }, { label: "Reaction threshold", value: "5" }],
   },
   {
     id: 10,
-    name: "Proxy Router",
-    description: "Routes all bot traffic through a rotating residential proxy pool. Prevents IP bans and rate-limit aggregation across accounts.",
-    category: "Stealth",
+    name: "Music Player",
+    description: "Stream high-quality audio from YouTube, Spotify, and SoundCloud directly in voice channels. Supports queues, playlists, voting skip, and equalizer settings.",
+    category: "Entertainment",
     level: "Expert",
-    icon: <Globe className="w-5 h-5" />,
-    accentColor: "#38bdf8",
-    enabled: true,
-    tags: ["Proxy", "Stealth", "Residential"],
-    stats: [{ label: "IPs in pool", value: "240" }, { label: "Rotations/hr", value: "48" }],
+    icon: <Music className="w-5 h-5" />,
+    accentColor: "#10b981",
+    enabled: false,
+    tags: ["Music", "Voice", "Queue"],
+    stats: [{ label: "Songs played", value: "1.8K" }, { label: "Queue max", value: "200" }],
   },
   {
     id: 11,
-    name: "Activity Faker",
-    description: "Simulates realistic user activity including typing indicators, read receipts, and online presence to avoid detection algorithms.",
-    category: "Stealth",
-    level: "Advanced",
-    icon: <Activity className="w-5 h-5" />,
-    accentColor: "#e879f9",
-    enabled: true,
-    tags: ["Stealth", "Typing", "Presence"],
-    stats: [{ label: "Sessions faked", value: "1.2K" }, { label: "Detection rate", value: "0%" }],
+    name: "Poll Creator",
+    description: "Create interactive polls with multiple choice options, time limits, and live result display. Supports anonymous voting and results export.",
+    category: "Engagement",
+    level: "Basic",
+    icon: <Hash className="w-5 h-5" />,
+    accentColor: "#6366f1",
+    enabled: false,
+    tags: ["Poll", "Vote", "Results"],
+    stats: [{ label: "Polls created", value: "34" }, { label: "Total votes", value: "2.2K" }],
   },
   {
     id: 12,
-    name: "Self Bot",
-    description: "Full self-bot framework with command prefix, plugin loader, and hotkey bindings. Runs invisibly alongside your Discord client.",
-    category: "AI",
-    level: "Expert",
-    icon: <Bot className="w-5 h-5" />,
-    accentColor: "#f97316",
-    enabled: false,
-    tags: ["Self-bot", "Commands", "Plugins"],
-    stats: [{ label: "Commands loaded", value: "34" }, { label: "Plugins", value: "9" }],
+    name: "Auto Role",
+    description: "Automatically assign roles to new members on join, after a set time delay, or based on verification completion. Supports tiered role progressions.",
+    category: "Roles",
+    level: "Basic",
+    icon: <Zap className="w-5 h-5" />,
+    accentColor: "#f43f5e",
+    enabled: true,
+    tags: ["Roles", "Auto-assign", "New members"],
+    stats: [{ label: "Roles assigned", value: "847" }, { label: "Delay", value: "10m" }],
   },
   {
     id: 13,
-    name: "hCaptcha Solver",
-    description: "Automatically solves hCaptcha challenges in real time using AI vision models. Bypasses Discord's verification gates with a high solve rate and low detection footprint.",
-    category: "Security",
-    level: "Expert",
-    icon: <Shield className="w-5 h-5" />,
-    accentColor: "#eab308",
+    name: "Server Rules",
+    description: "Post and manage your server rules with a built-in rule builder. Members can acknowledge the rules through a button to receive a verified member role.",
+    category: "Onboarding",
+    level: "Basic",
+    icon: <BookOpen className="w-5 h-5" />,
+    accentColor: "#38bdf8",
+    enabled: true,
+    tags: ["Rules", "Verification", "Onboarding"],
+    stats: [{ label: "Verified members", value: "612" }, { label: "Acceptance rate", value: "94%" }],
+  },
+  {
+    id: 14,
+    name: "Slowmode Manager",
+    description: "Dynamically adjust channel slowmode based on message volume. Automatically increases slowmode during message spikes to prevent flooding and reduce noise.",
+    category: "Moderation",
+    level: "Advanced",
+    icon: <Clock className="w-5 h-5" />,
+    accentColor: "#a78bfa",
     enabled: false,
-    tags: ["Captcha", "Bypass", "AI Vision"],
-    stats: [{ label: "Solve rate", value: "97.4%" }, { label: "Avg time", value: "1.8s" }],
+    tags: ["Slowmode", "Flood", "Dynamic"],
+    stats: [{ label: "Activations", value: "47" }, { label: "Avg slowmode", value: "8s" }],
   },
 ];
 
-const CATEGORIES = ["All", "Messaging", "Servers", "Security", "Tools", "Stealth", "AI"];
+const CATEGORIES = ["All", "Moderation", "Onboarding", "Roles", "Messaging", "Insights", "Engagement", "Support", "Entertainment"];
 const LEVELS = ["All", "Basic", "Advanced", "Expert"];
 
 const LEVEL_COLORS: Record<string, string> = {
@@ -204,7 +219,6 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
         el.style.borderColor = `${skill.accentColor}30`;
       }}
     >
-      {/* Header row */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <div className="rounded-lg p-2 shrink-0" style={{ background: `${skill.accentColor}20`, color: skill.accentColor }}>
@@ -213,16 +227,16 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
           <div>
             <p className="text-[13px] font-bold text-[#f2f3f5] leading-tight">{skill.name}</p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
-                style={{ background: `${LEVEL_COLORS[skill.level]}18`, color: LEVEL_COLORS[skill.level] }}>
+              <span
+                className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
+                style={{ background: `${LEVEL_COLORS[skill.level]}18`, color: LEVEL_COLORS[skill.level] }}
+              >
                 {skill.level}
               </span>
               <span className="text-[10px] text-[#4e5058]">{skill.category}</span>
             </div>
           </div>
         </div>
-
-        {/* Toggle */}
         <button
           onClick={() => onToggle(skill.id)}
           className="shrink-0 rounded-full transition-all duration-300 relative"
@@ -234,19 +248,13 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
         >
           <div
             className="absolute top-0.5 rounded-full bg-white transition-all duration-300"
-            style={{
-              width: 16, height: 16,
-              left: skill.enabled ? "calc(100% - 18px)" : 2,
-              boxShadow: "0 1px 4px rgba(0,0,0,0.4)",
-            }}
+            style={{ width: 16, height: 16, left: skill.enabled ? "calc(100% - 18px)" : 2, boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }}
           />
         </button>
       </div>
 
-      {/* Description */}
       <p className="text-[11px] text-[#949ba4] leading-relaxed line-clamp-2">{skill.description}</p>
 
-      {/* Stats */}
       {skill.stats && (
         <div className="flex gap-3">
           {skill.stats.map((s) => (
@@ -258,11 +266,13 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
         </div>
       )}
 
-      {/* Tags */}
       <div className="flex flex-wrap gap-1">
         {skill.tags.map((tag) => (
-          <span key={tag} className="px-1.5 py-0.5 rounded text-[9px] font-medium"
-            style={{ background: `${skill.accentColor}15`, color: skill.accentColor, border: `1px solid ${skill.accentColor}25` }}>
+          <span
+            key={tag}
+            className="px-1.5 py-0.5 rounded text-[9px] font-medium"
+            style={{ background: `${skill.accentColor}15`, color: skill.accentColor, border: `1px solid ${skill.accentColor}25` }}
+          >
             {tag}
           </span>
         ))}
@@ -277,7 +287,7 @@ export default function SkillsPage() {
   const [activeLevel, setActiveLevel] = useState("All");
 
   function toggleSkill(id: number) {
-    setSkills((prev) => prev.map((s) => s.id === id ? { ...s, enabled: !s.enabled } : s));
+    setSkills((prev) => prev.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)));
   }
 
   const filtered = skills.filter((s) => {
@@ -290,7 +300,6 @@ export default function SkillsPage() {
 
   return (
     <div className="flex-1 h-full flex flex-col overflow-hidden" style={{ backgroundColor: "#0a0f1e" }}>
-      {/* Header */}
       <div className="px-6 pt-5 pb-4 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
         <div className="flex items-center justify-between mb-3">
           <div>
@@ -304,7 +313,6 @@ export default function SkillsPage() {
           </div>
         </div>
 
-        {/* Category filter */}
         <div className="flex items-center gap-1.5 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
@@ -338,7 +346,6 @@ export default function SkillsPage() {
         </div>
       </div>
 
-      {/* Grid */}
       <div className="flex-1 overflow-y-auto discord-scrollbar p-4">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 gap-2">
@@ -346,7 +353,7 @@ export default function SkillsPage() {
             <p className="text-[#4e5058] text-[13px]">No skills match this filter</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 pb-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+          <div className="grid gap-3 pb-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
             {filtered.map((skill) => (
               <SkillCard key={skill.id} skill={skill} onToggle={toggleSkill} />
             ))}

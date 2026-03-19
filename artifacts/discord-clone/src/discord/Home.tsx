@@ -7,62 +7,73 @@ import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
 import { InboxPanel } from "@/components/InboxPanel";
 import { SettingsModal } from "@/components/SettingsModal";
-import { useDiscord } from "@/hooks/useDiscord";
 import ShopPage from "@/discord/Shop";
 import QuestsPage from "@/discord/Quests";
 import MessageRequestsPage from "@/discord/MessageRequests";
-import type { DiscordGuild, GuildChannel, DiscordChannel } from "@/lib/api";
+import { useAppStore } from "@/store/useAppStore";
+import type { Channel } from "@/types";
 
 interface DiscordHomeProps {
   onSwitchMode: () => void;
 }
 
 export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
-  const { user, guilds, channels } = useDiscord();
+  const servers = useAppStore((s) => s.servers);
+  const setActiveServer = useAppStore((s) => s.setActiveServer);
+  const setActiveChannel = useAppStore((s) => s.setActiveChannel);
+  const setActiveDm = useAppStore((s) => s.setActiveDm);
+  const activeServerId = useAppStore((s) => s.activeServerId);
+  const activeChannelId = useAppStore((s) => s.activeChannelId);
+  const activeDmId = useAppStore((s) => s.activeDmId);
+  const getDmRecipient = useAppStore((s) => s.getDmRecipient);
+  const getChannelsByServer = useAppStore((s) => s.getChannelsByServer);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [view, setView] = useState<string>("friends");
-  const [activeDmId, setActiveDmId] = useState<string | null>(null);
-  const [activeServer, setActiveServer] = useState<"dms" | string>("dms");
-  const [activeGuild, setActiveGuild] = useState<DiscordGuild | null>(null);
-  const [activeChannel, setActiveChannel] = useState<GuildChannel | null>(null);
+  const [activeServerPanel, setActiveServerPanel] = useState<"dms" | string>("dms");
 
   function handleSelectServer(serverId: "dms" | string) {
-    setActiveServer(serverId);
+    setActiveServerPanel(serverId);
     if (serverId === "dms") {
-      setActiveGuild(null);
+      setActiveServer(null);
       setActiveChannel(null);
     } else {
-      const guild = guilds.find((g) => g.id === serverId) ?? null;
-      setActiveGuild(guild);
+      setActiveServer(serverId);
       setActiveChannel(null);
-      setActiveDmId(null);
+      setActiveDm(null);
+      const channels = getChannelsByServer(serverId);
+      const firstText = channels.find((c) => c.type === "text");
+      if (firstText) setActiveChannel(firstText.id);
     }
   }
 
   function handleNavigate(newView: string) {
-    setActiveDmId(null);
+    setActiveDm(null);
     setView(newView);
   }
 
-  function handleOpenDm(channelId: string) {
-    setActiveDmId(channelId);
+  function handleOpenDm(dmId: string) {
+    setActiveDm(dmId);
     setView("dm");
+    setActiveServerPanel("dms");
   }
 
-  function handleSelectChannel(ch: GuildChannel) {
-    setActiveChannel(ch);
+  function handleSelectChannel(ch: Channel) {
+    setActiveChannel(ch.id);
   }
 
-  const activeDmChannel: DiscordChannel | undefined = channels.find((c) => c.id === activeDmId);
-  const dmRecipient = activeDmChannel?.recipients?.[0] ?? null;
-  const showGuildSidebar = activeServer !== "dms" && activeGuild !== null;
+  const activeServer = activeServerId ? servers.find((s) => s.id === activeServerId) ?? null : null;
+  const activeChannel = activeServerId && activeChannelId
+    ? getChannelsByServer(activeServerId).find((c) => c.id === activeChannelId) ?? null
+    : null;
+  const dmRecipient = activeDmId ? getDmRecipient(activeDmId) : null;
+  const showGuildSidebar = activeServerPanel !== "dms" && activeServer !== null;
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
       <ServerList
-        activeServer={activeServer}
+        activeServer={activeServerPanel}
         onSelectServer={handleSelectServer}
         isBotMode={false}
         onToggleBotMode={onSwitchMode}
@@ -70,8 +81,8 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
 
       {showGuildSidebar ? (
         <GuildChannelList
-          guild={activeGuild!}
-          activeChannelId={activeChannel?.id ?? null}
+          server={activeServer!}
+          activeChannelId={activeChannelId}
           onSelectChannel={handleSelectChannel}
           onOpenSettings={() => setSettingsOpen(true)}
         />
@@ -87,7 +98,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
       )}
 
       <div
-        key={`discord-${activeServer}-${activeDmId}-${activeChannel?.id}-${view}`}
+        key={`discord-${activeServerPanel}-${activeDmId}-${activeChannelId}-${view}`}
         className="flex flex-1 h-full overflow-hidden animate-view-fade"
       >
         {showGuildSidebar ? (
@@ -97,22 +108,20 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
               channelName={activeChannel.name}
               channelTopic={activeChannel.topic}
               isDm={false}
-              currentUser={user}
               onInboxToggle={() => setInboxOpen((v) => !v)}
             />
           ) : (
             <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#0a1220" }}>
-              <p className="text-[#87898c] text-[15px] font-semibold">{activeGuild?.name}</p>
+              <p className="text-[#87898c] text-[15px] font-semibold">{activeServer?.name}</p>
               <p className="text-[#5e6068] text-[13px]">Select a channel to start chatting</p>
             </div>
           )
         ) : view === "dm" && activeDmId ? (
           <ChatView
             channelId={activeDmId}
-            channelName={dmRecipient ? (dmRecipient.global_name ?? dmRecipient.username) : "DM"}
+            channelName={dmRecipient?.displayName ?? "DM"}
             isDm={true}
             dmRecipient={dmRecipient}
-            currentUser={user}
             onInboxToggle={() => setInboxOpen((v) => !v)}
           />
         ) : view === "shop" ? (
@@ -127,11 +136,8 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
             {!inboxOpen && <ActiveNow />}
           </>
         ) : (
-          <div
-            className="flex-1 h-full flex flex-col items-center justify-center gap-3"
-            style={{ backgroundColor: "#0a1220" }}
-          >
-            <p className="text-[#87898c] text-[15px] font-semibold">Coming soon...</p>
+          <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#0a1220" }}>
+            <p className="text-[#87898c] text-[15px] font-semibold">Coming soon…</p>
             <p className="text-[#5e6068] text-[13px]">This section isn't available yet.</p>
           </div>
         )}
@@ -139,10 +145,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
         {inboxOpen && (
           <InboxPanel
             onClose={() => setInboxOpen(false)}
-            onOpenDm={(id) => {
-              setInboxOpen(false);
-              handleOpenDm(id);
-            }}
+            onOpenDm={(id) => { setInboxOpen(false); handleOpenDm(id); }}
           />
         )}
       </div>

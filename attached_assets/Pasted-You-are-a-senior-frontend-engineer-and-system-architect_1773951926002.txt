@@ -1,0 +1,186 @@
+You are a senior frontend engineer and system architect.
+
+I have a React + TypeScript + Vite + Tailwind project that currently replicates a Discord-like UI, but it is purely static and uses hardcoded data.
+
+Your task is to refactor and upgrade this project into a scalable, dynamic, and realistic application with clean architecture and maintainable code.
+
+---
+
+# 🎯 OBJECTIVES
+
+Transform the project from a static UI clone into a dynamic app with:
+
+* Proper data flow
+* State management
+* Modular architecture
+* Realistic user interactions
+
+---
+
+# 🧱 REQUIRED IMPROVEMENTS
+
+## 1. Architecture Refactor
+
+* Separate concerns into:
+
+  * `/components` (UI only)
+  * `/features` (feature-based modules like chat, servers, users)
+  * `/services` (API logic / data fetching)
+  * `/store` (global state management)
+  * `/hooks` (custom reusable logic)
+  * `/types` (TypeScript interfaces)
+
+* Ensure components are dumb/presentational where possible
+
+---
+
+## 2. Replace Hardcoded Data
+
+* Remove all inline/static data
+
+* Create a mock backend using:
+
+  * local JSON files OR
+  * a mock API layer
+
+* Example data:
+
+  * users
+  * messages
+  * servers
+  * channels
+
+---
+
+## 3. State Management
+
+* Implement global state using Zustand (preferred) or Redux
+
+* Store:
+
+  * current user
+  * selected server
+  * selected channel
+  * messages per channel
+
+* Ensure proper reactivity when state updates
+
+---
+
+## 4. Messaging System (Core Feature)
+
+* Build a working message system:
+
+  * send messages
+  * display messages dynamically
+  * auto-scroll to latest message
+
+* Add:
+
+  * timestamps
+  * user avatars
+  * message grouping (like Discord)
+
+---
+
+## 5. Server & Channel Switching
+
+* Clicking a server updates:
+
+  * channel list
+  * messages
+
+* Clicking a channel updates:
+
+  * active chat
+
+---
+
+## 6. Realistic UI Behavior
+
+* Add:
+
+  * typing indicator (fake or simulated)
+  * hover effects
+  * loading skeletons
+  * smooth transitions
+
+---
+
+## 7. Custom Hooks
+
+Create reusable hooks:
+
+* useMessages(channelId)
+* useServers()
+* useCurrentUser()
+
+---
+
+## 8. Type Safety
+
+* Define strong TypeScript interfaces:
+
+  * User
+  * Message
+  * Server
+  * Channel
+
+* Avoid `any` completely
+
+---
+
+## 9. Performance Optimization
+
+* Use:
+
+  * React.memo where needed
+  * lazy loading (React.lazy)
+  * proper key usage in lists
+
+---
+
+## 10. UI/UX Enhancements
+
+* Improve layout spacing and responsiveness
+* Make it work on smaller screens
+* Add scrollable panels
+* Keep Discord-like design consistency
+
+---
+
+# 🔥 OPTIONAL ADVANCED FEATURES
+
+If possible, implement:
+
+* WebSocket simulation (or interval-based fake real-time updates)
+* Dark/light theme toggle
+* Notification badges
+* Online/offline user status system
+
+---
+
+# 📦 OUTPUT REQUIREMENTS
+
+* Provide full updated code (not just explanation)
+* Keep code clean, modular, and well-structured
+* Add comments only where necessary
+* Do not break existing UI design unless improving it
+
+---
+
+# ⚠️ IMPORTANT RULES
+
+* Do NOT use any real Discord API
+* Do NOT include anything related to automation or scraping
+* Focus on frontend engineering best practices only
+
+---
+
+Now start by:
+
+1. Refactoring the folder structure
+2. Creating the global state
+3. Rebuilding the messaging system
+
+Then proceed step-by-step until the app is fully upgraded.

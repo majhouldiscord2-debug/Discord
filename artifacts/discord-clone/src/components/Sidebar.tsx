@@ -1,49 +1,33 @@
 import { useState } from "react";
-import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, LogOut, Sparkles, ScrollText, BarChart2, Wrench, Server } from "lucide-react";
-
-import { useDiscord } from "@/hooks/useDiscord";
-import { avatarUrl } from "@/lib/api";
+import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText } from "lucide-react";
+import { useAppStore } from "@/store/useAppStore";
 import { Avatar } from "./Avatar";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
   activeView?: string;
   onNavigate?: (view: string) => void;
-  onOpenDm?: (channelId: string) => void;
+  onOpenDm?: (dmId: string) => void;
   activeDmId?: string | null;
   onOpenSettings?: () => void;
   isBotMode?: boolean;
 }
 
 export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDmId, onOpenSettings, isBotMode = false }: SidebarProps) {
-  const { user, channels, logout } = useDiscord();
+  const currentUserId = useAppStore((s) => s.currentUserId);
+  const users = useAppStore((s) => s.users);
+  const dmChannels = useAppStore((s) => s.dmChannels);
+  const currentUser = users[currentUserId];
   const [micMuted, setMicMuted] = useState(false);
   const [deafened, setDeafened] = useState(false);
 
-  const activeItem = (activeView === "dm") ? "" : activeView;
-
-  const dmChannels = channels.filter((c) => c.type === 1 || c.type === 3).slice(0, 12);
-
-  const handleNav = (key: string) => {
-    onNavigate?.(key);
-  };
-
-  const handleDm = (id: string) => {
-    onOpenDm?.(id);
-  };
-
-  const userAvatar = user ? avatarUrl(user) : null;
-  const displayName = user?.global_name ?? user?.username ?? "Unknown";
-  const tag = user?.discriminator && user.discriminator !== "0" ? `#${user.discriminator}` : "";
+  const activeItem = activeView === "dm" ? "" : activeView;
 
   return (
     <div
       className="w-[240px] h-full flex flex-col shrink-0"
-      style={{
-        background: "linear-gradient(180deg, #080d1a 0%, #080f1c 60%, #06091a 100%)",
-      }}
+      style={{ background: "linear-gradient(180deg, #080d1a 0%, #080f1c 60%, #06091a 100%)" }}
     >
-      {/* Top Search Button */}
       <button
         className="h-12 shrink-0 flex items-center px-3 gap-2 transition-colors hover:bg-white/5"
         style={{ borderBottom: "1px solid rgba(0,0,0,0.25)" }}
@@ -54,30 +38,27 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
         <Search className="w-4 h-4 text-[#5e6068] shrink-0" />
       </button>
 
-      {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto discord-scrollbar pt-2 px-2">
-        {/* Nav Items — Profile 1 (Discord) vs Profile 2 (Bot) */}
         <div className="space-y-[2px] mb-1">
           {isBotMode ? (
             <>
-              <NavItem icon={<BarChart2 className="w-[18px] h-[18px]" />}  label="Stats"    isActive={activeItem === "friends"} onClick={() => handleNav("friends")} />
-              <NavItem icon={<Zap className="w-[18px] h-[18px]" />}        label="Skills"   isActive={activeItem === "skills"}  onClick={() => handleNav("skills")} />
-              <NavItem icon={<ScrollText className="w-[18px] h-[18px]" />} label="Logs"     isActive={activeItem === "logs"}    onClick={() => handleNav("logs")} />
-              <NavItem icon={<Wrench className="w-[18px] h-[18px]" />}     label="Tools"    isActive={activeItem === "tools"}   onClick={() => handleNav("tools")} />
-              <NavItem icon={<Server className="w-[18px] h-[18px]" />}     label="Servers"  isActive={activeItem === "servers"} onClick={() => handleNav("servers")} />
+              <NavItem icon={<BarChart2 className="w-[18px] h-[18px]" />} label="Overview" isActive={activeItem === "friends"} onClick={() => onNavigate?.("friends")} />
+              <NavItem icon={<Zap className="w-[18px] h-[18px]" />} label="Bot Skills" isActive={activeItem === "skills"} onClick={() => onNavigate?.("skills")} />
+              <NavItem icon={<ScrollText className="w-[18px] h-[18px]" />} label="Audit Logs" isActive={activeItem === "logs"} onClick={() => onNavigate?.("logs")} />
+              <NavItem icon={<Wrench className="w-[18px] h-[18px]" />} label="Configuration" isActive={activeItem === "tools"} onClick={() => onNavigate?.("tools")} />
+              <NavItem icon={<Server className="w-[18px] h-[18px]" />} label="Servers" isActive={activeItem === "servers"} onClick={() => onNavigate?.("servers")} />
             </>
           ) : (
             <>
-              <NavItem icon={<Users className="w-[18px] h-[18px]" />}      label="Friends"          isActive={activeItem === "friends"}  onClick={() => handleNav("friends")} />
-              <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />}  label="Message Requests" isActive={activeItem === "requests"}  onClick={() => handleNav("requests")} />
-              <NavItem icon={<Sparkles className="w-[18px] h-[18px]" />}   label="Nitro Home"       isActive={activeItem === "nitro"}    onClick={() => handleNav("nitro")} />
-              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop"            isActive={activeItem === "shop"}     onClick={() => handleNav("shop")} />
-              <NavItem icon={<Target className="w-[18px] h-[18px]" />}     label="Quests"           isActive={activeItem === "quests"}   onClick={() => handleNav("quests")} />
+              <NavItem icon={<Users className="w-[18px] h-[18px]" />} label="Friends" isActive={activeItem === "friends"} onClick={() => onNavigate?.("friends")} />
+              <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />} label="Message Requests" isActive={activeItem === "requests"} onClick={() => onNavigate?.("requests")} />
+              <NavItem icon={<Sparkles className="w-[18px] h-[18px]" />} label="Nitro Home" isActive={activeItem === "nitro"} onClick={() => onNavigate?.("nitro")} />
+              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop" isActive={activeItem === "shop"} onClick={() => onNavigate?.("shop")} />
+              <NavItem icon={<Target className="w-[18px] h-[18px]" />} label="Quests" isActive={activeItem === "quests"} onClick={() => onNavigate?.("quests")} />
             </>
           )}
         </div>
 
-        {/* DMs Header */}
         <div className="mt-4 mb-1 px-2 flex items-center justify-between group cursor-pointer">
           <span className="text-[10px] font-bold text-[#6d6f76] group-hover:text-[#c0c3c9] uppercase tracking-widest transition-colors select-none">
             Direct Messages
@@ -89,46 +70,41 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
           )}
         </div>
 
-        {/* DM Contacts or In Progress */}
         {isBotMode ? (
           <div className="flex flex-col items-center justify-center py-8 px-4 gap-2">
-            <div className="w-8 h-8 rounded-full border-2 border-[#1d6ef5]/40 border-t-[#1d6ef5] animate-spin mb-1" />
-            <p className="text-[13px] font-semibold text-[#f2f3f5]">In Progress</p>
-            <p className="text-[11px] text-[#4e5058] text-center">Direct messages are disabled in bot mode</p>
+            <p className="text-[12px] text-[#4e5058] text-center">DMs are unavailable in bot management mode</p>
           </div>
         ) : (
           <div className="space-y-[1px] pb-2">
-            {dmChannels.length === 0 && (
-              <p className="text-[12px] text-[#4e5058] px-2 py-2">No recent DMs</p>
-            )}
-            {dmChannels.map((ch, i) => {
-              const recipient = ch.recipients?.[0];
-              const name = ch.type === 3
-                ? (ch.name ?? ch.recipients?.map(r => r.username).join(", ") ?? "Group DM")
-                : (recipient?.global_name ?? recipient?.username ?? "Unknown");
-              const initials = name[0]?.toUpperCase() ?? "?";
-              const src = recipient ? avatarUrl(recipient) : null;
-              const isActive = activeDmId === ch.id;
+            {dmChannels.map((dm, i) => {
+              const recipient = users[dm.recipientId];
+              if (!recipient) return null;
+              const isActive = activeDmId === dm.id;
               return (
                 <button
-                  key={ch.id}
-                  onClick={() => handleDm(ch.id)}
+                  key={dm.id}
+                  onClick={() => onOpenDm?.(dm.id)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 group animate-fade-slide-up",
-                    isActive
-                      ? "bg-[#404249] text-[#f2f3f5]"
-                      : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                    "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 animate-fade-slide-up",
+                    isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
                   )}
                   style={{ animationDelay: `${i * 30}ms` }}
                 >
-                  <Avatar
-                    initials={initials}
-                    src={src}
-                    color="#5865f2"
-                    size="sm"
-                    statusBg={isActive ? "#152438" : "#080f1c"}
-                  />
-                  <span className="truncate text-[14px] font-medium">{name}</span>
+                  <div className="relative shrink-0">
+                    <Avatar
+                      initials={recipient.initials}
+                      color={recipient.avatarColor}
+                      size="sm"
+                      statusBg={isActive ? "#152438" : "#080f1c"}
+                      status={recipient.status}
+                    />
+                  </div>
+                  <span className="truncate text-[14px] font-medium flex-1">{recipient.displayName}</span>
+                  {dm.unreadCount ? (
+                    <span className="bg-[#ed4245] text-white text-[10px] font-bold rounded-full px-1 min-w-[16px] h-4 flex items-center justify-center shrink-0">
+                      {dm.unreadCount}
+                    </span>
+                  ) : null}
                 </button>
               );
             })}
@@ -136,47 +112,29 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
         )}
       </div>
 
-      {/* User Profile Bar */}
       <div
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
-        style={{
-          background: "linear-gradient(180deg, #050c16 0%, #060e1a 100%)",
-          borderTop: "1px solid rgba(0,0,0,0.2)",
-        }}
+        style={{ background: "linear-gradient(180deg, #050c16 0%, #060e1a 100%)", borderTop: "1px solid rgba(0,0,0,0.2)" }}
       >
         <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
           <Avatar
-            initials={(displayName[0] ?? "?").toUpperCase()}
-            src={userAvatar}
-            color="#5865f2"
-            status="online"
+            initials={currentUser?.initials ?? "?"}
+            color={currentUser?.avatarColor ?? "#5865f2"}
+            status={currentUser?.status ?? "online"}
             size="sm"
             statusBg="#1e2022"
             className="mr-2"
           />
           <div className="flex flex-col text-left min-w-0">
-            <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">
-              {displayName}
-            </span>
-            <span className="text-[11px] text-[#6d6f76] leading-tight truncate">
-              {user?.username}{tag}
-            </span>
+            <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">{currentUser?.displayName}</span>
+            <span className="text-[11px] text-[#6d6f76] leading-tight truncate">@{currentUser?.username}</span>
           </div>
         </button>
-
         <div className="flex items-center gap-0.5 shrink-0">
-          <IconBtn
-            title={micMuted ? "Unmute" : "Mute"}
-            onClick={() => setMicMuted(!micMuted)}
-            danger={micMuted}
-          >
+          <IconBtn title={micMuted ? "Unmute" : "Mute"} onClick={() => setMicMuted(!micMuted)} danger={micMuted}>
             {micMuted ? <MicOff className="w-[17px] h-[17px]" /> : <Mic className="w-[17px] h-[17px]" />}
           </IconBtn>
-          <IconBtn
-            title={deafened ? "Undeafen" : "Deafen"}
-            onClick={() => setDeafened(!deafened)}
-            danger={deafened}
-          >
+          <IconBtn title={deafened ? "Undeafen" : "Deafen"} onClick={() => setDeafened(!deafened)} danger={deafened}>
             <Headphones className="w-[17px] h-[17px]" />
           </IconBtn>
           <div className="group">
@@ -184,60 +142,35 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
               <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
             </IconBtn>
           </div>
-          <IconBtn title="Log out" onClick={() => logout()} danger>
-            <LogOut className="w-[17px] h-[17px]" />
-          </IconBtn>
         </div>
       </div>
     </div>
   );
 }
 
-function NavItem({
-  icon, label, isActive, onClick, badge,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  isActive: boolean;
-  onClick: () => void;
-  badge?: React.ReactNode;
-}) {
+function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       className={cn(
         "w-full flex items-center px-2 py-[7px] rounded-[6px] transition-all duration-150 gap-3",
-        isActive
-          ? "bg-[#404249] text-[#f2f3f5]"
-          : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+        isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
       )}
     >
-      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76] group-hover:text-[#dbdee1]")}>
-        {icon}
-      </span>
+      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76]")}>{icon}</span>
       <span className="font-medium text-[15px] flex-1 text-left tracking-[-0.01em]">{label}</span>
-      {badge}
     </button>
   );
 }
 
-function IconBtn({
-  children, title, onClick, danger,
-}: {
-  children: React.ReactNode;
-  title: string;
-  onClick: () => void;
-  danger?: boolean;
-}) {
+function IconBtn({ children, title, onClick, danger }: { children: React.ReactNode; title: string; onClick?: () => void; danger?: boolean }) {
   return (
     <button
       title={title}
       onClick={onClick}
       className={cn(
         "w-8 h-8 rounded-[6px] flex items-center justify-center transition-all duration-150",
-        danger
-          ? "text-[#f23f43] hover:bg-white/8"
-          : "text-[#87898c] hover:bg-white/8 hover:text-[#dbdee1]"
+        danger ? "text-[#f23f43] hover:bg-white/8" : "text-[#87898c] hover:bg-white/8 hover:text-[#dbdee1]"
       )}
     >
       {children}

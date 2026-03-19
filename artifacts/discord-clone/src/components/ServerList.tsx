@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Plus, Compass, Download, Clock } from "lucide-react";
-import { useDiscord } from "@/hooks/useDiscord";
-import { guildIconUrl } from "@/lib/api";
+import { Plus, Compass, Download } from "lucide-react";
+import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
 
 function DiscordLogo() {
@@ -12,22 +11,9 @@ function DiscordLogo() {
   );
 }
 
-function BotIcon() {
-  return (
-    <svg viewBox="0 0 100 100" className="w-7 h-7" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="50" y1="8" x2="50" y2="22" stroke="white" strokeWidth="5" strokeLinecap="round" />
-      <circle cx="50" cy="6" r="5" fill="white" />
-      <rect x="7" y="40" width="10" height="20" rx="5" fill="white" />
-      <rect x="83" y="40" width="10" height="20" rx="5" fill="white" />
-      <rect x="18" y="24" width="64" height="54" rx="18" fill="white" />
-      <rect x="26" y="32" width="48" height="38" rx="10" fill="#1d6ef5" />
-      <rect x="34" y="43" width="12" height="16" rx="4" fill="white" />
-      <rect x="54" y="43" width="12" height="16" rx="4" fill="white" />
-    </svg>
-  );
-}
-
-interface ServerButtonProps {
+function ServerButton({
+  name, children, isActive, hasNotification, notificationCount, onClick, glowColor,
+}: {
   name: string;
   children: React.ReactNode;
   isActive: boolean;
@@ -35,11 +21,8 @@ interface ServerButtonProps {
   notificationCount?: number;
   onClick: () => void;
   glowColor?: string;
-}
-
-function ServerButton({ name, children, isActive, hasNotification, notificationCount, onClick, glowColor }: ServerButtonProps) {
+}) {
   const [hovered, setHovered] = useState(false);
-
   return (
     <div
       className="relative flex items-center justify-center w-full"
@@ -47,20 +30,18 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
       onMouseLeave={() => setHovered(false)}
     >
       <div
-        className={cn("absolute left-0 rounded-r-full transition-all duration-200 bg-white")}
+        className="absolute left-0 rounded-r-full transition-all duration-200 bg-white"
         style={{
           width: isActive ? 4 : hovered ? 4 : hasNotification ? 4 : 0,
           height: isActive ? 40 : hovered ? 20 : hasNotification ? 8 : 0,
           opacity: (isActive || hovered || hasNotification) ? 1 : 0,
         }}
       />
-
-      {!isActive && notificationCount && notificationCount > 0 && (
+      {!isActive && notificationCount && notificationCount > 0 ? (
         <div className="absolute bottom-0 right-1 min-w-[18px] h-[18px] bg-[#ed4245] rounded-full flex items-center justify-center z-20 px-1 shadow-lg">
           <span className="text-[10px] text-white font-bold leading-none">{notificationCount}</span>
         </div>
-      )}
-
+      ) : null}
       <button
         onClick={onClick}
         className="w-12 h-12 flex items-center justify-center text-white font-bold text-[18px] transition-all duration-200 overflow-hidden"
@@ -71,7 +52,6 @@ function ServerButton({ name, children, isActive, hasNotification, notificationC
       >
         {children}
       </button>
-
       {hovered && (
         <div className="absolute left-[68px] z-50 pointer-events-none animate-scale-in">
           <div
@@ -95,17 +75,15 @@ interface ServerListProps {
 }
 
 export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBotMode }: ServerListProps) {
-  const { guilds } = useDiscord();
+  const servers = useAppStore((s) => s.servers);
 
   return (
     <div
       className="w-[72px] h-full flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0"
-      style={{
-        background: "linear-gradient(180deg, #080e1c 0%, #060b14 50%, #070a18 100%)",
-      }}
+      style={{ background: "linear-gradient(180deg, #080e1c 0%, #060b14 50%, #070a18 100%)" }}
     >
       <ServerButton
-        name={isBotMode ? "Switch to Discord" : "Switch to Bot Mode"}
+        name={isBotMode ? "Switch to Discord" : "Switch to Bot Manager"}
         isActive={activeServer === "dms" && !isBotMode}
         onClick={() => {
           if (!isBotMode) onSelectServer("dms");
@@ -116,67 +94,43 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
         <div
           className="w-12 h-12 flex items-center justify-center transition-all duration-200"
           style={{
-            borderRadius: (!isBotMode && activeServer === "dms") ? 16 : 24,
-            background: (!isBotMode && activeServer === "dms")
-              ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
-              : isBotMode
-              ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
-              : "#0a1420",
+            borderRadius: (!isBotMode && activeServer === "dms") || isBotMode ? 16 : 24,
+            background:
+              (!isBotMode && activeServer === "dms") || isBotMode
+                ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
+                : "#0a1420",
           }}
         >
-          {isBotMode ? <BotIcon /> : <DiscordLogo />}
+          <DiscordLogo />
         </div>
       </ServerButton>
 
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
-      {isBotMode ? (
-        <div className="flex flex-col items-center gap-3 flex-1 justify-center py-4">
-          <div
-            className="w-12 h-12 flex items-center justify-center rounded-2xl"
-            style={{ background: "linear-gradient(135deg, #f59e0b22, #f59e0b11)", border: "1px solid #f59e0b44" }}
-          >
-            <Clock className="w-5 h-5 text-[#f59e0b]" />
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f59e0b] opacity-75" />
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#f59e0b]" />
-            </span>
-          </div>
-        </div>
-      ) : (
+      {!isBotMode && (
         <>
-          {guilds.map((guild) => {
-            const iconSrc = guildIconUrl(guild);
-            const initials = guild.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
-            const isActive = activeServer === guild.id;
+          {servers.map((server) => {
+            const isActive = activeServer === server.id;
             return (
               <ServerButton
-                key={guild.id}
-                name={guild.name}
+                key={server.id}
+                name={server.name}
                 isActive={isActive}
-                onClick={() => onSelectServer(guild.id)}
+                hasNotification={!!server.notificationCount}
+                notificationCount={server.notificationCount}
+                onClick={() => onSelectServer(server.id)}
+                glowColor={server.iconColor}
               >
-                {iconSrc ? (
-                  <img
-                    src={iconSrc}
-                    alt={guild.name}
-                    className="w-12 h-12 object-cover transition-all duration-200"
-                    style={{ borderRadius: isActive ? 16 : 24 }}
-                  />
-                ) : (
-                  <div
-                    className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[13px] font-bold text-white"
-                    style={{
-                      borderRadius: isActive ? 16 : 24,
-                      backgroundColor: "#1d6ef5",
-                      boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
-                    }}
-                  >
-                    {initials}
-                  </div>
-                )}
+                <div
+                  className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[16px] font-bold text-white"
+                  style={{
+                    borderRadius: isActive ? 16 : 24,
+                    backgroundColor: server.iconColor,
+                    boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
+                  }}
+                >
+                  {server.initials}
+                </div>
               </ServerButton>
             );
           })}
@@ -188,33 +142,37 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
               className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
               style={{ borderRadius: 24, background: "#0a1420" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-                (e.currentTarget as HTMLDivElement).style.background = "#1db954";
-                (e.currentTarget as HTMLDivElement).style.color = "white";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "16px";
+                el.style.background = "#1db954";
+                el.style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-                (e.currentTarget as HTMLDivElement).style.color = "#1db954";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "24px";
+                el.style.background = "#0a1420";
+                el.style.color = "#1db954";
               }}
             >
               <Plus className="w-6 h-6" />
             </div>
           </ServerButton>
 
-          <ServerButton name="Explore Discoverable Servers" isActive={false} onClick={() => {}}>
+          <ServerButton name="Explore Servers" isActive={false} onClick={() => {}}>
             <div
               className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
               style={{ borderRadius: 24, background: "#0a1420" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-                (e.currentTarget as HTMLDivElement).style.background = "#1db954";
-                (e.currentTarget as HTMLDivElement).style.color = "white";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "16px";
+                el.style.background = "#1db954";
+                el.style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-                (e.currentTarget as HTMLDivElement).style.color = "#1db954";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "24px";
+                el.style.background = "#0a1420";
+                el.style.color = "#1db954";
               }}
             >
               <Compass className="w-6 h-6" />
@@ -228,14 +186,16 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
               className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"
               style={{ borderRadius: 24, background: "#0a1420" }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "16px";
-                (e.currentTarget as HTMLDivElement).style.background = "#1d6ef5";
-                (e.currentTarget as HTMLDivElement).style.color = "white";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "16px";
+                el.style.background = "#1d6ef5";
+                el.style.color = "white";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderRadius = "24px";
-                (e.currentTarget as HTMLDivElement).style.background = "#0a1420";
-                (e.currentTarget as HTMLDivElement).style.color = "#1d6ef5";
+                const el = e.currentTarget as HTMLDivElement;
+                el.style.borderRadius = "24px";
+                el.style.background = "#0a1420";
+                el.style.color = "#1d6ef5";
               }}
             >
               <Download className="w-[22px] h-[22px]" />
