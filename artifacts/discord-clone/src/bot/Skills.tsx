@@ -159,6 +159,18 @@ const SKILLS: Skill[] = [
     tags: ["Self-bot", "Commands", "Plugins"],
     stats: [{ label: "Commands loaded", value: "34" }, { label: "Plugins", value: "9" }],
   },
+  {
+    id: 13,
+    name: "hCaptcha Solver",
+    description: "Automatically solves hCaptcha challenges in real time using AI vision models. Bypasses Discord's verification gates with a high solve rate and low detection footprint.",
+    category: "Security",
+    level: "Expert",
+    icon: <Shield className="w-5 h-5" />,
+    accentColor: "#eab308",
+    enabled: false,
+    tags: ["Captcha", "Bypass", "AI Vision"],
+    stats: [{ label: "Solve rate", value: "97.4%" }, { label: "Avg time", value: "1.8s" }],
+  },
 ];
 
 const CATEGORIES = ["All", "Messaging", "Servers", "Security", "Tools", "Stealth", "AI"];
