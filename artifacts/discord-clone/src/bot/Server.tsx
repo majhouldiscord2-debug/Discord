@@ -166,25 +166,18 @@ function useDiscordWidget(guildId?: string) {
 
     async function fetchData() {
       try {
-        const widgetRes = await fetch(`https://discord.com/api/guilds/${guildId}/widget.json`);
-        const widgetData = await widgetRes.json();
-        if (widgetData.presence_count !== undefined) {
-          setOnlineCount(widgetData.presence_count);
+        const res = await fetch(`/api/discord/guild-counts/${guildId}`);
+        if (res.ok) {
+          const data = await res.json() as { onlineCount: number | null; memberCount: number | null };
+          if (data.onlineCount !== null) setOnlineCount(data.onlineCount);
+          if (data.memberCount !== null) setMemberCount(data.memberCount);
         }
       } catch {}
-
-      try {
-        const previewRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/preview`);
-        const previewData = await previewRes.json();
-        if (previewData.approximate_member_count) setMemberCount(previewData.approximate_member_count);
-        if (previewData.approximate_presence_count) setOnlineCount(previewData.approximate_presence_count);
-      } catch {}
-
       setLoading(false);
     }
 
     fetchData();
-    const interval = setInterval(fetchData, 10000);
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, [guildId]);
 

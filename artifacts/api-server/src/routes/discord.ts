@@ -271,6 +271,35 @@ router.get("/discord/relationships", async (_req, res) => {
   return res.json(result.data);
 });
 
+router.get("/discord/guild-counts/:guildId", async (req, res) => {
+  const { guildId } = req.params;
+  let onlineCount: number | null = null;
+  let memberCount: number | null = null;
+
+  try {
+    const widgetRes = await fetch(`https://discord.com/api/guilds/${guildId}/widget.json`, {
+      headers: { "User-Agent": "DiscordBot (https://discord.com, 10)" },
+    });
+    if (widgetRes.ok) {
+      const data = await widgetRes.json() as Record<string, unknown>;
+      if (typeof data.presence_count === "number") onlineCount = data.presence_count;
+    }
+  } catch {}
+
+  try {
+    const previewRes = await fetch(`https://discord.com/api/v10/guilds/${guildId}/preview`, {
+      headers: { "User-Agent": "DiscordBot (https://discord.com, 10)" },
+    });
+    if (previewRes.ok) {
+      const data = await previewRes.json() as Record<string, unknown>;
+      if (typeof data.approximate_member_count === "number") memberCount = data.approximate_member_count;
+      if (typeof data.approximate_presence_count === "number") onlineCount = data.approximate_presence_count;
+    }
+  } catch {}
+
+  return res.json({ onlineCount, memberCount });
+});
+
 router.post("/auth/token", async (req, res, next) => {
   try {
     const { token, tokenType } = req.body as { token: string; tokenType: string };
