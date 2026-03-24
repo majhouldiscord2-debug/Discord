@@ -6,7 +6,8 @@ import {
   LogOut, Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAppStore } from "@/store/useAppStore";
+import { useDiscord } from "@/hooks/useDiscord";
+import { avatarUrl } from "@/lib/api";
 import { Avatar } from "./Avatar";
 
 interface SettingsModalProps {
@@ -136,16 +137,16 @@ function Divider() {
 }
 
 function MyAccountPage() {
-  const currentUserId = useAppStore((s) => s.currentUserId);
-  const users = useAppStore((s) => s.users);
-  const user = users[currentUserId];
+  const { user } = useDiscord();
   const [activeTab, setActiveTab] = useState<"security" | "standing">("security");
-  const [showEmail] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
 
-  const displayName = user?.displayName ?? "Unknown";
+  const displayName = user?.global_name ?? user?.username ?? "Unknown";
   const username = user?.username ?? "";
-  const initials = user?.initials ?? "?";
-  const avatarColor = user?.avatarColor ?? "#5865f2";
+  const initials = displayName[0]?.toUpperCase() ?? "?";
+  const avatarColor = "#5865f2";
+  const avatarSrc = user ? avatarUrl(user) : null;
+  const discriminator = user?.discriminator && user.discriminator !== "0" ? `#${user.discriminator}` : "";
 
   return (
     <>
