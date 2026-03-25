@@ -84,86 +84,20 @@ function SpaceCanvas() {
 }
 
 function DotRobot() {
-  // Dot size radius and grid spacing — small dots, tight matrix like ONE.BOT
-  const S = 5;
-  const G = 9;
-
-  // 0=none, 1=dim blue, 2=med blue-white, 3=bright white, 4=eye cyan glow
-  // Wide landscape head, two big 4-wide eye blocks, right-skewed smirk
-  const grid = [
-    // 18 cols wide
-    // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
-    [0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  0,  0,  0,  0,  0,  0,  0,  0], // 0  antenna
-    [0,  0,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 1  antenna stem
-    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0], // 2  head top
-    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 3  eyes row 1
-    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 4  eyes row 2
-    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 5  eyes row 3
-    [0,  2,  3,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  0], // 6  head mid gap
-    [0,  2,  3,  1,  1,  3,  1,  1,  1,  3,  3,  3,  3,  3,  1,  3,  2,  0], // 7  smirk (right heavy)
-    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0], // 8  head bottom
-    [0,  0,  0,  0,  0,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0], // 9  neck
-    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0], // 10 body top
-    [0,  3,  0,  3,  2,  2,  2,  2,  2,  2,  2,  2,  3,  0,  0,  3,  0,  0], // 11 body + arms
-    [0,  3,  0,  3,  2,  1,  1,  1,  1,  1,  1,  2,  3,  0,  0,  3,  0,  0], // 12 body inner
-    [0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0,  0], // 13 body bottom
-    [0,  0,  0,  0,  0,  3,  2,  0,  0,  2,  3,  0,  0,  0,  0,  0,  0,  0], // 14 legs
-    [0,  0,  0,  0,  0,  3,  0,  0,  0,  0,  3,  0,  0,  0,  0,  0,  0,  0], // 15 feet
-  ];
-
-  const colorMap: Record<number, { fill: string; r: number }> = {
-    1: { fill: "rgba(120,170,255,0.22)", r: S * 0.36 },
-    2: { fill: "rgba(160,200,255,0.50)", r: S * 0.40 },
-    3: { fill: "rgba(210,230,255,0.88)", r: S * 0.44 },
-    4: { fill: "rgba(0,225,255,1.00)",   r: S * 0.50 },
-  };
-
-  const rows = grid.length;
-  const cols = grid[0].length;
-  const W = cols * G;
-  const H = rows * G;
-
-  const dots: { cx: number; cy: number; type: number }[] = [];
-  grid.forEach((row, ri) => {
-    row.forEach((val, ci) => {
-      if (val > 0) dots.push({ cx: ci * G + G / 2, cy: ri * G + G / 2, type: val });
-    });
-  });
-
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block" }}>
-      <defs>
-        <filter id="glow2">
-          <feGaussianBlur stdDeviation="1.2" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-        <filter id="eyeglow2">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-      {dots.map((d, i) => {
-        const c = colorMap[d.type];
-        const isEye = d.type === 4;
-        return (
-          <circle
-            key={i}
-            cx={d.cx}
-            cy={d.cy}
-            r={c.r}
-            fill={c.fill}
-            filter={isEye ? "url(#eyeglow2)" : d.type >= 3 ? "url(#glow2)" : undefined}
-            style={isEye ? { animation: `eyePulse 2.8s ease-in-out infinite ${(i % 5) * 0.2}s` } : undefined}
-          />
-        );
-      })}
-      <style>{`
-        @keyframes eyePulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.45; }
-        }
-      `}</style>
-    </svg>
+    <img
+      src="/robot.png"
+      alt="Robot"
+      style={{
+        width: 230,
+        height: 230,
+        objectFit: "contain",
+        display: "block",
+        mixBlendMode: "screen",
+        filter: "brightness(1.2)",
+        animation: "robotPulse 3s ease-in-out infinite",
+      }}
+    />
   );
 }
 
@@ -315,7 +249,13 @@ export default function Login() {
               </>
             ) : "INITIALIZE UPLINK"}
           </button>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <style>{`
+            @keyframes spin { to { transform: rotate(360deg); } }
+            @keyframes robotPulse {
+              0%, 100% { opacity: 0.9; filter: brightness(1.15); }
+              50% { opacity: 1; filter: brightness(1.4); }
+            }
+          `}</style>
         </div>
 
         {/* RIGHT — robot panel */}
@@ -331,7 +271,7 @@ export default function Login() {
             position: "relative",
           }}
         >
-          <div style={{ marginBottom: 22, filter: "drop-shadow(0 0 18px rgba(0,180,255,0.35))" }}>
+          <div style={{ marginBottom: 16 }}>
             <DotRobot />
           </div>
 
