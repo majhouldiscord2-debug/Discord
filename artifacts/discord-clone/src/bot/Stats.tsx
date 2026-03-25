@@ -218,6 +218,24 @@ export default function Stats() {
                 </div>
               )}
             </div>
+
+            {/* Text Frame / About Me */}
+            <div className="mx-5 mb-4 rounded-[10px] overflow-hidden" style={{ background: "#0a0000", border: "1px solid rgba(200,0,0,0.18)" }}>
+              <div className="flex items-center gap-2 px-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "linear-gradient(90deg, #cc000018 0%, transparent 100%)" }}>
+                <div className="w-1.5 h-1.5 rounded-full bg-[#cc0000]" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#4e5058]">About Me</span>
+                <div className="ml-auto flex items-center gap-3">
+                  <span className="text-[10px] font-bold tracking-widest text-[#cc0000] uppercase">TG WORKS</span>
+                  <span className="w-px h-3 bg-white/10" />
+                  <span className="text-[10px] font-semibold text-[#6d6f76]">Friends</span>
+                </div>
+              </div>
+              <div className="px-3 py-2.5">
+                <p className="text-[12px] leading-[1.6] text-[#87898c]">
+                  Automated bot powering <span className="text-[#cc0000] font-semibold">TG WORKS</span> — managing servers, tracking stats, and keeping everything running smoothly.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
