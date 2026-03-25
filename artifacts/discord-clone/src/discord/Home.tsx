@@ -85,23 +85,22 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
       style={{
         backgroundColor: "#000000",
         position: "relative",
-        boxShadow: "inset 0 0 120px rgba(0,0,0,0.95), inset 0 0 2px rgba(29,110,245,0.3)",
-        border: "1px solid rgba(29,110,245,0.15)",
+        boxShadow: "0 0 0 1px rgba(255,255,255,0.08), inset 0 0 80px rgba(0,0,0,0.8)",
       }}
     >
       {/* ── Frame corner accents ── */}
       {[
-        { top: 0, left: 0, borderTop: "2px solid rgba(29,110,245,0.7)", borderLeft: "2px solid rgba(29,110,245,0.7)" },
-        { top: 0, right: 0, borderTop: "2px solid rgba(29,110,245,0.7)", borderRight: "2px solid rgba(29,110,245,0.7)" },
-        { bottom: 0, left: 0, borderBottom: "2px solid rgba(29,110,245,0.7)", borderLeft: "2px solid rgba(29,110,245,0.7)" },
-        { bottom: 0, right: 0, borderBottom: "2px solid rgba(29,110,245,0.7)", borderRight: "2px solid rgba(29,110,245,0.7)" },
+        { top: 0, left: 0, borderTop: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
+        { top: 0, right: 0, borderTop: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
+        { bottom: 0, left: 0, borderBottom: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
+        { bottom: 0, right: 0, borderBottom: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
       ].map((style, i) => (
         <div
           key={i}
           style={{
             position: "absolute",
-            width: 18,
-            height: 18,
+            width: 22,
+            height: 22,
             zIndex: 50,
             pointerEvents: "none",
             ...style,
@@ -115,7 +114,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
         style={{
           height: "38px",
           backgroundColor: "#000000",
-          borderBottom: "1px solid rgba(29,110,245,0.18)",
+          borderBottom: "1px solid rgba(255,255,255,0.07)",
           paddingLeft: "16px",
           paddingRight: "12px",
         }}
@@ -126,7 +125,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
             fontSize: 10,
             fontWeight: 800,
             letterSpacing: "0.22em",
-            color: "rgba(29,110,245,0.75)",
+            color: "rgba(255,255,255,0.55)",
             fontFamily: "'Courier New', monospace",
             userSelect: "none",
             flexShrink: 0,
