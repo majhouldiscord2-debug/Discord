@@ -75,7 +75,7 @@ const MessageBubble = memo(function MessageBubble({ msg, isOwn }: { msg: Message
     <div className={cn("group/msg flex items-start gap-2", isOwn && "flex-row-reverse")}>
       <div className={cn(
         "max-w-[500px] min-w-0 px-3 py-[6px] rounded-[18px]",
-        isOwn ? "bg-[#1d6ef5] text-white rounded-br-[4px]" : "bg-[#111827] text-[#dbdee1] rounded-bl-[4px]"
+        isOwn ? "bg-[#aa0000] text-white rounded-br-[4px]" : "bg-[#1a0a0a] text-[#dbdee1] rounded-bl-[4px]"
       )}>
         <p className="text-[14px] leading-[1.5] break-words whitespace-pre-wrap">{msg.content}</p>
       </div>
@@ -104,18 +104,18 @@ const MessageGroupBlock = memo(function MessageGroupBlock({
       <div className="shrink-0 mt-[2px]">
         <Avatar
           initials={initials}
-          color={author?.avatarColor ?? "#5865f2"}
+          color={author?.avatarColor ?? "#cc0000"}
           size="md"
-          statusBg="#0a1220"
+          statusBg="#0a0000"
         />
       </div>
       <div className={cn("flex-1 min-w-0", isOwnMessage && "flex flex-col items-end")}>
         <div className={cn("flex items-baseline gap-2 mb-[2px]", isOwnMessage && "flex-row-reverse")}>
-          <span className={cn("text-[14px] font-semibold leading-tight", isOwnMessage ? "text-[#89b4fa]" : "text-[#f2f3f5]")}>
+          <span className={cn("text-[14px] font-semibold leading-tight", isOwnMessage ? "text-[#ff8080]" : "text-[#f2f3f5]")}>
             {name}
           </span>
           {author?.bot && (
-            <span className="px-1 py-[1px] text-[9px] font-bold bg-[#5865f2] text-white rounded uppercase tracking-wide leading-none">
+            <span className="px-1 py-[1px] text-[9px] font-bold bg-[#aa0000] text-white rounded uppercase tracking-wide leading-none">
               BOT
             </span>
           )}
@@ -270,14 +270,14 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
   const displayName = isDm && dmRecipient ? dmRecipient.displayName : `#${channelName}`;
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a0000" }}>
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3 select-none"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.4)", background: "linear-gradient(180deg, #0c1530 0%, #0a1220 100%)" }}
+        style={{ borderBottom: "1px solid rgba(80,0,0,0.4)", background: "linear-gradient(180deg, #150000 0%, #0a0000 100%)" }}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {isDm && dmRecipient ? (
-            <Avatar initials={dmRecipient.initials} color={dmRecipient.avatarColor} size="sm" statusBg="#0a1220" status={dmRecipient.status} />
+            <Avatar initials={dmRecipient.initials} color={dmRecipient.avatarColor} size="sm" statusBg="#0a0000" status={dmRecipient.status} />
           ) : (
             channelName === "announcements" ? <Megaphone className="w-5 h-5 text-[#7d8188] shrink-0" /> : <Hash className="w-5 h-5 text-[#7d8188] shrink-0" />
           )}
@@ -300,7 +300,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
           {!isDm && <IconBtn title="Member List"><Users className="w-[18px] h-[18px]" /></IconBtn>}
           <IconBtn title="Pinned Messages"><Pin className="w-[18px] h-[18px]" /></IconBtn>
           {searchOpen ? (
-            <div className="flex items-center gap-1 bg-[#0d1525] border border-white/10 rounded-[6px] px-2 h-7">
+            <div className="flex items-center gap-1 bg-[#1a0000] border border-white/10 rounded-[6px] px-2 h-7">
               <Search className="w-3.5 h-3.5 text-[#7d8188] shrink-0" />
               <input
                 ref={searchRef}
@@ -324,7 +324,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
       </div>
 
       {searchOpen && searchQuery.trim() && (
-        <div className="px-4 py-1.5 text-[12px] text-[#87898c] shrink-0 flex items-center gap-2" style={{ background: "#0d1525", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+        <div className="px-4 py-1.5 text-[12px] text-[#87898c] shrink-0 flex items-center gap-2" style={{ background: "#1a0000", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
           <Search className="w-3 h-3" />
           {displayMessages.length} result{displayMessages.length !== 1 ? "s" : ""} for <span className="text-[#dbdee1] font-semibold">"{searchQuery}"</span>
         </div>
@@ -334,7 +334,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
         <div className="px-4 pt-8 pb-2">
           {isDm && dmRecipient ? (
             <div className="flex flex-col items-start gap-3">
-              <Avatar initials={dmRecipient.initials} color={dmRecipient.avatarColor} size="lg" statusBg="#0a1220" status={dmRecipient.status} />
+              <Avatar initials={dmRecipient.initials} color={dmRecipient.avatarColor} size="lg" statusBg="#0a0000" status={dmRecipient.status} />
               <h2 className="text-[24px] font-bold text-[#f2f3f5]">{dmRecipient.displayName}</h2>
               <p className="text-[#87898c] text-[14px]">
                 This is the beginning of your direct message history with{" "}
@@ -343,7 +343,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
             </div>
           ) : (
             <div className="flex flex-col items-start gap-2">
-              <div className="w-[52px] h-[52px] rounded-full bg-[#1d6ef5] flex items-center justify-center">
+              <div className="w-[52px] h-[52px] rounded-full bg-[#aa0000] flex items-center justify-center">
                 <Hash className="w-7 h-7 text-white" />
               </div>
               <h2 className="text-[24px] font-bold text-[#f2f3f5]">Welcome to #{channelName}!</h2>
@@ -381,7 +381,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
       <div className="shrink-0 px-4 pb-4 pt-1">
         <div
           className="flex items-end rounded-[12px] px-3 py-2 gap-2 transition-colors focus-within:ring-1 focus-within:ring-white/10"
-          style={{ backgroundColor: "#1e2842" }}
+          style={{ backgroundColor: "#1a0505" }}
         >
           <button className="w-8 h-8 flex items-center justify-center text-[#87898c] hover:text-[#dbdee1] transition-colors shrink-0 self-end mb-[2px]" title="Add attachment">
             <Plus className="w-5 h-5" />
@@ -414,7 +414,7 @@ export function ChatView({ channelId, channelName, channelTopic, isDm, dmRecipie
             {draft.trim() && (
               <button
                 onClick={handleSend}
-                className="w-8 h-8 rounded-[6px] flex items-center justify-center bg-[#1d6ef5] text-white hover:bg-[#1a5fd4] transition-colors"
+                className="w-8 h-8 rounded-[6px] flex items-center justify-center bg-[#cc0000] text-white hover:bg-[#aa0000] transition-colors"
                 title="Send"
               >
                 <Send className="w-4 h-4" />

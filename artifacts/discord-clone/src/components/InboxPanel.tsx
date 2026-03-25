@@ -68,7 +68,7 @@ export function InboxPanel({ onClose, onOpenDm }: InboxPanelProps) {
               <span className="ml-1.5 w-[7px] h-[7px] rounded-full bg-[#f23f43] inline-block" />
             )}
             {tab === t && (
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-full bg-[#5865f2]" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[2px] w-8 rounded-full bg-[#cc0000]" />
             )}
           </button>
         ))}
@@ -82,7 +82,7 @@ export function InboxPanel({ onClose, onOpenDm }: InboxPanelProps) {
               if (!u) return null;
               return (
                 <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors group">
-                  <Avatar initials={u.initials} color={u.avatarColor} size="md" statusBg="#080e1c" status={u.status} />
+                  <Avatar initials={u.initials} color={u.avatarColor} size="md" statusBg="#080000" status={u.status} />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[13px] text-[#dbdee1] leading-snug">
@@ -104,10 +104,10 @@ export function InboxPanel({ onClose, onOpenDm }: InboxPanelProps) {
           <div className="py-2">
             {unreadDms.length === 0 ? (
               <div className="px-4 py-6">
-                <div className="rounded-[10px] p-4" style={{ background: "#0d1525", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="rounded-[10px] p-4" style={{ background: "#1a0505", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="flex gap-3 items-start">
-                    <div className="w-10 h-10 rounded-full bg-[#1e2636] flex items-center justify-center shrink-0">
-                      <Inbox className="w-5 h-5 text-[#5865f2]" />
+                    <div className="w-10 h-10 rounded-full bg-[#2a0000] flex items-center justify-center shrink-0">
+                      <Inbox className="w-5 h-5 text-[#cc0000]" />
                     </div>
                     <div>
                       <p className="text-[13px] font-bold text-[#f2f3f5] mb-1">You're all caught up!</p>

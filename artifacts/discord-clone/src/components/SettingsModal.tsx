@@ -107,7 +107,7 @@ function TabBtn({ label, isActive, onClick }: { label: string; isActive: boolean
       onClick={onClick}
       className={cn(
         "pb-[10px] mr-5 text-[15px] font-medium border-b-2 transition-colors",
-        isActive ? "text-[#f2f3f5] border-[#5865f2]" : "text-[#949ba4] border-transparent hover:text-[#dbdee1]"
+        isActive ? "text-[#f2f3f5] border-[#cc0000]" : "text-[#949ba4] border-transparent hover:text-[#dbdee1]"
       )}
     >
       {label}
@@ -145,7 +145,7 @@ function MyAccountPage() {
   const displayName = user?.global_name ?? user?.username ?? "Unknown";
   const username = user?.username ?? "";
   const initials = displayName[0]?.toUpperCase() ?? "?";
-  const avatarColor = "#5865f2";
+  const avatarColor = "#cc0000";
   const avatarSrc = user ? avatarUrl(user) : null;
   const discriminator = user?.discriminator && user.discriminator !== "0" ? `#${user.discriminator}` : "";
 
@@ -185,7 +185,7 @@ function MyAccountPage() {
                     ) : (
                       <div
                         className="w-[72px] h-[72px] rounded-full flex items-center justify-center font-bold text-white border-[6px]"
-                        style={{ backgroundColor: "#5865f2", borderColor: "#111214", fontSize: 20 }}
+                        style={{ backgroundColor: "#cc0000", borderColor: "#111214", fontSize: 20 }}
                       >
                         {initials}
                       </div>
@@ -197,7 +197,7 @@ function MyAccountPage() {
                   </div>
                   <button
                     className="px-3 py-[6px] rounded-[3px] text-[13px] font-semibold text-white hover:brightness-110 transition-all"
-                    style={{ backgroundColor: "#5865f2" }}
+                    style={{ backgroundColor: "#cc0000" }}
                   >
                     Edit User Profile
                   </button>
@@ -205,7 +205,7 @@ function MyAccountPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[18px] font-bold text-[#f2f3f5]">{displayName}</span>
                   {user?.bot && (
-                    <span className="px-1 py-[1px] text-[9px] font-bold bg-[#5865f2] text-white rounded uppercase tracking-wide">BOT</span>
+                    <span className="px-1 py-[1px] text-[9px] font-bold bg-[#cc0000] text-white rounded uppercase tracking-wide">BOT</span>
                   )}
                 </div>
                 <div className="text-[14px] text-[#87898c]">{username}{discriminator}</div>
@@ -330,7 +330,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                 ) : (
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-[12px]"
-                    style={{ backgroundColor: "#5865f2" }}
+                    style={{ backgroundColor: "#cc0000" }}
                   >
                     {initials}
                   </div>
@@ -391,8 +391,8 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
                     className={cn(
                       "w-full flex items-center gap-2 px-2 py-[6px] rounded-[3px] transition-colors text-left",
                       activePage === item.id
-                        ? "bg-[#404249] text-[#f2f3f5]"
-                        : "text-[#949ba4] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                        ? "bg-[#2a0505] text-[#f2f3f5]"
+                        : "text-[#949ba4] hover:bg-[#1a0505] hover:text-[#dbdee1]"
                     )}
                   >
                     <span className="shrink-0">{item.icon}</span>

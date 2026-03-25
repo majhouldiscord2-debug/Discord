@@ -61,7 +61,7 @@ export function GuildChannelList({ server, activeChannelId, onSelectChannel, onO
   return (
     <div
       className="w-[240px] h-full flex flex-col shrink-0"
-      style={{ background: "linear-gradient(180deg, #080d1a 0%, #080f1c 60%, #06091a 100%)" }}
+      style={{ background: "linear-gradient(180deg, #0d0000 0%, #0a0000 60%, #080000 100%)" }}
     >
       <div
         className="h-12 shrink-0 flex items-center px-3 gap-2 cursor-pointer hover:bg-white/5 transition-colors select-none"
@@ -111,10 +111,10 @@ export function GuildChannelList({ server, activeChannelId, onSelectChannel, onO
                         "w-full flex items-center gap-1.5 px-2 py-[5px] mx-2 rounded-[6px] transition-all duration-150 text-left group/ch",
                         "max-w-[calc(100%-16px)]",
                         isActive
-                          ? "bg-[#404249] text-[#f2f3f5]"
+                          ? "bg-[#2a0505] text-[#f2f3f5]"
                           : isVoice
-                          ? "text-[#5e6068] hover:text-[#c0c3c9] hover:bg-[#35373c]/50"
-                          : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+                          ? "text-[#5e6068] hover:text-[#c0c3c9] hover:bg-[#1a0505]/50"
+                          : "text-[#87898c] hover:bg-[#1a0505] hover:text-[#dbdee1]"
                       )}
                     >
                       <span className="shrink-0">

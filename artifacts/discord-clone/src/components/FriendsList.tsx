@@ -67,7 +67,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
               onClick={() => setActiveTab(t)}
               className="relative px-3 py-1.5 text-[14px] font-medium transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 rounded-[5px]"
               style={{
-                backgroundColor: activeTab === t ? "#35373c" : "transparent",
+                backgroundColor: activeTab === t ? "#2a0505" : "transparent",
                 color: activeTab === t ? "#f2f3f5" : "#87898c",
               }}
               onMouseEnter={(e) => {

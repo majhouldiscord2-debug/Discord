@@ -26,7 +26,7 @@ export function ActiveNow() {
         </div>
         <div
           className="px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest"
-          style={{ background: "rgba(0,176,244,0.12)", color: "#00b0f4", border: "1px solid rgba(0,176,244,0.2)" }}
+          style={{ background: "rgba(200,0,0,0.12)", color: "#ff6060", border: "1px solid rgba(200,0,0,0.3)" }}
         >
           Coming Soon
         </div>

@@ -122,7 +122,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
             <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
               <Avatar
                 initials={currentUser?.initials ?? "?"}
-                color={currentUser?.avatarColor ?? "#5865f2"}
+                color={currentUser?.avatarColor ?? "#cc0000"}
                 status={currentUser?.status ?? "online"}
                 size="sm"
                 statusBg="#1e2022"
@@ -159,7 +159,7 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; la
       onClick={onClick}
       className={cn(
         "w-full flex items-center px-2 py-[7px] rounded-[6px] transition-all duration-150 gap-3",
-        isActive ? "bg-[#1a1a1a] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#111111] hover:text-[#dbdee1]"
+        isActive ? "bg-[#2a0505] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#1a0505] hover:text-[#dbdee1]"
       )}
     >
       <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76]")}>{icon}</span>

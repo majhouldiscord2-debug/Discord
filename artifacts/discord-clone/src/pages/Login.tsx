@@ -21,11 +21,11 @@ function SpaceBackground() {
 
     const starColors = [
       [255, 255, 255],
-      [180, 210, 255],
-      [220, 235, 255],
-      [255, 240, 200],
-      [200, 220, 255],
-      [150, 200, 255],
+      [255, 200, 200],
+      [255, 220, 220],
+      [255, 240, 240],
+      [220, 100, 100],
+      [255, 150, 150],
     ];
 
     // Three depth layers for parallax feel
@@ -61,11 +61,11 @@ function SpaceBackground() {
 
     // Nebula nodes
     const nebulae = [
-      { x: 0.15, y: 0.25, rx: 0.35, ry: 0.25, r: 60, g: 90, b: 180, a: 0.045 },
-      { x: 0.78, y: 0.65, rx: 0.28, ry: 0.22, r: 80, g: 50, b: 160, a: 0.04 },
-      { x: 0.5,  y: 0.1,  rx: 0.45, ry: 0.18, r: 30, g: 60, b: 150, a: 0.035 },
-      { x: 0.85, y: 0.2,  rx: 0.22, ry: 0.3,  r: 100, g: 80, b: 200, a: 0.03 },
-      { x: 0.3,  y: 0.8,  rx: 0.3,  ry: 0.2,  r: 50, g: 100, b: 180, a: 0.03 },
+      { x: 0.15, y: 0.25, rx: 0.35, ry: 0.25, r: 180, g: 20, b: 20, a: 0.045 },
+      { x: 0.78, y: 0.65, rx: 0.28, ry: 0.22, r: 160, g: 10, b: 10, a: 0.04 },
+      { x: 0.5,  y: 0.1,  rx: 0.45, ry: 0.18, r: 200, g: 30, b: 30, a: 0.035 },
+      { x: 0.85, y: 0.2,  rx: 0.22, ry: 0.3,  r: 140, g: 0,  b: 0,  a: 0.03 },
+      { x: 0.3,  y: 0.8,  rx: 0.3,  ry: 0.2,  r: 180, g: 20, b: 20, a: 0.03 },
     ];
 
     // Shooting stars pool
@@ -108,9 +108,9 @@ function SpaceBackground() {
 
       // Deep space base gradient
       const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
-      bg.addColorStop(0, "#010208");
-      bg.addColorStop(0.5, "#020510");
-      bg.addColorStop(1, "#010208");
+      bg.addColorStop(0, "#080000");
+      bg.addColorStop(0.5, "#0f0000");
+      bg.addColorStop(1, "#080000");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
@@ -166,7 +166,7 @@ function SpaceBackground() {
           m.x, m.y
         );
         tail.addColorStop(0, `rgba(255,255,255,0)`);
-        tail.addColorStop(0.6, `rgba(200,225,255,${0.5 * opacity})`);
+        tail.addColorStop(0.6, `rgba(255,180,180,${0.5 * opacity})`);
         tail.addColorStop(1, `rgba(255,255,255,${0.9 * opacity})`);
         ctx.beginPath();
         ctx.moveTo(m.x - Math.cos(m.angle) * m.len, m.y - Math.sin(m.angle) * m.len);
@@ -212,7 +212,7 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-screen w-full items-center justify-center" style={{ background: "#000000", position: "relative" }}>
+    <div className="flex h-screen w-full items-center justify-center" style={{ background: "#080000", position: "relative" }}>
       <SpaceBackground />
 
       {/* Card wrapper */}
@@ -263,7 +263,7 @@ export default function Login() {
               display: "block",
               fontSize: 9.5,
               fontWeight: 700,
-              color: "rgba(100,140,200,0.7)",
+              color: "rgba(220,80,80,0.8)",
               letterSpacing: "0.22em",
               fontFamily: "'Courier New', monospace",
               marginBottom: 8,
@@ -285,10 +285,10 @@ export default function Login() {
               borderRadius: 10,
               padding: "11px 14px",
               fontSize: 13,
-              color: "rgba(160,200,255,0.85)",
+              color: "rgba(255,200,200,0.85)",
               fontFamily: "'Courier New', monospace",
               outline: "none",
-              caretColor: "#1d6ef5",
+              caretColor: "#cc0000",
               marginBottom: 16,
             }}
             autoComplete="off"
@@ -321,7 +321,7 @@ export default function Login() {
               padding: "13px 0",
               borderRadius: 50,
               border: "none",
-              background: "linear-gradient(135deg, #1d6ef5 0%, #1252cc 100%)",
+              background: "linear-gradient(135deg, #cc0000 0%, #8b0000 100%)",
               color: "#fff",
               fontSize: 11.5,
               fontWeight: 900,
@@ -329,7 +329,7 @@ export default function Login() {
               textTransform: "uppercase",
               cursor: token.trim() && !loading ? "pointer" : "not-allowed",
               opacity: !token.trim() || loading ? 0.35 : 1,
-              boxShadow: "0 8px 26px rgba(29,110,245,0.45)",
+              boxShadow: "0 8px 26px rgba(200,0,0,0.45)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
