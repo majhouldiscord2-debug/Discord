@@ -27,11 +27,11 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
   return (
     <div
       className="w-[240px] h-full flex flex-col shrink-0"
-      style={{ backgroundColor: "#2b2d31" }}
+      style={{ backgroundColor: "#000000" }}
     >
       <button
         className="h-12 shrink-0 flex items-center px-3 gap-2 transition-colors hover:bg-white/5"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
       >
         <span className="flex-1 text-left text-[13px] font-medium text-[#87898c] hover:text-[#dbdee1] transition-colors truncate">
           Find or start a conversation
@@ -79,10 +79,10 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
           <div className="pb-2 space-y-[2px]">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex items-center gap-3 px-2 py-[6px] rounded-[6px]">
-                <div className="w-8 h-8 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: "#3a3c40", opacity: 0.6 + i * 0.05 }} />
+                <div className="w-8 h-8 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: "#1a1a1a", opacity: 0.9 }} />
                 <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                  <div className="h-2.5 rounded-full animate-pulse" style={{ backgroundColor: "#3a3c40", width: `${60 + (i * 13) % 35}%` }} />
-                  <div className="h-2 rounded-full animate-pulse" style={{ backgroundColor: "#3a3c40", width: `${40 + (i * 9) % 30}%`, opacity: 0.6 }} />
+                  <div className="h-2.5 rounded-full animate-pulse" style={{ backgroundColor: "#1a1a1a", width: `${60 + (i * 13) % 35}%` }} />
+                  <div className="h-2 rounded-full animate-pulse" style={{ backgroundColor: "#1a1a1a", width: `${40 + (i * 9) % 30}%`, opacity: 0.7 }} />
                 </div>
               </div>
             ))}
@@ -92,7 +92,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
 
       <div
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
-        style={{ backgroundColor: "#232428", borderTop: "1px solid rgba(0,0,0,0.3)" }}
+        style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,255,255,0.06)" }}
       >
         {!isBotMode ? (
           <>
@@ -159,7 +159,7 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; la
       onClick={onClick}
       className={cn(
         "w-full flex items-center px-2 py-[7px] rounded-[6px] transition-all duration-150 gap-3",
-        isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+        isActive ? "bg-[#1a1a1a] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#111111] hover:text-[#dbdee1]"
       )}
     >
       <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76]")}>{icon}</span>

@@ -5,7 +5,6 @@ import { GuildChannelList } from "@/components/GuildChannelList";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
-import { SettingsModal } from "@/components/SettingsModal";
 import { InProgressPage } from "@/components/InProgress";
 import ShopPage from "@/discord/Shop";
 import QuestsPage from "@/discord/Quests";
@@ -28,7 +27,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
   const getDmRecipient = useAppStore((s) => s.getDmRecipient);
   const getChannelsByServer = useAppStore((s) => s.getChannelsByServer);
 
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [view, setView] = useState<string>("friends");
   const [activeServerPanel, setActiveServerPanel] = useState<"dms" | string>("dms");
 
@@ -70,7 +68,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
   const showGuildSidebar = activeServerPanel !== "dms" && activeServer !== null;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-sans selection:bg-primary/30">
+    <div className="flex h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#000000" }}>
       <ServerList
         activeServer={activeServerPanel}
         onSelectServer={handleSelectServer}
@@ -83,7 +81,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           server={activeServer!}
           activeChannelId={activeChannelId}
           onSelectChannel={handleSelectChannel}
-          onOpenSettings={() => setSettingsOpen(true)}
         />
       ) : (
         <Sidebar
@@ -91,7 +88,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           onNavigate={handleNavigate}
           onOpenDm={handleOpenDm}
           activeDmId={activeDmId}
-          onOpenSettings={() => setSettingsOpen(true)}
           isBotMode={false}
         />
       )}
@@ -109,7 +105,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
               isDm={false}
             />
           ) : (
-            <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#0a1220" }}>
+            <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#000000" }}>
               <p className="text-[#87898c] text-[15px] font-semibold">{activeServer?.name}</p>
               <p className="text-[#5e6068] text-[13px]">Select a channel to start chatting</p>
             </div>
@@ -136,8 +132,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           <InProgressPage title="Nitro Home" subtitle="Nitro Home and other features are currently being built. Coming soon!" />
         )}
       </div>
-
-      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

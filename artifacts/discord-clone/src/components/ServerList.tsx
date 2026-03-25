@@ -81,7 +81,7 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
   return (
     <div
       className="w-[72px] h-full flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0"
-      style={{ backgroundColor: "#1e1f22" }}
+      style={{ backgroundColor: "#000000" }}
     >
       <ServerButton
         name={isBotMode ? "Switch to Discord" : "Switch to Bot Manager"}
@@ -114,9 +114,9 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
             <div key={i} className="relative flex items-center justify-center w-full">
               <button
                 className="w-12 h-12 flex items-center justify-center overflow-hidden animate-pulse"
-                style={{ borderRadius: 24, backgroundColor: "#2b2d31" }}
+                style={{ borderRadius: 24, backgroundColor: "#111111" }}
               >
-                {i === 0 ? <InProgressClock size={30} /> : <div style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: "#35373c" }} />}
+                {i === 0 ? <InProgressClock size={30} /> : <div style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: "#1a1a1a" }} />}
               </button>
             </div>
           ))}

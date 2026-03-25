@@ -44,10 +44,10 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
   };
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#000000" }}>
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#313338" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", backgroundColor: "#000000" }}
       >
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-[#7d8188]" />
@@ -85,7 +85,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto discord-scrollbar flex flex-col items-center justify-center" style={{ backgroundColor: "#313338" }}>
+      <div className="flex-1 overflow-y-auto discord-scrollbar flex flex-col items-center justify-center" style={{ backgroundColor: "#000000" }}>
         <InProgress
           size="lg"
           label="Friends List"
@@ -102,7 +102,7 @@ function TabBtn({ label, isActive, onClick, badge }: { label: string; isActive: 
       onClick={onClick}
       className={cn(
         "px-3 py-1 text-[13px] font-medium rounded-[5px] transition-all duration-150 relative whitespace-nowrap",
-        isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
+        isActive ? "bg-[#1a1a1a] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#111111] hover:text-[#dbdee1]"
       )}
     >
       {label}

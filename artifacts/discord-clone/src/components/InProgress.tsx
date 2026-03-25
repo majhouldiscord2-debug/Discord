@@ -7,7 +7,7 @@ export function InProgressClock({ size = 56 }: ClockProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="28" cy="28" r="26" stroke="#00b0f4" strokeWidth="2.5" strokeDasharray="6 4" strokeLinecap="round" opacity="0.5" />
-      <circle cx="28" cy="28" r="20" fill="#1e1f22" stroke="#00b0f4" strokeWidth="1.5" opacity="0.8" />
+      <circle cx="28" cy="28" r="20" fill="#000000" stroke="#00b0f4" strokeWidth="1.5" opacity="0.8" />
       <line x1="28" y1="28" x2="28" y2="14" stroke="#00b0f4" strokeWidth="2" strokeLinecap="round" />
       <line x1="28" y1="28" x2="38" y2="34" stroke="#87898c" strokeWidth="2" strokeLinecap="round" />
       <circle cx="28" cy="28" r="2.5" fill="#00b0f4" />
@@ -51,7 +51,7 @@ export function InProgressPage({
   subtitle?: string;
 }) {
   return (
-    <div className="flex-1 h-full flex flex-col items-center justify-center gap-5 select-none" style={{ backgroundColor: "#313338" }}>
+    <div className="flex-1 h-full flex flex-col items-center justify-center gap-5 select-none" style={{ backgroundColor: "#000000" }}>
       <InProgressClock size={88} />
       <div className="flex flex-col items-center gap-2 text-center">
         <span className="text-[20px] font-bold text-[#dbdee1]">{title}</span>

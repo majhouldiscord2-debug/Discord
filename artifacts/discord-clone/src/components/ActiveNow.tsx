@@ -5,13 +5,13 @@ export function ActiveNow() {
     <div
       className="w-[340px] h-full hidden lg:flex flex-col shrink-0"
       style={{
-        background: "#2b2d31",
-        borderLeft: "1px solid rgba(0,0,0,0.3)",
+        background: "#000000",
+        borderLeft: "1px solid rgba(255,255,255,0.06)",
       }}
     >
       <div
         className="h-12 shrink-0 flex items-center px-4"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)" }}
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
       >
         <span className="text-[15px] font-semibold text-[#f2f3f5]">Active Now</span>
       </div>
