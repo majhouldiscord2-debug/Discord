@@ -16,8 +16,8 @@ export function ActiveNow() {
         <span className="text-[15px] font-semibold text-[#f2f3f5]">Active Now</span>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-5">
-        <InProgressClock size={72} />
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center gap-5 animate-fade-slide-up">
+        <InProgressClock size={72} float />
         <div className="flex flex-col gap-2">
           <p className="text-[15px] font-semibold text-[#f2f3f5]">In Progress</p>
           <p className="text-[13px] text-[#87898c] leading-snug">

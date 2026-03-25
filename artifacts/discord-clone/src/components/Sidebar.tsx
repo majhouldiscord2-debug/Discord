@@ -78,11 +78,11 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
         ) : (
           <div className="pb-2 space-y-[2px]">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3 px-2 py-[6px] rounded-[6px]">
-                <div className="w-8 h-8 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: "#1a1a1a", opacity: 0.9 }} />
+              <div key={i} className="flex items-center gap-3 px-2 py-[6px] rounded-[6px]" style={{ animationDelay: `${i * 80}ms` }}>
+                <div className="w-8 h-8 rounded-full shrink-0 skeleton-shimmer" />
                 <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                  <div className="h-2.5 rounded-full animate-pulse" style={{ backgroundColor: "#1a1a1a", width: `${60 + (i * 13) % 35}%` }} />
-                  <div className="h-2 rounded-full animate-pulse" style={{ backgroundColor: "#1a1a1a", width: `${40 + (i * 9) % 30}%`, opacity: 0.7 }} />
+                  <div className="h-2.5 rounded-full skeleton-shimmer" style={{ width: `${58 + (i * 13) % 37}%`, animationDelay: `${i * 120}ms` }} />
+                  <div className="h-2 rounded-full skeleton-shimmer" style={{ width: `${38 + (i * 9) % 28}%`, animationDelay: `${i * 80 + 200}ms` }} />
                 </div>
               </div>
             ))}

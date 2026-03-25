@@ -20,34 +20,35 @@
 }
 
 :root {
-  --background: 220 50% 6%;
-  --foreground: 214 30% 90%;
-  --sidebar: 220 55% 8%;
-  --sidebar-dark: 220 60% 5%;
-  --sidebar-darker: 220 55% 7%;
-  --primary: 216 92% 54%;
+  --background: 0 0% 0%;
+  --foreground: 214 20% 88%;
+  --sidebar: 0 0% 2%;
+  --sidebar-dark: 0 0% 1%;
+  --sidebar-darker: 0 0% 0%;
+  --primary: 197 100% 48%;
   --primary-foreground: 0 0% 100%;
-  --accent: 220 50% 13%;
-  --muted: 215 25% 50%;
-  --muted-foreground: 215 25% 50%;
+  --accent: 0 0% 8%;
+  --muted: 0 0% 45%;
+  --muted-foreground: 0 0% 45%;
   --success: 145 65% 39%;
   --warning: 38 95% 54%;
   --danger: 359 82% 60%;
-  --border: 220 50% 10%;
+  --border: 0 0% 10%;
 }
 
 @layer base {
   html {
-    background-color: hsl(var(--background));
+    background-color: #000000;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    background-color: #000000;
   }
 }
 
 /* ── Keyframe animations ───────────────────────────────────────── */
 @keyframes fadeSlideUp {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
@@ -58,17 +59,12 @@
 
 @keyframes subtleFloat {
   0%,100% { transform: translateY(0px); }
-  50%     { transform: translateY(-3px); }
+  50%     { transform: translateY(-5px); }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
+  from { opacity: 0; transform: scale(0.88); }
   to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes modalSlideIn {
-  from { opacity: 0; transform: translateY(14px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes sidebarSlideIn {
@@ -87,13 +83,8 @@
 }
 
 @keyframes viewFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
 }
 
 @keyframes spinOnce {
@@ -101,38 +92,86 @@
   to   { transform: rotate(90deg); }
 }
 
-@keyframes logEntryIn {
-  from { opacity: 0; transform: translateX(-6px); background-color: rgba(255,255,255,0.04); }
-  to   { opacity: 1; transform: translateX(0); background-color: transparent; }
-}
-
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
 }
 
+/* ── Cool new animations ─────────────────────────────────────── */
+
+/* Clock hands spin */
+@keyframes clockSpin {
+  from { transform-origin: 28px 28px; transform: rotate(0deg); }
+  to   { transform-origin: 28px 28px; transform: rotate(360deg); }
+}
+
+/* Outer dashed ring rotates slowly */
+@keyframes dashRotate {
+  from { transform-origin: center; transform: rotate(0deg); }
+  to   { transform-origin: center; transform: rotate(360deg); }
+}
+
+/* Teal glow pulse */
+@keyframes tealglow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(0,176,244,0.3)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(0,176,244,0.7)); }
+}
+
+/* Skeleton shimmer */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* Floating animation for clock */
+@keyframes floatClock {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-7px) scale(1.03); }
+}
+
+/* Fade in from black */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Server button breathe */
+@keyframes serverBreathe {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.06); }
+}
+
+/* Border glow */
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,176,244,0); }
+  50%       { box-shadow: 0 0 0 2px rgba(0,176,244,0.25), inset 0 0 12px rgba(0,176,244,0.05); }
+}
+
+/* Teal coming-soon badge pulse */
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,176,244,0.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(0,176,244,0); }
+}
+
 /* ── Animation utilities ─────────────────────────────────────── */
 @layer utilities {
   .animate-fade-slide-up {
-    animation: fadeSlideUp 0.3s ease both;
+    animation: fadeSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .animate-scale-in {
-    animation: scaleIn 0.25s ease both;
-  }
-  .animate-modal-slide-in {
-    animation: modalSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: scaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .animate-sidebar-slide-in {
-    animation: sidebarSlideIn 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: sidebarSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .animate-page-slide-right {
-    animation: pageSlideInRight 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: pageSlideInRight 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .animate-page-slide-left {
-    animation: pageSlideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: pageSlideInLeft 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .animate-view-fade {
-    animation: viewFadeIn 0.25s ease both;
+    animation: viewFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .hover\:animate-spin-once:hover {
     animation: spinOnce 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -140,11 +179,48 @@
   .online-pulse {
     animation: onlinePulse 2.4s ease-in-out infinite;
   }
-  .animate-log-entry {
-    animation: logEntryIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
-  }
   .animate-pulse-soft {
     animation: pulse-soft 2s ease-in-out infinite;
+  }
+
+  /* Clock animations */
+  .animate-clock-spin {
+    animation: clockSpin 8s linear infinite;
+    transform-origin: 28px 28px;
+  }
+  .animate-dash-rotate {
+    animation: dashRotate 20s linear infinite;
+    transform-origin: center;
+  }
+  .animate-teal-glow {
+    animation: tealglow 3s ease-in-out infinite;
+  }
+  .animate-float-clock {
+    animation: floatClock 4s ease-in-out infinite;
+  }
+  .animate-server-breathe {
+    animation: serverBreathe 3s ease-in-out infinite;
+  }
+  .animate-border-glow {
+    animation: borderGlow 3s ease-in-out infinite;
+  }
+  .animate-badge-pulse {
+    animation: badgePulse 2s ease-in-out infinite;
+  }
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease both;
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      #111111 25%,
+      #1e1e1e 50%,
+      #111111 75%
+    );
+    background-size: 400px 100%;
+    animation: shimmer 2s ease-in-out infinite;
   }
 
   /* Staggered delay helpers */
@@ -167,29 +243,29 @@
   }
 
   /* Discord-style refined scrollbar */
-  .discord-scrollbar::-webkit-scrollbar { width: 6px; }
+  .discord-scrollbar::-webkit-scrollbar { width: 4px; }
   .discord-scrollbar::-webkit-scrollbar-track { background: transparent; }
   .discord-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(255,255,255,0.07);
-    border-radius: 3px;
+    background-color: rgba(255,255,255,0.06);
+    border-radius: 2px;
   }
   .discord-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255,255,255,0.14);
+    background-color: rgba(255,255,255,0.12);
   }
   .discord-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.07) transparent;
+    scrollbar-color: rgba(255,255,255,0.06) transparent;
   }
 
-  /* GPU-composited layers for smoother animation */
+  /* GPU-composited layers */
   .animate-fade-slide-up,
   .animate-scale-in,
-  .animate-modal-slide-in,
   .animate-sidebar-slide-in,
   .animate-page-slide-right,
   .animate-page-slide-left,
   .animate-view-fade,
-  .animate-log-entry {
+  .animate-float-clock,
+  .animate-teal-glow {
     will-change: transform, opacity;
   }
 }

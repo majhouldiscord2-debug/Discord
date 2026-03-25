@@ -111,12 +111,14 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
       {!isBotMode && (
         <div className="flex flex-col items-center w-full gap-2 mt-1 px-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="relative flex items-center justify-center w-full">
+            <div key={i} className="relative flex items-center justify-center w-full" style={{ animationDelay: `${i * 200}ms` }}>
               <button
-                className="w-12 h-12 flex items-center justify-center overflow-hidden animate-pulse"
-                style={{ borderRadius: 24, backgroundColor: "#111111" }}
+                className="w-12 h-12 flex items-center justify-center overflow-hidden animate-server-breathe"
+                style={{ borderRadius: 24, backgroundColor: "#0d0d0d", animationDelay: `${i * 400}ms` }}
               >
-                {i === 0 ? <InProgressClock size={30} /> : <div style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: "#1a1a1a" }} />}
+                {i === 0 ? <InProgressClock size={28} /> : (
+                  <div className="skeleton-shimmer" style={{ width: 28, height: 28, borderRadius: 7 }} />
+                )}
               </button>
             </div>
           ))}
