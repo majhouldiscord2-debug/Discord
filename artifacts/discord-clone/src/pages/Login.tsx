@@ -84,37 +84,38 @@ function SpaceCanvas() {
 }
 
 function DotRobot() {
-  const S = 7;
-  const G = 11;
+  // Dot size radius and grid spacing — small dots, tight matrix like ONE.BOT
+  const S = 5;
+  const G = 9;
 
-  // 0=none, 1=dim, 2=med, 3=bright, 4=eye(cyan), 5=accent
+  // 0=none, 1=dim blue, 2=med blue-white, 3=bright white, 4=eye cyan glow
+  // Wide landscape head, two big 4-wide eye blocks, right-skewed smirk
   const grid = [
-    [0,0,0,0,0,0,3,0,0,0,0,0,0],
-    [0,0,0,0,0,0,3,0,0,0,0,0,0],
-    [0,0,0,0,0,3,1,3,0,0,0,0,0],
-    [0,0,0,3,3,3,3,3,3,3,0,0,0],
-    [0,0,3,2,2,2,2,2,2,2,3,0,0],
-    [0,0,3,2,4,4,2,4,4,2,3,0,0],
-    [0,0,3,2,4,4,2,4,4,2,3,0,0],
-    [0,0,3,2,2,2,2,2,2,2,3,0,0],
-    [0,0,3,2,3,2,2,2,3,2,3,0,0],
-    [0,0,0,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,0,2,2,2,2,2,0,0,0,0],
-    [0,3,0,3,3,3,3,3,3,3,0,3,0],
-    [0,3,0,3,2,2,2,2,2,3,0,3,0],
-    [0,3,0,3,2,1,1,1,2,3,0,3,0],
-    [0,0,0,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,0,3,2,0,2,3,0,0,0,0],
-    [0,0,0,0,3,2,0,2,3,0,0,0,0],
-    [0,0,0,0,3,0,0,0,3,0,0,0,0],
+    // 18 cols wide
+    // 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17
+    [0,  0,  0,  0,  0,  0,  0,  0,  3,  3,  0,  0,  0,  0,  0,  0,  0,  0], // 0  antenna
+    [0,  0,  0,  0,  0,  0,  0,  0,  3,  0,  0,  0,  0,  0,  0,  0,  0,  0], // 1  antenna stem
+    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0], // 2  head top
+    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 3  eyes row 1
+    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 4  eyes row 2
+    [0,  2,  3,  1,  4,  4,  4,  4,  1,  1,  4,  4,  4,  4,  1,  3,  2,  0], // 5  eyes row 3
+    [0,  2,  3,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  3,  2,  0], // 6  head mid gap
+    [0,  2,  3,  1,  1,  3,  1,  1,  1,  3,  3,  3,  3,  3,  1,  3,  2,  0], // 7  smirk (right heavy)
+    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0], // 8  head bottom
+    [0,  0,  0,  0,  0,  2,  2,  2,  2,  2,  2,  2,  0,  0,  0,  0,  0,  0], // 9  neck
+    [0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0], // 10 body top
+    [0,  3,  0,  3,  2,  2,  2,  2,  2,  2,  2,  2,  3,  0,  0,  3,  0,  0], // 11 body + arms
+    [0,  3,  0,  3,  2,  1,  1,  1,  1,  1,  1,  2,  3,  0,  0,  3,  0,  0], // 12 body inner
+    [0,  0,  0,  3,  3,  3,  3,  3,  3,  3,  3,  3,  3,  0,  0,  0,  0,  0], // 13 body bottom
+    [0,  0,  0,  0,  0,  3,  2,  0,  0,  2,  3,  0,  0,  0,  0,  0,  0,  0], // 14 legs
+    [0,  0,  0,  0,  0,  3,  0,  0,  0,  0,  3,  0,  0,  0,  0,  0,  0,  0], // 15 feet
   ];
 
-  const colorMap: Record<number, { fill: string; glow?: string; r?: number }> = {
-    1: { fill: "rgba(100,160,255,0.25)", r: S * 0.38 },
-    2: { fill: "rgba(140,190,255,0.45)", r: S * 0.42 },
-    3: { fill: "rgba(200,225,255,0.82)", r: S * 0.46 },
-    4: { fill: "rgba(0,220,255,0.95)", glow: "rgba(0,200,255,0.6)", r: S * 0.5 },
-    5: { fill: "rgba(100,200,255,0.9)", r: S * 0.44 },
+  const colorMap: Record<number, { fill: string; r: number }> = {
+    1: { fill: "rgba(120,170,255,0.22)", r: S * 0.36 },
+    2: { fill: "rgba(160,200,255,0.50)", r: S * 0.40 },
+    3: { fill: "rgba(210,230,255,0.88)", r: S * 0.44 },
+    4: { fill: "rgba(0,225,255,1.00)",   r: S * 0.50 },
   };
 
   const rows = grid.length;
@@ -132,41 +133,34 @@ function DotRobot() {
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block" }}>
       <defs>
-        {dots.filter(d => d.type === 4).map((_, i) => (
-          <radialGradient key={i} id={`eg${i}`} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(0,240,255,1)" />
-            <stop offset="100%" stopColor="rgba(0,180,255,0)" />
-          </radialGradient>
-        ))}
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <filter id="glow2">
+          <feGaussianBlur stdDeviation="1.2" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-        <filter id="eyeglow">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
+        <filter id="eyeglow2">
+          <feGaussianBlur stdDeviation="3" result="blur" />
           <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
       {dots.map((d, i) => {
         const c = colorMap[d.type];
-        const r = c.r ?? S * 0.42;
         const isEye = d.type === 4;
         return (
           <circle
             key={i}
             cx={d.cx}
             cy={d.cy}
-            r={r}
+            r={c.r}
             fill={c.fill}
-            filter={isEye ? "url(#eyeglow)" : d.type >= 3 ? "url(#glow)" : undefined}
-            style={isEye ? { animation: `eyePulse 2.4s ease-in-out infinite ${i * 0.15}s` } : undefined}
+            filter={isEye ? "url(#eyeglow2)" : d.type >= 3 ? "url(#glow2)" : undefined}
+            style={isEye ? { animation: `eyePulse 2.8s ease-in-out infinite ${(i % 5) * 0.2}s` } : undefined}
           />
         );
       })}
       <style>{`
         @keyframes eyePulse {
           0%, 100% { opacity: 1; }
-          50% { opacity: 0.55; }
+          50% { opacity: 0.45; }
         }
       `}</style>
     </svg>
