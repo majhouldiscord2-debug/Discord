@@ -102,19 +102,28 @@ export default function Login() {
     <div className="flex h-screen w-full items-center justify-center" style={{ background: "#000000", position: "relative" }}>
       <SpaceCanvas />
 
+      {/* Wrapper for corner brackets */}
+      <div style={{ position: "relative", zIndex: 1, width: "min(860px, 94vw)" }}>
+        {/* Corner brackets */}
+        {[
+          { top: -6, left: -6, borderTop: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
+          { top: -6, right: -6, borderTop: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
+          { bottom: -6, left: -6, borderBottom: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
+          { bottom: -6, right: -6, borderBottom: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
+        ].map((s, i) => (
+          <div key={i} style={{ position: "absolute", width: 20, height: 20, pointerEvents: "none", zIndex: 10, ...s }} />
+        ))}
+
       <div
         className="animate-scale-in"
         style={{
-          position: "relative",
-          zIndex: 1,
           display: "flex",
-          width: "min(860px, 94vw)",
           minHeight: 420,
-          borderRadius: 24,
+          borderRadius: 20,
           overflow: "hidden",
-          background: "rgba(5,8,18,0.72)",
-          border: "1px solid rgba(255,255,255,0.07)",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(29,100,245,0.08), inset 0 1px 0 rgba(255,255,255,0.05)",
+          background: "rgba(0,0,0,0.82)",
+          border: "1px solid rgba(255,255,255,0.10)",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.06)",
           backdropFilter: "blur(32px)",
         }}
       >
@@ -301,6 +310,7 @@ export default function Login() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
