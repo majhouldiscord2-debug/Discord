@@ -21,52 +21,70 @@ function SpaceBackground() {
 
     const starColors = [
       [255, 255, 255],
-      [255, 200, 200],
-      [255, 220, 220],
-      [255, 240, 240],
-      [220, 100, 100],
-      [255, 150, 150],
+      [255, 210, 210],
+      [255, 235, 235],
+      [255, 255, 255],
+      [230, 110, 110],
+      [200, 60,  60],
+      [255, 170, 170],
+      [210, 200, 255],
     ];
 
     // Three depth layers for parallax feel
     const layers = [
-      Array.from({ length: 180 }, () => ({
+      Array.from({ length: 220 }, () => ({
         x: Math.random(), y: Math.random(),
-        r: Math.random() * 0.7 + 0.2,
-        base: Math.random() * 0.35 + 0.1,
+        r: Math.random() * 0.65 + 0.15,
+        base: Math.random() * 0.3 + 0.08,
         offset: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.008 + 0.002,
+        speed: Math.random() * 0.006 + 0.0015,
         color: starColors[Math.floor(Math.random() * starColors.length)],
-        drift: (Math.random() - 0.5) * 0.00004,
+        drift: (Math.random() - 0.5) * 0.00003,
       })),
-      Array.from({ length: 100 }, () => ({
+      Array.from({ length: 110 }, () => ({
         x: Math.random(), y: Math.random(),
-        r: Math.random() * 1.2 + 0.5,
-        base: Math.random() * 0.5 + 0.2,
+        r: Math.random() * 1.1 + 0.45,
+        base: Math.random() * 0.45 + 0.18,
         offset: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.014 + 0.004,
+        speed: Math.random() * 0.013 + 0.004,
         color: starColors[Math.floor(Math.random() * starColors.length)],
-        drift: (Math.random() - 0.5) * 0.00007,
+        drift: (Math.random() - 0.5) * 0.00006,
       })),
-      Array.from({ length: 40 }, () => ({
+      Array.from({ length: 45 }, () => ({
         x: Math.random(), y: Math.random(),
-        r: Math.random() * 2.0 + 1.0,
-        base: Math.random() * 0.6 + 0.3,
+        r: Math.random() * 2.2 + 1.0,
+        base: Math.random() * 0.65 + 0.3,
         offset: Math.random() * Math.PI * 2,
-        speed: Math.random() * 0.02 + 0.007,
+        speed: Math.random() * 0.018 + 0.006,
         color: starColors[Math.floor(Math.random() * starColors.length)],
-        drift: (Math.random() - 0.5) * 0.0001,
+        drift: (Math.random() - 0.5) * 0.00009,
       })),
     ];
 
-    // Nebula nodes
+    // Enhanced nebulae — richer red + deep purple/blue mix for depth
     const nebulae = [
-      { x: 0.15, y: 0.25, rx: 0.35, ry: 0.25, r: 180, g: 20, b: 20, a: 0.045 },
-      { x: 0.78, y: 0.65, rx: 0.28, ry: 0.22, r: 160, g: 10, b: 10, a: 0.04 },
-      { x: 0.5,  y: 0.1,  rx: 0.45, ry: 0.18, r: 200, g: 30, b: 30, a: 0.035 },
-      { x: 0.85, y: 0.2,  rx: 0.22, ry: 0.3,  r: 140, g: 0,  b: 0,  a: 0.03 },
-      { x: 0.3,  y: 0.8,  rx: 0.3,  ry: 0.2,  r: 180, g: 20, b: 20, a: 0.03 },
+      { x: 0.12, y: 0.22, rx: 0.42, ry: 0.32, r: 200, g: 20,  b: 20,  a: 0.065 },
+      { x: 0.80, y: 0.60, rx: 0.32, ry: 0.26, r: 170, g: 10,  b: 10,  a: 0.055 },
+      { x: 0.50, y: 0.08, rx: 0.50, ry: 0.20, r: 210, g: 30,  b: 30,  a: 0.05  },
+      { x: 0.88, y: 0.18, rx: 0.25, ry: 0.35, r: 150, g: 0,   b: 0,   a: 0.045 },
+      { x: 0.28, y: 0.82, rx: 0.35, ry: 0.22, r: 190, g: 15,  b: 15,  a: 0.045 },
+      { x: 0.60, y: 0.50, rx: 0.28, ry: 0.20, r: 40,  g: 0,   b: 80,  a: 0.04  },
+      { x: 0.05, y: 0.65, rx: 0.20, ry: 0.28, r: 60,  g: 0,   b: 100, a: 0.035 },
+      { x: 0.72, y: 0.88, rx: 0.30, ry: 0.18, r: 180, g: 30,  b: 0,   a: 0.04  },
     ];
+
+    // Floating energy particles — slow drifting embers
+    interface Particle { x: number; y: number; vx: number; vy: number; r: number; alpha: number; life: number; maxLife: number; }
+    const particles: Particle[] = Array.from({ length: 60 }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      vx: (Math.random() - 0.5) * 0.00012,
+      vy: -Math.random() * 0.00018 - 0.00005,
+      r: Math.random() * 1.6 + 0.4,
+      alpha: Math.random() * 0.45 + 0.05,
+      life: Math.floor(Math.random() * 300),
+      maxLife: Math.floor(Math.random() * 400 + 200),
+    }));
 
     // Shooting stars pool
     interface Meteor { x: number; y: number; len: number; angle: number; speed: number; life: number; maxLife: number; }
@@ -74,24 +92,25 @@ function SpaceBackground() {
     let frame = 0;
 
     const spawnMeteor = (W: number, H: number) => {
-      const angle = Math.PI * 0.15 + Math.random() * 0.2;
+      const angle = Math.PI * 0.13 + Math.random() * 0.22;
       meteors.push({
-        x: Math.random() * W,
-        y: Math.random() * H * 0.5,
-        len: Math.random() * 180 + 80,
+        x: Math.random() * W * 0.8,
+        y: Math.random() * H * 0.45,
+        len: Math.random() * 220 + 100,
         angle,
-        speed: Math.random() * 6 + 4,
+        speed: Math.random() * 7 + 5,
         life: 0,
-        maxLife: Math.random() * 35 + 25,
+        maxLife: Math.random() * 40 + 28,
       });
     };
 
     const drawNebulae = (W: number, H: number) => {
       nebulae.forEach((n) => {
         const grd = ctx.createRadialGradient(n.x * W, n.y * H, 0, n.x * W, n.y * H, Math.max(n.rx * W, n.ry * H));
-        grd.addColorStop(0, `rgba(${n.r},${n.g},${n.b},${n.a})`);
-        grd.addColorStop(0.5, `rgba(${n.r},${n.g},${n.b},${n.a * 0.5})`);
-        grd.addColorStop(1, `rgba(${n.r},${n.g},${n.b},0)`);
+        grd.addColorStop(0,   `rgba(${n.r},${n.g},${n.b},${n.a})`);
+        grd.addColorStop(0.4, `rgba(${n.r},${n.g},${n.b},${n.a * 0.55})`);
+        grd.addColorStop(0.75,`rgba(${n.r},${n.g},${n.b},${n.a * 0.18})`);
+        grd.addColorStop(1,   `rgba(${n.r},${n.g},${n.b},0)`);
         ctx.save();
         ctx.scale(1, n.ry / n.rx);
         ctx.beginPath();
@@ -102,20 +121,85 @@ function SpaceBackground() {
       });
     };
 
+    const drawGrid = (W: number, H: number) => {
+      const cellW = 90, cellH = 90;
+      const pulse = 0.012 + 0.006 * Math.sin(frame * 0.008);
+      ctx.save();
+      ctx.strokeStyle = `rgba(180,0,0,${pulse})`;
+      ctx.lineWidth = 0.5;
+      for (let x = 0; x < W; x += cellW) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y < H; y += cellH) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+      ctx.restore();
+    };
+
+    const drawVignette = (W: number, H: number) => {
+      const vPulse = 0.55 + 0.06 * Math.sin(frame * 0.005);
+      const vg = ctx.createRadialGradient(W / 2, H / 2, H * 0.28, W / 2, H / 2, H * 0.85);
+      vg.addColorStop(0, "rgba(0,0,0,0)");
+      vg.addColorStop(0.7, "rgba(0,0,0,0)");
+      vg.addColorStop(1, `rgba(0,0,0,${vPulse})`);
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Red edge glow
+      const edgePulse = 0.055 + 0.025 * Math.sin(frame * 0.007);
+      const eg = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H);
+      eg.addColorStop(0, "rgba(180,0,0,0)");
+      eg.addColorStop(0.75, "rgba(180,0,0,0)");
+      eg.addColorStop(1, `rgba(180,0,0,${edgePulse})`);
+      ctx.fillStyle = eg;
+      ctx.fillRect(0, 0, W, H);
+    };
+
     const draw = () => {
       frame++;
       const W = canvas.width, H = canvas.height;
 
-      // Deep space base gradient
-      const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
-      bg.addColorStop(0, "#080000");
-      bg.addColorStop(0.5, "#0f0000");
-      bg.addColorStop(1, "#080000");
+      // Richer deep-space base: near-black with a red-to-indigo sweep
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0,    "#050008");
+      bg.addColorStop(0.25, "#0a0002");
+      bg.addColorStop(0.5,  "#110003");
+      bg.addColorStop(0.75, "#0a0002");
+      bg.addColorStop(1,    "#050008");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
+      // Subtle grid
+      drawGrid(W, H);
+
       // Nebulae
       drawNebulae(W, H);
+
+      // Drifting energy particles (embers)
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life++;
+        if (p.x < 0) p.x = 1;
+        if (p.x > 1) p.x = 0;
+        if (p.y < 0 || p.y > 1 || p.life >= p.maxLife) {
+          p.x = Math.random();
+          p.y = 1;
+          p.life = 0;
+          p.maxLife = Math.floor(Math.random() * 400 + 200);
+          p.alpha = Math.random() * 0.45 + 0.05;
+        }
+        const lifeAlpha = p.life < 40 ? p.life / 40 : p.life > p.maxLife - 40 ? (p.maxLife - p.life) / 40 : 1;
+        const px = p.x * W, py = p.y * H;
+        const pg = ctx.createRadialGradient(px, py, 0, px, py, p.r * 3);
+        pg.addColorStop(0, `rgba(255,80,80,${p.alpha * lifeAlpha})`);
+        pg.addColorStop(0.5, `rgba(220,30,30,${p.alpha * lifeAlpha * 0.4})`);
+        pg.addColorStop(1, "rgba(180,0,0,0)");
+        ctx.beginPath();
+        ctx.arc(px, py, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = pg;
+        ctx.fill();
+      });
 
       // Stars by layer
       layers.forEach((layer) => {
@@ -128,13 +212,13 @@ function SpaceBackground() {
           const [r, g, b] = s.color;
           const sx = s.x * W, sy = s.y * H;
 
-          // Glow for larger stars
           if (s.r > 1.2) {
-            const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 4);
-            glow.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.5})`);
+            const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+            glow.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.6})`);
+            glow.addColorStop(0.4, `rgba(${r},${g},${b},${alpha * 0.2})`);
             glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
             ctx.beginPath();
-            ctx.arc(sx, sy, s.r * 4, 0, Math.PI * 2);
+            ctx.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
             ctx.fillStyle = glow;
             ctx.fill();
           }
@@ -146,8 +230,9 @@ function SpaceBackground() {
         });
       });
 
-      // Shooting stars
-      if (frame % 140 === 0) spawnMeteor(W, H);
+      // Shooting stars — spawn more frequently with a red-white trail
+      if (frame % 110 === 0) spawnMeteor(W, H);
+      if (frame % 290 === 0) spawnMeteor(W, H);
 
       for (let i = meteors.length - 1; i >= 0; i--) {
         const m = meteors[i];
@@ -155,28 +240,32 @@ function SpaceBackground() {
         m.y += Math.sin(m.angle) * m.speed;
         m.life++;
         const progress = m.life / m.maxLife;
-        const opacity = progress < 0.2
-          ? progress / 0.2
-          : progress > 0.7
-          ? (1 - progress) / 0.3
+        const opacity = progress < 0.18
+          ? progress / 0.18
+          : progress > 0.65
+          ? (1 - progress) / 0.35
           : 1;
         const tail = ctx.createLinearGradient(
           m.x - Math.cos(m.angle) * m.len,
           m.y - Math.sin(m.angle) * m.len,
           m.x, m.y
         );
-        tail.addColorStop(0, `rgba(255,255,255,0)`);
-        tail.addColorStop(0.6, `rgba(255,180,180,${0.5 * opacity})`);
-        tail.addColorStop(1, `rgba(255,255,255,${0.9 * opacity})`);
+        tail.addColorStop(0,   "rgba(255,255,255,0)");
+        tail.addColorStop(0.4, `rgba(220,60,60,${0.3 * opacity})`);
+        tail.addColorStop(0.75,`rgba(255,160,160,${0.65 * opacity})`);
+        tail.addColorStop(1,   `rgba(255,255,255,${opacity})`);
         ctx.beginPath();
         ctx.moveTo(m.x - Math.cos(m.angle) * m.len, m.y - Math.sin(m.angle) * m.len);
         ctx.lineTo(m.x, m.y);
         ctx.strokeStyle = tail;
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.8;
         ctx.stroke();
 
         if (m.life >= m.maxLife) meteors.splice(i, 1);
       }
+
+      // Vignette + red edge pulse — layered on top
+      drawVignette(W, H);
 
       animId = requestAnimationFrame(draw);
     };
