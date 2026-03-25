@@ -87,14 +87,31 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
         className="shrink-0 flex items-center"
         style={{
           height: "38px",
-          backgroundColor: "#1a1a1a",
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          backgroundColor: "#000000",
+          borderBottom: "1px solid rgba(29,110,245,0.18)",
           paddingLeft: "16px",
           paddingRight: "12px",
         }}
       >
+        {/* Left brand label */}
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: "0.22em",
+            color: "rgba(29,110,245,0.75)",
+            fontFamily: "'Courier New', monospace",
+            userSelect: "none",
+            flexShrink: 0,
+          }}
+        >
+          TG WORKS
+        </span>
+
+        <span style={{ margin: "0 10px", color: "rgba(255,255,255,0.12)", fontSize: 16, flexShrink: 0 }}>·</span>
+
         {/* Centered label */}
-        <span className="flex-1 text-center text-[13px] font-semibold" style={{ color: "#dbdee1" }}>
+        <span className="flex-1 text-center text-[13px] font-semibold truncate" style={{ color: "#dbdee1" }}>
           {titleBarLabel}
         </span>
 

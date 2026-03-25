@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { AlertCircle } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
+import { DotRobot } from "@/components/DotRobot";
 
 function SpaceCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -81,24 +82,6 @@ function SpaceCanvas() {
   }, []);
 
   return <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />;
-}
-
-function DotRobot() {
-  return (
-    <img
-      src="/robot.png"
-      alt="Robot"
-      style={{
-        width: 230,
-        height: 230,
-        objectFit: "contain",
-        display: "block",
-        mixBlendMode: "screen",
-        filter: "brightness(1.2)",
-        animation: "robotPulse 3s ease-in-out infinite",
-      }}
-    />
-  );
 }
 
 export default function Login() {
@@ -249,13 +232,7 @@ export default function Login() {
               </>
             ) : "INITIALIZE UPLINK"}
           </button>
-          <style>{`
-            @keyframes spin { to { transform: rotate(360deg); } }
-            @keyframes robotPulse {
-              0%, 100% { opacity: 0.9; filter: brightness(1.15); }
-              50% { opacity: 1; filter: brightness(1.4); }
-            }
-          `}</style>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
 
         {/* RIGHT — robot panel */}
