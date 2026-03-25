@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 
 interface Props {
   onComplete: () => void;
@@ -14,7 +14,6 @@ function randomChar(chars: string) {
 
 function useGlitchText(final: string, active: boolean) {
   const [text, setText] = useState(final);
-  const frame = useRef(0);
 
   useEffect(() => {
     if (!active) { setText(final); return; }
@@ -31,7 +30,6 @@ function useGlitchText(final: string, active: boolean) {
           .join("")
       );
       iteration += 0.4;
-      frame.current++;
       if (iteration >= final.length + 4) clearInterval(interval);
     }, 40);
     return () => clearInterval(interval);
@@ -77,27 +75,22 @@ function BinaryRain() {
 function CircuitLines() {
   return (
     <svg className="absolute inset-0 w-full h-full opacity-20 pointer-events-none" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
-      {/* Horizontal lines */}
       <line x1="0" y1="80" x2="800" y2="80" stroke="#ef4444" strokeWidth="0.5" strokeDasharray="4 8" />
       <line x1="0" y1="520" x2="800" y2="520" stroke="#ef4444" strokeWidth="0.5" strokeDasharray="4 8" />
       <line x1="0" y1="300" x2="260" y2="300" stroke="#ef4444" strokeWidth="0.5" />
       <line x1="540" y1="300" x2="800" y2="300" stroke="#ef4444" strokeWidth="0.5" />
-      {/* Vertical lines */}
       <line x1="60" y1="0" x2="60" y2="600" stroke="#ef4444" strokeWidth="0.5" strokeDasharray="4 8" />
       <line x1="740" y1="0" x2="740" y2="600" stroke="#ef4444" strokeWidth="0.5" strokeDasharray="4 8" />
-      {/* Corner brackets */}
       <polyline points="20,20 20,60 60,60" fill="none" stroke="#ef4444" strokeWidth="1.5" />
       <polyline points="780,20 780,60 740,60" fill="none" stroke="#ef4444" strokeWidth="1.5" />
       <polyline points="20,580 20,540 60,540" fill="none" stroke="#ef4444" strokeWidth="1.5" />
       <polyline points="780,580 780,540 740,540" fill="none" stroke="#ef4444" strokeWidth="1.5" />
-      {/* Circuit nodes */}
       <circle cx="60" cy="80" r="3" fill="#ef4444" />
       <circle cx="740" cy="80" r="3" fill="#ef4444" />
       <circle cx="60" cy="520" r="3" fill="#ef4444" />
       <circle cx="740" cy="520" r="3" fill="#ef4444" />
       <circle cx="60" cy="300" r="3" fill="#ef4444" />
       <circle cx="740" cy="300" r="3" fill="#ef4444" />
-      {/* Scan lines path */}
       <rect x="0" y="0" width="800" height="600" fill="url(#scanlines)" />
       <defs>
         <pattern id="scanlines" width="2" height="4" patternUnits="userSpaceOnUse">
@@ -122,6 +115,9 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
   const [barWidth, setBarWidth] = useState(0);
   const [showStatic, setShowStatic] = useState(false);
 
+  const onCompleteRef = useRef(onComplete);
+  useLayoutEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+
   const label = targetMode === "bot" ? "BOT MANAGER" : "DISCORD";
   const mainText = useGlitchText(`SWITCHING TO ${label}`, phase === "main");
   const subText = useGlitchText("IDENTITY PROTOCOL ACTIVE", phase === "main");
@@ -130,21 +126,35 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
     const t1 = setTimeout(() => setPhase("main"), 100);
     const t2 = setTimeout(() => setShowStatic(true), 1400);
     const t3 = setTimeout(() => setPhase("exit"), 1600);
-    const t4 = setTimeout(() => onComplete(), 1950);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, [onComplete]);
+    const t4 = setTimeout(() => onCompleteRef.current(), 1950);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+    };
+  }, []);
 
   useEffect(() => {
     if (phase !== "main") return;
+    let rafId: number;
     let start: number | null = null;
     const duration = 1200;
+    let alive = true;
+
     function tick(ts: number) {
+      if (!alive) return;
       if (!start) start = ts;
       const pct = Math.min((ts - start) / duration, 1);
       setBarWidth(pct * 100);
-      if (pct < 1) requestAnimationFrame(tick);
+      if (pct < 1) rafId = requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
+
+    rafId = requestAnimationFrame(tick);
+    return () => {
+      alive = false;
+      cancelAnimationFrame(rafId);
+    };
   }, [phase]);
 
   return (
@@ -171,7 +181,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
         @keyframes psaBarGlow { 0%,100%{box-shadow:0 0 6px #ef4444} 50%{box-shadow:0 0 18px #ef4444,0 0 40px #ef444466} }
       `}</style>
 
-      {/* Background glow */}
       <div
         className="absolute inset-0"
         style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(239,68,68,0.12) 0%, transparent 70%)" }}
@@ -180,7 +189,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
       <BinaryRain />
       <CircuitLines />
 
-      {/* Static flash */}
       {showStatic && (
         <div
           className="absolute inset-0 z-10 pointer-events-none"
@@ -191,7 +199,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
         />
       )}
 
-      {/* Scanning line */}
       <div
         className="absolute left-0 right-0 h-[2px] pointer-events-none z-10"
         style={{
@@ -203,7 +210,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
         }}
       />
 
-      {/* Top HUD */}
       <div className="absolute top-4 left-6 right-6 flex justify-between items-start z-20">
         <div className="flex flex-col gap-1">
           <HexData label="SYS:" value="0xFF4A2D" />
@@ -222,16 +228,13 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
         </div>
       </div>
 
-      {/* Bottom HUD */}
       <div className="absolute bottom-4 left-6 right-6 flex justify-between z-20 font-mono text-[9px] text-red-800">
         <span>TG-WORKS :: SECURE_SHELL_v2.4</span>
         <span style={{ animation: "psaPulse 1s ease infinite" }}>ENCRYPTING...</span>
         <span>NODE_ID: 0x{(0xDEAD + Math.floor(barWidth)).toString(16).toUpperCase()}</span>
       </div>
 
-      {/* Main center panel */}
       <div className="relative z-20 flex flex-col items-center gap-6 px-8">
-        {/* Spinning ring */}
         <div className="relative w-20 h-20 flex items-center justify-center">
           <div
             className="absolute inset-0 rounded-full"
@@ -254,7 +257,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
           </svg>
         </div>
 
-        {/* Glitch main text */}
         <div className="flex flex-col items-center gap-2">
           <div
             className="text-2xl font-mono font-bold tracking-[0.3em] text-red-400 text-center"
@@ -267,7 +269,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
           </div>
         </div>
 
-        {/* Progress bar */}
         <div className="w-80 flex flex-col gap-2">
           <div className="flex justify-between font-mono text-[10px] text-red-800">
             <span>LOADING PROFILE</span>
@@ -275,9 +276,10 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
           </div>
           <div className="h-[3px] w-full bg-red-950 rounded-full overflow-hidden">
             <div
-              className="h-full bg-red-500 rounded-full transition-all duration-75"
+              className="h-full bg-red-500 rounded-full"
               style={{
                 width: `${barWidth}%`,
+                transition: "width 0.05s linear",
                 animation: "psaBarGlow 0.5s ease infinite",
               }}
             />
@@ -288,7 +290,6 @@ export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props
           </div>
         </div>
 
-        {/* Status lines */}
         <div className="flex flex-col gap-1 font-mono text-[10px] text-red-900 w-80">
           {barWidth > 20 && <div className="text-red-700">{">"} AUTH_TOKEN validated</div>}
           {barWidth > 45 && <div className="text-red-700">{">"} SESSION encrypted</div>}

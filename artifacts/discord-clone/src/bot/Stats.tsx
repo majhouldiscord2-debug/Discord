@@ -200,7 +200,7 @@ export default function Stats() {
             <div className="px-5 pb-4 -mt-7 flex items-end gap-4">
               <div className="relative shrink-0">
                 {stats.userAvatar ? (
-                  <img src={stats.userAvatar} alt={stats.displayName} className="w-[56px] h-[56px] rounded-full ring-4" style={{ ringColor: "#080000" }} />
+                  <img src={stats.userAvatar} alt={stats.displayName} className="w-[56px] h-[56px] rounded-full ring-4 ring-[#080000]" />
                 ) : (
                   <div className="w-[56px] h-[56px] rounded-full bg-[#cc0000] flex items-center justify-center text-white font-bold text-xl ring-4 ring-[#080000]">
                     {stats.displayName[0]?.toUpperCase()}
