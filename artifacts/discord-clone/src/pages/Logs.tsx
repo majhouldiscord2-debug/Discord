@@ -54,10 +54,10 @@ function makeNewLog(): LogEntry {
 }
 
 const levelMeta: Record<LogLevel, { color: string; bg: string; border: string; dot: string }> = {
-  INFO:  { color: "#87898c", bg: "transparent",           border: "transparent",         dot: "#5e6068" },
-  DEBUG: { color: "#7289da", bg: "rgba(114,137,218,0.06)", border: "rgba(114,137,218,0.15)", dot: "#7289da" },
-  WARN:  { color: "#f0b232", bg: "rgba(240,178,50,0.06)",  border: "rgba(240,178,50,0.15)",  dot: "#f0b232" },
-  ERROR: { color: "#f23f43", bg: "rgba(242,63,67,0.07)",   border: "rgba(242,63,67,0.15)",   dot: "#f23f43" },
+  INFO:  { color: "#a0a8b0", bg: "transparent",                border: "transparent",           dot: "rgba(255,255,255,0.2)" },
+  DEBUG: { color: "#818cf8", bg: "rgba(129,140,248,0.06)",     border: "rgba(129,140,248,0.25)", dot: "#818cf8" },
+  WARN:  { color: "#f0b232", bg: "rgba(240,178,50,0.07)",      border: "rgba(240,178,50,0.3)",   dot: "#f0b232" },
+  ERROR: { color: "#ff4d4d", bg: "rgba(255,77,77,0.08)",       border: "rgba(255,77,77,0.35)",   dot: "#ff4d4d" },
 };
 
 const levels: LogLevel[] = ["INFO", "WARN", "ERROR", "DEBUG"];
@@ -117,21 +117,24 @@ export default function Logs() {
   }), [logs]);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a0000" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#000" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
         style={{
-          borderBottom: "1px solid rgba(0,0,0,0.28)",
-          background: "linear-gradient(180deg, #150000 0%, #0a0000 100%)",
+          borderBottom: "1px solid rgba(204,0,0,0.18)",
+          background: "linear-gradient(180deg, #0d0000 0%, #000 100%)",
         }}
       >
         <div className="flex items-center gap-2">
-          <div className={cn("w-2 h-2 rounded-full", streaming ? "online-pulse bg-[#23a55a]" : "bg-[#5e6068]")} />
-          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Logs</span>
+          <div
+            className={cn("w-2 h-2 rounded-full transition-all", streaming ? "bg-[#cc0000]" : "bg-[rgba(255,255,255,0.2)]")}
+            style={streaming ? { boxShadow: "0 0 6px #cc0000" } : {}}
+          />
+          <span className="text-white font-bold text-[15px] tracking-[-0.01em]">Logs</span>
         </div>
 
-        <div className="w-px h-5 bg-white/10 mx-1" />
+        <div className="w-px h-5 mx-1" style={{ background: "rgba(255,255,255,0.08)" }} />
 
         {/* Level filter tabs */}
         <div className="flex items-center gap-1">
@@ -143,16 +146,17 @@ export default function Logs() {
                 "px-2.5 py-[3px] text-[11px] font-bold rounded-[4px] transition-all duration-150 tracking-wider",
                 activeLevel === lvl
                   ? lvl === "ALL"
-                    ? "bg-[#152438] text-[#f2f3f5]"
+                    ? "text-white"
                     : lvl === "ERROR"
-                    ? "bg-[#f23f43]/20 text-[#f23f43]"
+                    ? "bg-[#ff4d4d]/20 text-[#ff4d4d]"
                     : lvl === "WARN"
                     ? "bg-[#f0b232]/20 text-[#f0b232]"
                     : lvl === "DEBUG"
-                    ? "bg-[#7289da]/20 text-[#7289da]"
-                    : "bg-[#152438] text-[#87898c]"
-                  : "text-[#5e6068] hover:text-[#87898c] hover:bg-white/5"
+                    ? "bg-[#818cf8]/20 text-[#818cf8]"
+                    : "text-white"
+                  : "text-[rgba(255,255,255,0.3)] hover:text-[rgba(255,255,255,0.65)] hover:bg-white/5"
               )}
+              style={activeLevel === lvl && lvl === "ALL" ? { background: "rgba(204,0,0,0.22)", boxShadow: "0 0 0 1px rgba(204,0,0,0.3)" } : activeLevel === lvl && lvl === "INFO" ? { background: "rgba(255,255,255,0.08)" } : {}}
             >
               {lvl}
               {lvl !== "ALL" && <span className="ml-1 opacity-60">{counts[lvl]}</span>}
@@ -169,10 +173,10 @@ export default function Logs() {
             placeholder="Search logs..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-[180px] text-[#dbdee1] placeholder:text-[#5e6068] text-[12px] py-[5px] pl-3 pr-8 rounded-[5px] outline-none transition-all focus:w-[240px] focus:ring-1 focus:ring-white/10"
-            style={{ backgroundColor: "#060000" }}
+            className="w-[180px] text-white placeholder:text-[rgba(255,255,255,0.25)] text-[12px] py-[5px] pl-3 pr-8 rounded-[6px] outline-none transition-all focus:w-[240px]"
+            style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(204,0,0,0.2)" }}
           />
-          <Search className="absolute right-2.5 top-[6px] w-3.5 h-3.5 text-[#5e6068]" />
+          <Search className="absolute right-2.5 top-[6px] w-3.5 h-3.5" style={{ color: "rgba(255,255,255,0.25)" }} />
         </div>
 
         {/* Action buttons */}
@@ -181,11 +185,10 @@ export default function Logs() {
             onClick={toggleStream}
             title={streaming ? "Stop live stream" : "Start live stream"}
             className={cn(
-              "flex items-center gap-1.5 px-2.5 py-[4px] text-[11px] font-semibold rounded-[5px] transition-all",
-              streaming
-                ? "bg-[#23a55a]/20 text-[#23a55a] hover:bg-[#23a55a]/30"
-                : "bg-[#152438] text-[#87898c] hover:text-[#dbdee1] hover:bg-[#1a3050]"
+              "flex items-center gap-1.5 px-2.5 py-[4px] text-[11px] font-bold rounded-[5px] transition-all",
+              streaming ? "text-[#cc0000]" : "text-[rgba(255,255,255,0.45)] hover:text-white hover:bg-white/8"
             )}
+            style={streaming ? { background: "rgba(204,0,0,0.15)", boxShadow: "0 0 8px rgba(204,0,0,0.3)" } : {}}
           >
             <RefreshCw className={cn("w-3 h-3", streaming && "animate-spin")} />
             {streaming ? "Live" : "Stream"}
@@ -195,15 +198,17 @@ export default function Logs() {
             title="Toggle auto-scroll"
             className={cn(
               "p-1.5 rounded-[5px] transition-colors",
-              autoScroll ? "text-[#cc0000] bg-[#cc0000]/15" : "text-[#5e6068] hover:bg-white/5 hover:text-[#87898c]"
+              autoScroll ? "text-[#cc0000] bg-[rgba(204,0,0,0.12)]" : "hover:bg-white/8 hover:text-white"
             )}
+            style={!autoScroll ? { color: "rgba(255,255,255,0.3)" } : {}}
           >
             <ChevronDown className="w-4 h-4" />
           </button>
           <button
             onClick={() => setLogs([])}
             title="Clear logs"
-            className="p-1.5 rounded-[5px] text-[#5e6068] hover:text-[#f23f43] hover:bg-[#f23f43]/10 transition-colors"
+            className="p-1.5 rounded-[5px] transition-colors hover:text-[#ff4d4d] hover:bg-[rgba(255,77,77,0.1)]"
+            style={{ color: "rgba(255,255,255,0.3)" }}
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -216,7 +221,8 @@ export default function Logs() {
               a.href = url; a.download = "logs.txt"; a.click();
               URL.revokeObjectURL(url);
             }}
-            className="p-1.5 rounded-[5px] text-[#5e6068] hover:text-[#dbdee1] hover:bg-white/5 transition-colors"
+            className="p-1.5 rounded-[5px] transition-colors hover:text-white hover:bg-white/8"
+            style={{ color: "rgba(255,255,255,0.3)" }}
           >
             <Download className="w-4 h-4" />
           </button>
@@ -226,26 +232,26 @@ export default function Logs() {
       {/* Log frame */}
       <div className="flex-1 overflow-hidden p-3">
         <div
-          className="h-full rounded-[8px] overflow-hidden flex flex-col"
+          className="h-full rounded-[10px] overflow-hidden flex flex-col"
           style={{
-            background: "#18191c",
-            border: "1px solid rgba(255,255,255,0.06)",
-            boxShadow: "inset 0 2px 16px rgba(0,0,0,0.5)",
+            background: "#060606",
+            border: "1px solid rgba(204,0,0,0.18)",
+            boxShadow: "inset 0 2px 20px rgba(0,0,0,0.6), 0 0 30px rgba(204,0,0,0.04)",
           }}
         >
           {/* Title bar */}
           <div
             className="flex items-center gap-1.5 px-4 py-2.5 shrink-0"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
+            style={{ borderBottom: "1px solid rgba(204,0,0,0.1)", background: "rgba(204,0,0,0.04)" }}
           >
-            <div className="w-2.5 h-2.5 rounded-full bg-[#f23f43]/70" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#f0b232]/70" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#23a55a]/70" />
-            <span className="ml-2 text-[10px] text-[#3e4147] font-mono tracking-widest">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#ff4d4d]/60" style={{ boxShadow: "0 0 4px rgba(255,77,77,0.4)" }} />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#f0b232]/60" style={{ boxShadow: "0 0 4px rgba(240,178,50,0.4)" }} />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#23a55a]/60" style={{ boxShadow: "0 0 4px rgba(35,165,90,0.4)" }} />
+            <span className="ml-2 text-[10px] font-mono tracking-widest" style={{ color: "rgba(255,255,255,0.25)" }}>
               system.log — {filtered.length} entries
             </span>
             {streaming && (
-              <span className="ml-auto text-[10px] text-[#23a55a] font-mono animate-pulse tracking-wider">
+              <span className="ml-auto text-[10px] font-bold font-mono tracking-wider animate-pulse" style={{ color: "#cc0000", textShadow: "0 0 8px rgba(204,0,0,0.6)" }}>
                 ● LIVE
               </span>
             )}
@@ -255,22 +261,21 @@ export default function Logs() {
           <div
             className="grid px-4 py-1.5 shrink-0"
             style={{
-              gridTemplateColumns: "200px 56px 80px 1fr",
+              gridTemplateColumns: "200px 60px 84px 1fr",
               borderBottom: "1px solid rgba(255,255,255,0.04)",
               background: "rgba(255,255,255,0.02)",
             }}
           >
-            <span className="text-[9px] font-bold text-[#3e4147] uppercase tracking-widest">Timestamp</span>
-            <span className="text-[9px] font-bold text-[#3e4147] uppercase tracking-widest">Level</span>
-            <span className="text-[9px] font-bold text-[#3e4147] uppercase tracking-widest">Source</span>
-            <span className="text-[9px] font-bold text-[#3e4147] uppercase tracking-widest">Message</span>
+            {["Timestamp","Level","Source","Message"].map((h) => (
+              <span key={h} className="text-[9px] font-black uppercase tracking-widest" style={{ color: "rgba(204,0,0,0.5)" }}>{h}</span>
+            ))}
           </div>
 
           {/* Entries */}
           <div className="flex-1 overflow-y-auto discord-scrollbar font-mono">
             {filtered.length === 0 ? (
               <div className="flex items-center justify-center h-full">
-                <p className="text-[#3e4147] text-[13px]">No log entries match your filter.</p>
+                <p className="text-[13px]" style={{ color: "rgba(255,255,255,0.2)" }}>No log entries match your filter.</p>
               </div>
             ) : (
               filtered.map((log) => {
@@ -279,26 +284,26 @@ export default function Logs() {
                 return (
                   <div
                     key={log.id}
-                    className={cn("grid px-4 py-[5px] transition-colors duration-75 hover:bg-white/[0.025] group cursor-default", isNew && "animate-log-entry")}
+                    className={cn("grid px-4 py-[5px] transition-colors duration-75 group cursor-default", isNew && "animate-log-entry")}
                     style={{
-                      gridTemplateColumns: "200px 56px 80px 1fr",
+                      gridTemplateColumns: "200px 60px 84px 1fr",
                       background: m.bg,
-                      borderLeft: `2px solid ${activeLevel === log.level ? m.border : "transparent"}`,
+                      borderLeft: `2px solid ${m.border}`,
                     }}
                   >
-                    <span className="text-[10px] text-[#3e4147] tabular-nums truncate pr-2 group-hover:text-[#5e6068] transition-colors">
+                    <span className="text-[10px] tabular-nums truncate pr-2" style={{ color: "rgba(255,255,255,0.22)" }}>
                       {log.timestamp}
                     </span>
                     <div className="flex items-center gap-1">
-                      <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: m.dot }} />
-                      <span className="text-[10px] font-bold tracking-wide" style={{ color: m.color }}>
+                      <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: m.dot, boxShadow: `0 0 4px ${m.dot}` }} />
+                      <span className="text-[10px] font-black tracking-wide" style={{ color: m.color }}>
                         {log.level}
                       </span>
                     </div>
-                    <span className="text-[10px] text-[#1a3050] truncate pr-2 group-hover:text-[#5e6068] transition-colors">
+                    <span className="text-[10px] truncate pr-2 font-medium" style={{ color: "rgba(204,0,0,0.6)" }}>
                       [{log.source}]
                     </span>
-                    <span className="text-[11px] truncate" style={{ color: m.color === "#87898c" ? "#6d6f76" : m.color }}>
+                    <span className="text-[11px] truncate" style={{ color: log.level === "INFO" ? "rgba(255,255,255,0.55)" : m.color }}>
                       {log.message}
                     </span>
                   </div>
@@ -313,11 +318,11 @@ export default function Logs() {
             className="px-4 py-2 shrink-0 flex items-center gap-2"
             style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
           >
-            <span className="text-[11px] text-[#23a55a] font-mono">›</span>
-            <span className="text-[10px] text-[#060000] font-mono animate-pulse">_</span>
-            <span className="ml-auto text-[9px] text-[#060000] font-mono tabular-nums">
-              {counts.ERROR > 0 && <span className="text-[#f23f43] mr-2">{counts.ERROR} error{counts.ERROR !== 1 ? "s" : ""}</span>}
-              {counts.WARN > 0 && <span className="text-[#f0b232] mr-2">{counts.WARN} warning{counts.WARN !== 1 ? "s" : ""}</span>}
+            <span className="text-[11px] font-mono" style={{ color: "#cc0000", textShadow: "0 0 6px rgba(204,0,0,0.5)" }}>›</span>
+            <span className="text-[10px] font-mono animate-pulse" style={{ color: "rgba(255,255,255,0.4)" }}>_</span>
+            <span className="ml-auto text-[9px] font-mono tabular-nums" style={{ color: "rgba(255,255,255,0.3)" }}>
+              {counts.ERROR > 0 && <span className="mr-2" style={{ color: "#ff4d4d" }}>{counts.ERROR} error{counts.ERROR !== 1 ? "s" : ""}</span>}
+              {counts.WARN > 0 && <span className="mr-2" style={{ color: "#f0b232" }}>{counts.WARN} warning{counts.WARN !== 1 ? "s" : ""}</span>}
               {logs.length} total
             </span>
           </div>

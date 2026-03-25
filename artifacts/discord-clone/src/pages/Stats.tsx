@@ -44,32 +44,29 @@ interface BigStatProps {
 function BigStat({ icon, label, value, sub, color, loading }: BigStatProps) {
   return (
     <div
-      className="flex-1 min-w-0 rounded-[14px] p-5 flex flex-col gap-3 relative overflow-hidden group transition-transform duration-200 hover:scale-[1.02]"
+      className="flex-1 min-w-0 rounded-[14px] p-5 flex flex-col gap-3 relative overflow-hidden group transition-all duration-200 hover:scale-[1.02] hover:brightness-110"
       style={{
-        background: `linear-gradient(135deg, ${color}22 0%, #0a0000 60%)`,
-        border: `1px solid ${color}35`,
-        boxShadow: `0 0 30px ${color}12, inset 0 1px 0 ${color}15`,
+        background: `linear-gradient(135deg, ${color}20 0%, #000 65%)`,
+        border: `1px solid ${color}40`,
+        boxShadow: `0 4px 20px ${color}15, inset 0 1px 0 ${color}20`,
       }}
     >
-      <div
-        className="w-10 h-10 rounded-[12px] flex items-center justify-center"
-        style={{ background: `${color}25`, color }}
-      >
+      <div className="w-10 h-10 rounded-[12px] flex items-center justify-center" style={{ background: `${color}22`, color, boxShadow: `0 0 14px ${color}40` }}>
         {icon}
       </div>
       {loading ? (
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full border-2 border-white/10 border-t-white/60 animate-spin" />
-          <span className="text-[13px] text-[#6d6f76]">Counting all messages…</span>
+          <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.35)" }}>Counting all messages…</span>
         </div>
       ) : (
-        <div className="text-[32px] font-extrabold tracking-tighter leading-none" style={{ color }}>
+        <div className="text-[32px] font-black tracking-tighter leading-none" style={{ color, textShadow: `0 0 20px ${color}60` }}>
           {value}
         </div>
       )}
       <div>
-        <div className="text-[13px] font-semibold text-[#dbdee1]">{label}</div>
-        {sub && <div className="text-[11px] text-[#5e6068] mt-0.5">{sub}</div>}
+        <div className="text-[13px] font-semibold" style={{ color: "rgba(255,255,255,0.8)" }}>{label}</div>
+        {sub && <div className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>{sub}</div>}
       </div>
     </div>
   );
@@ -86,23 +83,21 @@ interface MiniStatProps {
 function MiniStat({ icon, label, value, color, sub }: MiniStatProps) {
   return (
     <div
-      className="rounded-[12px] p-4 flex items-center gap-3 transition-all duration-150 hover:brightness-110"
+      className="rounded-[12px] p-4 flex items-center gap-3 transition-all duration-200 hover:scale-[1.03] hover:brightness-110"
       style={{
-        background: `linear-gradient(135deg, ${color}15 0%, #0a0000 100%)`,
-        border: `1px solid ${color}25`,
+        background: `linear-gradient(135deg, ${color}18 0%, #000 100%)`,
+        border: `1px solid ${color}35`,
+        boxShadow: `0 2px 12px ${color}10`,
       }}
     >
-      <div
-        className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
-        style={{ background: `${color}22`, color }}
-      >
+      <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0" style={{ background: `${color}20`, color, boxShadow: `0 0 10px ${color}30` }}>
         {icon}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[20px] font-bold tracking-tight leading-none" style={{ color }}>{value}</div>
-        <div className="text-[12px] font-medium text-[#87898c] mt-0.5 truncate">{label}</div>
+        <div className="text-[20px] font-black tracking-tight leading-none" style={{ color, textShadow: `0 0 12px ${color}50` }}>{value}</div>
+        <div className="text-[12px] font-medium mt-0.5 truncate" style={{ color: "rgba(255,255,255,0.45)" }}>{label}</div>
       </div>
-      {sub && <div className="text-[11px] text-[#4e5058] shrink-0">{sub}</div>}
+      {sub && <div className="text-[11px] shrink-0" style={{ color: "rgba(255,255,255,0.25)" }}>{sub}</div>}
     </div>
   );
 }
@@ -118,16 +113,13 @@ interface BarRowProps {
 function BarRow({ label, value, max, color, suffix = "" }: BarRowProps) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
-    <div className="flex flex-col gap-1.5 py-2.5 border-b border-white/[0.04] last:border-b-0">
+    <div className="flex flex-col gap-1.5 py-2.5 border-b last:border-b-0" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
       <div className="flex items-center justify-between">
-        <span className="text-[13px] font-medium text-[#87898c]">{label}</span>
-        <span className="text-[13px] font-bold text-[#dbdee1]">{fmt(value)}{suffix}</span>
+        <span className="text-[13px] font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>{label}</span>
+        <span className="text-[13px] font-bold" style={{ color: "rgba(255,255,255,0.8)" }}>{fmt(value)}{suffix}</span>
       </div>
-      <div className="h-[5px] rounded-full bg-white/[0.06] overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{ width: `${pct}%`, background: color }}
-        />
+      <div className="h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+        <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: color, boxShadow: `0 0 8px ${color}80` }} />
       </div>
     </div>
   );
@@ -142,12 +134,12 @@ interface InfoRowProps {
 
 function InfoRow({ label, value, icon, mono }: InfoRowProps) {
   return (
-    <div className="flex items-center justify-between py-[11px] border-b border-white/[0.04] last:border-b-0 px-4">
-      <div className="flex items-center gap-2.5 text-[#6d6f76]">
+    <div className="flex items-center justify-between py-[11px] border-b last:border-b-0 px-4" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+      <div className="flex items-center gap-2.5" style={{ color: "rgba(204,0,0,0.6)" }}>
         {icon && <span className="shrink-0">{icon}</span>}
-        <span className="text-[13px] font-medium">{label}</span>
+        <span className="text-[13px] font-medium" style={{ color: "rgba(255,255,255,0.45)" }}>{label}</span>
       </div>
-      <span className={`text-[13px] font-semibold text-[#c4c9cf] text-right max-w-[55%] truncate ${mono ? "font-mono text-[12px]" : ""}`}>
+      <span className={`text-[13px] font-semibold text-right max-w-[55%] truncate ${mono ? "font-mono text-[12px]" : ""}`} style={{ color: "rgba(255,255,255,0.8)" }}>
         {value}
       </span>
     </div>
@@ -157,7 +149,7 @@ function InfoRow({ label, value, icon, mono }: InfoRowProps) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-[10px] font-bold text-[#4e5058] uppercase tracking-[0.12em] mb-2.5 px-1">{title}</h2>
+      <h2 className="text-[10px] font-black uppercase tracking-[0.16em] mb-2.5 px-1" style={{ color: "rgba(204,0,0,0.55)" }}>{title}</h2>
       {children}
     </section>
   );
@@ -165,10 +157,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="rounded-[14px] overflow-hidden"
-      style={{ background: "#0a0000", border: "1px solid rgba(255,255,255,0.055)" }}
-    >
+    <div className="rounded-[14px] overflow-hidden" style={{ background: "#050505", border: "1px solid rgba(204,0,0,0.15)" }}>
       {children}
     </div>
   );
@@ -489,13 +478,13 @@ export default function Stats() {
   const totalMsg = msgStats ? msgStats.totalMessages : 0;
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#080000" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#000" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-5 gap-2"
         style={{
-          borderBottom: "1px solid rgba(255,255,255,0.06)",
-          background: "linear-gradient(180deg, #150000 0%, #0a0000 100%)",
+          borderBottom: "1px solid rgba(204,0,0,0.18)",
+          background: "linear-gradient(180deg, #0d0000 0%, #000 100%)",
         }}
       >
         <BarChart2 className="w-[18px] h-[18px] text-[#cc0000]" />
