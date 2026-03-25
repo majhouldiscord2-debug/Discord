@@ -80,7 +80,34 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
     "Discord";
 
   return (
-    <div className="flex flex-col h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#000000" }}>
+    <div
+      className="flex flex-col h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30"
+      style={{
+        backgroundColor: "#000000",
+        position: "relative",
+        boxShadow: "inset 0 0 120px rgba(0,0,0,0.95), inset 0 0 2px rgba(29,110,245,0.3)",
+        border: "1px solid rgba(29,110,245,0.15)",
+      }}
+    >
+      {/* ── Frame corner accents ── */}
+      {[
+        { top: 0, left: 0, borderTop: "2px solid rgba(29,110,245,0.7)", borderLeft: "2px solid rgba(29,110,245,0.7)" },
+        { top: 0, right: 0, borderTop: "2px solid rgba(29,110,245,0.7)", borderRight: "2px solid rgba(29,110,245,0.7)" },
+        { bottom: 0, left: 0, borderBottom: "2px solid rgba(29,110,245,0.7)", borderLeft: "2px solid rgba(29,110,245,0.7)" },
+        { bottom: 0, right: 0, borderBottom: "2px solid rgba(29,110,245,0.7)", borderRight: "2px solid rgba(29,110,245,0.7)" },
+      ].map((style, i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            width: 18,
+            height: 18,
+            zIndex: 50,
+            pointerEvents: "none",
+            ...style,
+          }}
+        />
+      ))}
 
       {/* ── Title bar ── */}
       <div

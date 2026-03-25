@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { AlertCircle } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
-import { DotRobot } from "@/components/DotRobot";
 
 function SpaceCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -232,7 +231,13 @@ export default function Login() {
               </>
             ) : "INITIALIZE UPLINK"}
           </button>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+          <style>{`
+            @keyframes spin { to { transform: rotate(360deg); } }
+            @keyframes tgPulse {
+              0%, 100% { filter: brightness(1.1); opacity: 0.92; }
+              50% { filter: brightness(1.35); opacity: 1; }
+            }
+          `}</style>
         </div>
 
         {/* RIGHT — robot panel */}
@@ -248,8 +253,20 @@ export default function Login() {
             position: "relative",
           }}
         >
-          <div style={{ marginBottom: 16 }}>
-            <DotRobot />
+          <div style={{ marginBottom: 20, position: "relative" }}>
+            <img
+              src="/tg-logo.png"
+              alt="TG Works"
+              style={{
+                width: 150,
+                height: 150,
+                objectFit: "contain",
+                display: "block",
+                mixBlendMode: "screen",
+                filter: "brightness(1.1)",
+                animation: "tgPulse 3.5s ease-in-out infinite",
+              }}
+            />
           </div>
 
           <h2
