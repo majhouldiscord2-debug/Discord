@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import { useDiscord } from "@/hooks/useDiscord";
 import { getMessageStats, type MessageStats, avatarUrl } from "@/lib/api";
 import {
@@ -174,6 +174,274 @@ function Card({ children }: { children: React.ReactNode }) {
   );
 }
 
+interface ProfileCardProps {
+  userAvatar: string | null;
+  displayName: string;
+  username: string;
+  tag: string;
+  isBot: boolean;
+}
+
+function ProfileCard({ userAvatar, displayName, username, tag, isBot }: ProfileCardProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const t = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(t);
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    type Particle = { x: number; y: number; vx: number; vy: number; r: number; alpha: number; decay: number };
+    const particles: Particle[] = [];
+    const spawn = () => {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + 4,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -(0.3 + Math.random() * 0.7),
+        r: 0.8 + Math.random() * 1.8,
+        alpha: 0.6 + Math.random() * 0.4,
+        decay: 0.004 + Math.random() * 0.006,
+      });
+    };
+
+    let frame = 0;
+    let raf: number;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      if (frame++ % 3 === 0) spawn();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx; p.y += p.vy; p.alpha -= p.decay;
+        if (p.alpha <= 0 || p.y < -6) { particles.splice(i, 1); continue; }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,${60 + Math.floor(p.alpha * 40)},${60 + Math.floor(p.alpha * 20)},${p.alpha})`;
+        ctx.fill();
+      }
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <>
+      <style>{`
+        @keyframes pcCardIn {
+          from { opacity: 0; transform: translateY(14px) scale(0.97); }
+          to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes pcBannerShift {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes pcScan {
+          0%   { transform: translateY(-100%); }
+          100% { transform: translateY(400%); }
+        }
+        @keyframes pcRing1 {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pcRing2 {
+          to { transform: rotate(-360deg); }
+        }
+        @keyframes pcAvatarGlow {
+          0%,100% { box-shadow: 0 0 0 3px rgba(204,0,0,0.6), 0 0 18px rgba(204,0,0,0.35); }
+          50%      { box-shadow: 0 0 0 3px rgba(255,60,60,0.9), 0 0 32px rgba(255,60,60,0.55); }
+        }
+        @keyframes pcOnlinePulse {
+          0%,100% { box-shadow: 0 0 0 2px #0a0000, 0 0 0 4px rgba(35,165,90,0.3); }
+          50%      { box-shadow: 0 0 0 2px #0a0000, 0 0 0 6px rgba(35,165,90,0.6); }
+        }
+        @keyframes pcNameIn {
+          from { opacity: 0; transform: translateX(-10px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pcSubIn {
+          from { opacity: 0; transform: translateX(-8px); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pcCornerPulse {
+          0%,100% { opacity: 0.4; }
+          50%      { opacity: 0.9; }
+        }
+        @keyframes pcGlitch {
+          0%,94%,100% { clip-path: none; transform: none; }
+          95%  { clip-path: inset(30% 0 40% 0); transform: translateX(-4px); }
+          96%  { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
+          97%  { clip-path: inset(10% 0 70% 0); transform: translateX(-2px); }
+          98%  { clip-path: none; transform: none; }
+        }
+        .pc-card { animation: pcCardIn 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+        .pc-name { animation: pcNameIn 0.45s cubic-bezier(0.16,1,0.3,1) 0.25s both; }
+        .pc-sub  { animation: pcSubIn  0.45s cubic-bezier(0.16,1,0.3,1) 0.38s both; }
+        .pc-glitch { animation: pcGlitch 8s steps(1) infinite; }
+      `}</style>
+
+      <div
+        ref={cardRef}
+        className="pc-card rounded-[16px] overflow-hidden relative"
+        style={{
+          background: "linear-gradient(135deg, #1a0000 0%, #100000 50%, #0a0000 100%)",
+          border: "1px solid rgba(204,0,0,0.3)",
+          boxShadow: mounted
+            ? "0 0 0 1px rgba(204,0,0,0.15), 0 8px 40px rgba(180,0,0,0.2), 0 0 80px rgba(180,0,0,0.06)"
+            : "none",
+          transition: "box-shadow 0.6s ease",
+        }}
+      >
+        {/* Banner */}
+        <div className="h-[80px] w-full relative overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(135deg, #cc0000, #8b0000, #ff3333, #6b0000, #cc0000)",
+              backgroundSize: "300% 300%",
+              animation: "pcBannerShift 6s ease infinite",
+            }}
+          />
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.7 }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px)",
+              pointerEvents: "none",
+            }}
+          />
+          <div
+            className="absolute left-0 right-0 h-[2px] pc-glitch"
+            style={{
+              background: "linear-gradient(90deg, transparent, rgba(255,200,200,0.7), transparent)",
+              animation: "pcScan 3.5s linear infinite",
+              top: 0,
+            }}
+          />
+          {/* Corner brackets */}
+          {[["top-1.5 left-1.5","border-t-2 border-l-2"],["top-1.5 right-1.5","border-t-2 border-r-2"],["bottom-1.5 left-1.5","border-b-2 border-l-2"],["bottom-1.5 right-1.5","border-b-2 border-r-2"]].map(([pos, brd], i) => (
+            <div key={i} className={`absolute ${pos} w-3 h-3 ${brd} border-white/40 rounded-[1px]`} style={{ animation: `pcCornerPulse 2s ease-in-out ${i * 0.5}s infinite` }} />
+          ))}
+          {/* TG WORKS watermark */}
+          <div className="absolute top-2 right-8 text-[9px] font-black tracking-[0.25em] text-white/20 select-none uppercase">TG WORKS</div>
+        </div>
+
+        {/* Avatar + info row */}
+        <div className="px-5 pb-4 -mt-8 flex items-end gap-4">
+          {/* Avatar with rings */}
+          <div className="relative shrink-0" style={{ width: 64, height: 64 }}>
+            {/* Outer spinning ring */}
+            <div
+              className="absolute"
+              style={{
+                inset: -6,
+                borderRadius: "50%",
+                border: "1.5px solid transparent",
+                borderTopColor: "rgba(204,0,0,0.7)",
+                borderRightColor: "rgba(204,0,0,0.2)",
+                borderBottomColor: "rgba(204,0,0,0.7)",
+                borderLeftColor: "rgba(204,0,0,0.2)",
+                animation: "pcRing1 2.8s linear infinite",
+              }}
+            />
+            {/* Inner counter-spin ring */}
+            <div
+              className="absolute"
+              style={{
+                inset: -2,
+                borderRadius: "50%",
+                border: "1px dashed rgba(255,80,80,0.35)",
+                animation: "pcRing2 4s linear infinite",
+              }}
+            />
+            {userAvatar ? (
+              <img
+                src={userAvatar}
+                alt={displayName}
+                className="w-16 h-16 rounded-full object-cover"
+                style={{ animation: "pcAvatarGlow 2.5s ease-in-out infinite" }}
+              />
+            ) : (
+              <div
+                className="w-16 h-16 rounded-full bg-[#cc0000] flex items-center justify-center text-white font-bold text-2xl"
+                style={{ animation: "pcAvatarGlow 2.5s ease-in-out infinite" }}
+              >
+                {displayName[0]?.toUpperCase()}
+              </div>
+            )}
+            {/* Online dot */}
+            <div
+              className="absolute -bottom-0.5 -right-0.5 w-[18px] h-[18px] rounded-full bg-[#23a55a]"
+              style={{ animation: "pcOnlinePulse 2s ease-in-out infinite", border: "3px solid #0a0000" }}
+            />
+          </div>
+
+          <div className="pb-1 min-w-0 flex-1">
+            <div className="pc-name font-black text-white text-[18px] leading-tight tracking-tight pc-glitch">
+              {displayName}
+            </div>
+            <div className="pc-sub text-[#6d6f76] text-[12px] font-medium font-mono">
+              @{username}{tag}
+            </div>
+          </div>
+
+          {isBot && (
+            <div
+              className="ml-auto mb-1 shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-[11px] font-bold"
+              style={{
+                background: "#cc000022",
+                color: "#ff6060",
+                border: "1px solid #cc000050",
+                boxShadow: "0 0 10px rgba(204,0,0,0.3)",
+                animation: "pcCornerPulse 1.5s ease-in-out infinite",
+              }}
+            >
+              <Bot className="w-3.5 h-3.5" /> BOT
+            </div>
+          )}
+        </div>
+
+        {/* About Me */}
+        <div
+          className="mx-5 mb-4 rounded-[10px] overflow-hidden"
+          style={{
+            background: "rgba(0,0,0,0.4)",
+            border: "1px solid rgba(204,0,0,0.2)",
+            backdropFilter: "blur(4px)",
+          }}
+        >
+          <div
+            className="flex items-center gap-2 px-3 py-2"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "linear-gradient(90deg, rgba(204,0,0,0.12) 0%, transparent 100%)" }}
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-[#cc0000]" style={{ boxShadow: "0 0 6px #cc0000", animation: "pcCornerPulse 1.2s ease-in-out infinite" }} />
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#4e5058]">About Me</span>
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-[10px] font-black tracking-widest text-[#cc0000] uppercase" style={{ textShadow: "0 0 8px rgba(204,0,0,0.5)" }}>TG WORKS</span>
+              <span className="w-px h-3 bg-white/10" />
+              <span className="text-[10px] font-semibold text-[#6d6f76]">User</span>
+            </div>
+          </div>
+          <div className="px-3 py-2.5">
+            <p className="text-[12px] leading-[1.6] text-[#87898c]">
+              Powered by <span className="text-[#cc0000] font-semibold" style={{ textShadow: "0 0 6px rgba(204,0,0,0.4)" }}>TG WORKS</span> — tracking stats and keeping everything running smoothly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function Stats() {
   const { user, guilds, channels, relationships, tokenType } = useDiscord();
   const [msgStats, setMsgStats] = useState<MessageStats | null>(null);
@@ -252,39 +520,13 @@ export default function Stats() {
 
         {/* Profile Banner */}
         {user && (
-          <div
-            className="rounded-[16px] overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg, #1a0000 0%, #100000 50%, #0a0000 100%)",
-              border: "1px solid rgba(88,101,242,0.25)",
-              boxShadow: "0 8px 40px rgba(88,101,242,0.12)",
-            }}
-          >
-            <div className="h-[70px] w-full relative" style={{ background: "linear-gradient(135deg, #cc0000 0%, #8b0000 50%, #200000 100%)" }}>
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-            </div>
-            <div className="px-5 pb-4 -mt-7 flex items-end gap-4">
-              <div className="relative shrink-0">
-                {stats.userAvatar ? (
-                  <img src={stats.userAvatar} alt={stats.displayName} className="w-[56px] h-[56px] rounded-full ring-4 ring-[#0a0000]" />
-                ) : (
-                  <div className="w-[56px] h-[56px] rounded-full bg-[#cc0000] flex items-center justify-center text-white font-bold text-xl ring-4 ring-[#0a0000]">
-                    {stats.displayName[0]?.toUpperCase()}
-                  </div>
-                )}
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#23a55a] ring-2 ring-[#0a0000]" />
-              </div>
-              <div className="pb-1 min-w-0">
-                <div className="font-bold text-[#f2f3f5] text-[17px] leading-tight truncate">{stats.displayName}</div>
-                <div className="text-[#6d6f76] text-[12px] font-medium">@{user.username}{stats.tag}</div>
-              </div>
-              {stats.isBot && (
-                <div className="ml-auto mb-1 shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-[11px] font-bold" style={{ background: "#cc000022", color: "#cc0000", border: "1px solid #cc000040" }}>
-                  <Bot className="w-3.5 h-3.5" /> BOT
-                </div>
-              )}
-            </div>
-          </div>
+          <ProfileCard
+            userAvatar={stats.userAvatar}
+            displayName={stats.displayName}
+            username={user.username}
+            tag={stats.tag}
+            isBot={stats.isBot}
+          />
         )}
 
         {/* Message Stats — Big 3 */}
