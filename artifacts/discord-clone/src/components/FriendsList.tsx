@@ -65,16 +65,27 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
             <button
               key={t}
               onClick={() => setActiveTab(t)}
-              className={cn(
-                "relative px-3 py-1.5 text-[14px] font-medium transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 rounded-[5px]",
-                activeTab === t
-                  ? "bg-[#35373c] text-[#f2f3f5]"
-                  : "text-[#87898c] hover:bg-[#2e3035] hover:text-[#dbdee1]"
-              )}
+              className="relative px-3 py-1.5 text-[14px] font-medium transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 rounded-[5px]"
+              style={{
+                backgroundColor: activeTab === t ? "#35373c" : "transparent",
+                color: activeTab === t ? "#f2f3f5" : "#87898c",
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== t) {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#2e3035";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#dbdee1";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== t) {
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                  (e.currentTarget as HTMLButtonElement).style.color = "#87898c";
+                }
+              }}
             >
               {t === "online" ? "Online" : t === "all" ? "All" : t === "pending" ? "Pending" : "Blocked"}
               {t === "pending" && pendingFriends.length > 0 && (
-                <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full leading-none bg-[#ed4245] text-white">
+                <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full leading-none" style={{ backgroundColor: "#ed4245", color: "white" }}>
                   {pendingFriends.length}
                 </span>
               )}
