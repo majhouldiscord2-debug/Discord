@@ -165,11 +165,11 @@ export default function Login() {
         <div
           className="rounded-[28px] px-10 py-11 animate-scale-in"
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.88)",
-            border: "1px solid rgba(29, 110, 245, 0.22)",
+            backgroundColor: "#000000",
+            border: "1px solid rgba(29, 110, 245, 0.18)",
             boxShadow:
-              "0 40px 100px rgba(0,0,0,0.95), 0 0 60px rgba(29,110,245,0.08), inset 0 1px 0 rgba(255,255,255,0.04)",
-            backdropFilter: "blur(28px)",
+              "0 40px 100px rgba(0,0,0,1), 0 0 60px rgba(29,110,245,0.06), inset 0 1px 0 rgba(255,255,255,0.03)",
+            backdropFilter: "blur(0px)",
           }}
         >
           {/* Shield Icon */}
@@ -213,7 +213,7 @@ export default function Login() {
               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               className="w-full rounded-xl px-4 py-3.5 text-[13px] text-[#6a90b8] outline-none transition-all placeholder:text-[#1e3450]"
               style={{
-                backgroundColor: "#050505",
+                backgroundColor: "#000000",
                 border: "1px solid rgba(29, 110, 245, 0.15)",
                 caretColor: "#1d6ef5",
                 fontFamily: "'Courier New', monospace",
