@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { AlertCircle } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
 
-function SpaceCanvas() {
+function SpaceBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -11,68 +11,42 @@ function SpaceCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     let animId: number;
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
     resize();
     window.addEventListener("resize", resize);
-    const stars = Array.from({ length: 220 }, () => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      r: Math.random() * 1.6 + 0.2,
-      opacity: Math.random() * 0.8 + 0.2,
-      speed: Math.random() * 0.12 + 0.03,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
-    }));
-    const nebulae = Array.from({ length: 5 }, () => ({
-      x: Math.random() * window.innerWidth,
-      y: Math.random() * window.innerHeight,
-      rx: Math.random() * 300 + 150,
-      ry: Math.random() * 200 + 100,
-      color: ["rgba(29,110,245,", "rgba(80,0,180,", "rgba(0,120,200,", "rgba(60,0,160,", "rgba(0,60,180,"][Math.floor(Math.random() * 5)],
-      opacity: Math.random() * 0.06 + 0.02,
-      driftX: (Math.random() - 0.5) * 0.07,
-      driftY: (Math.random() - 0.5) * 0.05,
+    const stars = Array.from({ length: 120 }, () => ({
+      x: Math.random(),
+      y: Math.random() * 0.72,
+      r: Math.random() * 1.3 + 0.15,
+      base: Math.random() * 0.55 + 0.2,
+      offset: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.018 + 0.004,
     }));
     let frame = 0;
     const draw = () => {
       frame++;
-      const W = canvas.width;
-      const H = canvas.height;
+      const W = canvas.width, H = canvas.height;
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(0, 0, W, H);
-      nebulae.forEach((n) => {
-        n.x += n.driftX; n.y += n.driftY;
-        if (n.x < -n.rx) n.x = W + n.rx;
-        if (n.x > W + n.rx) n.x = -n.rx;
-        if (n.y < -n.ry) n.y = H + n.ry;
-        if (n.y > H + n.ry) n.y = -n.ry;
-        const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.rx);
-        grad.addColorStop(0, n.color + n.opacity + ")");
-        grad.addColorStop(1, n.color + "0)");
-        ctx.beginPath();
-        ctx.ellipse(n.x, n.y, n.rx, n.ry, 0, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-      });
       stars.forEach((s) => {
-        s.y += s.speed;
-        if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
-        const twinkle = 0.5 + 0.5 * Math.sin(frame * s.twinkleSpeed + s.twinkleOffset);
+        const twinkle = 0.6 + 0.4 * Math.sin(frame * s.speed + s.offset);
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${s.opacity * (0.6 + 0.4 * twinkle)})`;
+        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.base * twinkle})`;
         ctx.fill();
       });
-      if (Math.random() < 0.003) {
-        const sx = Math.random() * W, sy = Math.random() * H * 0.5, len = Math.random() * 120 + 60;
-        const g = ctx.createLinearGradient(sx, sy, sx + len, sy + len * 0.4);
-        g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(0.5, "rgba(255,255,255,0.7)"); g.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + len, sy + len * 0.4);
-        ctx.strokeStyle = g; ctx.lineWidth = 1.2; ctx.stroke();
+      if (frame % 420 === 0) {
+        const sx = Math.random() * W * 0.8 + W * 0.1;
+        const sy = Math.random() * H * 0.45;
+        const len = Math.random() * 140 + 80;
+        const angle = Math.PI * 0.18 + Math.random() * 0.15;
+        const g = ctx.createLinearGradient(sx, sy, sx + Math.cos(angle) * len, sy + Math.sin(angle) * len);
+        g.addColorStop(0, "rgba(255,255,255,0)");
+        g.addColorStop(0.45, "rgba(255,255,255,0.75)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + Math.cos(angle) * len, sy + Math.sin(angle) * len);
+        ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
       }
       animId = requestAnimationFrame(draw);
     };
@@ -80,7 +54,18 @@ function SpaceCanvas() {
     return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
   }, []);
 
-  return <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />;
+  return (
+    <>
+      <div style={{
+        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
+        backgroundImage: "url('/space-bg.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center bottom",
+        backgroundRepeat: "no-repeat",
+      }} />
+      <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 1, pointerEvents: "none" }} />
+    </>
+  );
 }
 
 export default function Login() {
@@ -100,10 +85,10 @@ export default function Login() {
 
   return (
     <div className="flex h-screen w-full items-center justify-center" style={{ background: "#000000", position: "relative" }}>
-      <SpaceCanvas />
+      <SpaceBackground />
 
       {/* Wrapper for corner brackets */}
-      <div style={{ position: "relative", zIndex: 1, width: "min(860px, 94vw)" }}>
+      <div style={{ position: "relative", zIndex: 2, width: "min(860px, 94vw)" }}>
         {/* Corner brackets */}
         {[
           { top: -6, left: -6, borderTop: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
