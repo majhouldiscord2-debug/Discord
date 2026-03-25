@@ -16,11 +16,16 @@ export default function Home() {
     setSwitching(true);
   }
 
-  function handleComplete() {
+  // Called mid-animation: swap the underlying dashboard while overlay is still visible
+  function handleSwitch() {
     const next = pendingRef.current;
     pendingRef.current = null;
-    switchingRef.current = false;
     if (next !== null) setIsBotMode(next);
+  }
+
+  // Called when the animation fully fades out: remove the overlay
+  function handleComplete() {
+    switchingRef.current = false;
     setSwitching(false);
   }
 
@@ -29,7 +34,8 @@ export default function Home() {
       {switching && (
         <ProfileSwitchAnimation
           key={String(isBotMode)}
-          targetMode={pendingRef.current ? "bot" : "discord"}
+          targetMode={pendingRef.current !== null ? (pendingRef.current ? "bot" : "discord") : (isBotMode ? "bot" : "discord")}
+          onSwitch={handleSwitch}
           onComplete={handleComplete}
         />
       )}

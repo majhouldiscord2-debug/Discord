@@ -1,19 +1,28 @@
 import { useEffect, useRef } from "react";
 
 interface Props {
+  onSwitch: () => void;
   onComplete: () => void;
   targetMode: "bot" | "discord";
 }
 
 const TOTAL_MS = 2200;
+// Switch the underlying dashboard at 65% — well before the fade-out starts at 82%
+const SWITCH_AT_MS = Math.round(TOTAL_MS * 0.65);
 
-export default function ProfileSwitchAnimation({ onComplete, targetMode }: Props) {
+export default function ProfileSwitchAnimation({ onSwitch, onComplete, targetMode }: Props) {
+  const onSwitchRef   = useRef(onSwitch);
   const onCompleteRef = useRef(onComplete);
+  onSwitchRef.current   = onSwitch;
   onCompleteRef.current = onComplete;
 
   useEffect(() => {
-    const id = setTimeout(() => onCompleteRef.current(), TOTAL_MS);
-    return () => clearTimeout(id);
+    const switchId   = setTimeout(() => onSwitchRef.current(),   SWITCH_AT_MS);
+    const completeId = setTimeout(() => onCompleteRef.current(), TOTAL_MS);
+    return () => {
+      clearTimeout(switchId);
+      clearTimeout(completeId);
+    };
   }, []);
 
   const isBot = targetMode === "bot";
