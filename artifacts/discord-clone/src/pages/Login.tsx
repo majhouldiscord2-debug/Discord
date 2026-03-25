@@ -11,60 +11,188 @@ function SpaceBackground() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     let animId: number;
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
     resize();
     window.addEventListener("resize", resize);
-    const stars = Array.from({ length: 120 }, () => ({
-      x: Math.random(),
-      y: Math.random() * 0.72,
-      r: Math.random() * 1.3 + 0.15,
-      base: Math.random() * 0.55 + 0.2,
-      offset: Math.random() * Math.PI * 2,
-      speed: Math.random() * 0.018 + 0.004,
-    }));
+
+    const starColors = [
+      [255, 255, 255],
+      [180, 210, 255],
+      [220, 235, 255],
+      [255, 240, 200],
+      [200, 220, 255],
+      [150, 200, 255],
+    ];
+
+    // Three depth layers for parallax feel
+    const layers = [
+      Array.from({ length: 180 }, () => ({
+        x: Math.random(), y: Math.random(),
+        r: Math.random() * 0.7 + 0.2,
+        base: Math.random() * 0.35 + 0.1,
+        offset: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.008 + 0.002,
+        color: starColors[Math.floor(Math.random() * starColors.length)],
+        drift: (Math.random() - 0.5) * 0.00004,
+      })),
+      Array.from({ length: 100 }, () => ({
+        x: Math.random(), y: Math.random(),
+        r: Math.random() * 1.2 + 0.5,
+        base: Math.random() * 0.5 + 0.2,
+        offset: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.014 + 0.004,
+        color: starColors[Math.floor(Math.random() * starColors.length)],
+        drift: (Math.random() - 0.5) * 0.00007,
+      })),
+      Array.from({ length: 40 }, () => ({
+        x: Math.random(), y: Math.random(),
+        r: Math.random() * 2.0 + 1.0,
+        base: Math.random() * 0.6 + 0.3,
+        offset: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.02 + 0.007,
+        color: starColors[Math.floor(Math.random() * starColors.length)],
+        drift: (Math.random() - 0.5) * 0.0001,
+      })),
+    ];
+
+    // Nebula nodes
+    const nebulae = [
+      { x: 0.15, y: 0.25, rx: 0.35, ry: 0.25, r: 60, g: 90, b: 180, a: 0.045 },
+      { x: 0.78, y: 0.65, rx: 0.28, ry: 0.22, r: 80, g: 50, b: 160, a: 0.04 },
+      { x: 0.5,  y: 0.1,  rx: 0.45, ry: 0.18, r: 30, g: 60, b: 150, a: 0.035 },
+      { x: 0.85, y: 0.2,  rx: 0.22, ry: 0.3,  r: 100, g: 80, b: 200, a: 0.03 },
+      { x: 0.3,  y: 0.8,  rx: 0.3,  ry: 0.2,  r: 50, g: 100, b: 180, a: 0.03 },
+    ];
+
+    // Shooting stars pool
+    interface Meteor { x: number; y: number; len: number; angle: number; speed: number; life: number; maxLife: number; }
+    const meteors: Meteor[] = [];
     let frame = 0;
+
+    const spawnMeteor = (W: number, H: number) => {
+      const angle = Math.PI * 0.15 + Math.random() * 0.2;
+      meteors.push({
+        x: Math.random() * W,
+        y: Math.random() * H * 0.5,
+        len: Math.random() * 180 + 80,
+        angle,
+        speed: Math.random() * 6 + 4,
+        life: 0,
+        maxLife: Math.random() * 35 + 25,
+      });
+    };
+
+    const drawNebulae = (W: number, H: number) => {
+      nebulae.forEach((n) => {
+        const grd = ctx.createRadialGradient(n.x * W, n.y * H, 0, n.x * W, n.y * H, Math.max(n.rx * W, n.ry * H));
+        grd.addColorStop(0, `rgba(${n.r},${n.g},${n.b},${n.a})`);
+        grd.addColorStop(0.5, `rgba(${n.r},${n.g},${n.b},${n.a * 0.5})`);
+        grd.addColorStop(1, `rgba(${n.r},${n.g},${n.b},0)`);
+        ctx.save();
+        ctx.scale(1, n.ry / n.rx);
+        ctx.beginPath();
+        ctx.arc(n.x * W, (n.y * H) / (n.ry / n.rx), n.rx * W, 0, Math.PI * 2);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.restore();
+      });
+    };
+
     const draw = () => {
       frame++;
       const W = canvas.width, H = canvas.height;
-      ctx.clearRect(0, 0, W, H);
-      stars.forEach((s) => {
-        const twinkle = 0.6 + 0.4 * Math.sin(frame * s.speed + s.offset);
-        ctx.beginPath();
-        ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${s.base * twinkle})`;
-        ctx.fill();
+
+      // Deep space base gradient
+      const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
+      bg.addColorStop(0, "#010208");
+      bg.addColorStop(0.5, "#020510");
+      bg.addColorStop(1, "#010208");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Nebulae
+      drawNebulae(W, H);
+
+      // Stars by layer
+      layers.forEach((layer) => {
+        layer.forEach((s) => {
+          s.x += s.drift;
+          if (s.x < 0) s.x = 1;
+          if (s.x > 1) s.x = 0;
+          const twinkle = 0.55 + 0.45 * Math.sin(frame * s.speed + s.offset);
+          const alpha = s.base * twinkle;
+          const [r, g, b] = s.color;
+          const sx = s.x * W, sy = s.y * H;
+
+          // Glow for larger stars
+          if (s.r > 1.2) {
+            const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 4);
+            glow.addColorStop(0, `rgba(${r},${g},${b},${alpha * 0.5})`);
+            glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
+            ctx.beginPath();
+            ctx.arc(sx, sy, s.r * 4, 0, Math.PI * 2);
+            ctx.fillStyle = glow;
+            ctx.fill();
+          }
+
+          ctx.beginPath();
+          ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+          ctx.fill();
+        });
       });
-      if (frame % 420 === 0) {
-        const sx = Math.random() * W * 0.8 + W * 0.1;
-        const sy = Math.random() * H * 0.45;
-        const len = Math.random() * 140 + 80;
-        const angle = Math.PI * 0.18 + Math.random() * 0.15;
-        const g = ctx.createLinearGradient(sx, sy, sx + Math.cos(angle) * len, sy + Math.sin(angle) * len);
-        g.addColorStop(0, "rgba(255,255,255,0)");
-        g.addColorStop(0.45, "rgba(255,255,255,0.75)");
-        g.addColorStop(1, "rgba(255,255,255,0)");
+
+      // Shooting stars
+      if (frame % 140 === 0) spawnMeteor(W, H);
+
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i];
+        m.x += Math.cos(m.angle) * m.speed;
+        m.y += Math.sin(m.angle) * m.speed;
+        m.life++;
+        const progress = m.life / m.maxLife;
+        const opacity = progress < 0.2
+          ? progress / 0.2
+          : progress > 0.7
+          ? (1 - progress) / 0.3
+          : 1;
+        const tail = ctx.createLinearGradient(
+          m.x - Math.cos(m.angle) * m.len,
+          m.y - Math.sin(m.angle) * m.len,
+          m.x, m.y
+        );
+        tail.addColorStop(0, `rgba(255,255,255,0)`);
+        tail.addColorStop(0.6, `rgba(200,225,255,${0.5 * opacity})`);
+        tail.addColorStop(1, `rgba(255,255,255,${0.9 * opacity})`);
         ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(sx + Math.cos(angle) * len, sy + Math.sin(angle) * len);
-        ctx.strokeStyle = g; ctx.lineWidth = 1; ctx.stroke();
+        ctx.moveTo(m.x - Math.cos(m.angle) * m.len, m.y - Math.sin(m.angle) * m.len);
+        ctx.lineTo(m.x, m.y);
+        ctx.strokeStyle = tail;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        if (m.life >= m.maxLife) meteors.splice(i, 1);
       }
+
       animId = requestAnimationFrame(draw);
     };
     draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
   }, []);
 
   return (
-    <>
-      <div style={{
-        position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none",
-        backgroundImage: "url('/space-bg.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center bottom",
-        backgroundRepeat: "no-repeat",
-      }} />
-      <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 1, pointerEvents: "none" }} />
-    </>
+    <canvas
+      ref={canvasRef}
+      style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }}
+    />
   );
 }
 
