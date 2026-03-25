@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus, Compass, Download } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
-import { InProgress } from "./InProgress";
+import { InProgressClock } from "./InProgress";
 
 function DiscordLogo() {
   return (
@@ -81,7 +81,7 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
   return (
     <div
       className="w-[72px] h-full flex flex-col items-center py-3 gap-2 overflow-y-auto no-scrollbar shrink-0"
-      style={{ background: "linear-gradient(180deg, #080e1c 0%, #060b14 50%, #070a18 100%)" }}
+      style={{ backgroundColor: "#1e1f22" }}
     >
       <ServerButton
         name={isBotMode ? "Switch to Discord" : "Switch to Bot Manager"}
@@ -109,8 +109,17 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
       {!isBotMode && (
-        <div className="flex flex-col items-center w-full mt-1">
-          <InProgress size="sm" label="Servers" description="Coming soon" />
+        <div className="flex flex-col items-center w-full gap-2 mt-1 px-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="relative flex items-center justify-center w-full">
+              <button
+                className="w-12 h-12 flex items-center justify-center overflow-hidden animate-pulse"
+                style={{ borderRadius: 24, backgroundColor: "#2b2d31" }}
+              >
+                {i === 0 ? <InProgressClock size={30} /> : <div style={{ width: 30, height: 30, borderRadius: 8, backgroundColor: "#35373c" }} />}
+              </button>
+            </div>
+          ))}
         </div>
       )}
     </div>

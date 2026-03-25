@@ -44,10 +44,10 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
   };
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#313338" }}>
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
-        style={{ borderBottom: "1px solid rgba(0,0,0,0.4)", background: "linear-gradient(180deg, #0c1530 0%, #0a1220 100%)" }}
+        style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#313338" }}
       >
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-[#7d8188]" />
@@ -76,7 +76,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
             <Video className="w-[18px] h-[18px]" />
           </button>
           <div className="w-px h-5 bg-white/10 mx-1" />
-          <button onClick={onInboxToggle} className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
+          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
             <Inbox className="w-[18px] h-[18px]" />
           </button>
           <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Help">
@@ -85,7 +85,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto discord-scrollbar px-4 pt-4 flex flex-col items-center justify-center">
+      <div className="flex-1 overflow-y-auto discord-scrollbar flex flex-col items-center justify-center" style={{ backgroundColor: "#313338" }}>
         <InProgress
           size="lg"
           label="Friends List"
@@ -102,7 +102,7 @@ function TabBtn({ label, isActive, onClick, badge }: { label: string; isActive: 
       onClick={onClick}
       className={cn(
         "px-3 py-1 text-[13px] font-medium rounded-[5px] transition-all duration-150 relative whitespace-nowrap",
-        isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#0d1a2e] hover:text-[#dbdee1]"
+        isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
       )}
     >
       {label}

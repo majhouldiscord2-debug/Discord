@@ -5,7 +5,6 @@ import { GuildChannelList } from "@/components/GuildChannelList";
 import { FriendsList } from "@/components/FriendsList";
 import { ActiveNow } from "@/components/ActiveNow";
 import { ChatView } from "@/components/ChatView";
-import { InboxPanel } from "@/components/InboxPanel";
 import { SettingsModal } from "@/components/SettingsModal";
 import { InProgressPage } from "@/components/InProgress";
 import ShopPage from "@/discord/Shop";
@@ -30,7 +29,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
   const getChannelsByServer = useAppStore((s) => s.getChannelsByServer);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [inboxOpen, setInboxOpen] = useState(false);
   const [view, setView] = useState<string>("friends");
   const [activeServerPanel, setActiveServerPanel] = useState<"dms" | string>("dms");
 
@@ -109,7 +107,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
               channelName={activeChannel.name}
               channelTopic={activeChannel.topic}
               isDm={false}
-              onInboxToggle={() => setInboxOpen((v) => !v)}
             />
           ) : (
             <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#0a1220" }}>
@@ -123,7 +120,6 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
             channelName={dmRecipient?.displayName ?? "DM"}
             isDm={true}
             dmRecipient={dmRecipient}
-            onInboxToggle={() => setInboxOpen((v) => !v)}
           />
         ) : view === "shop" ? (
           <ShopPage />
@@ -133,18 +129,11 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           <MessageRequestsPage />
         ) : view === "friends" || view === "dm" ? (
           <>
-            <FriendsList onInboxToggle={() => setInboxOpen((v) => !v)} />
-            {!inboxOpen && <ActiveNow />}
+            <FriendsList />
+            <ActiveNow />
           </>
         ) : (
           <InProgressPage title="Nitro Home" subtitle="Nitro Home and other features are currently being built. Coming soon!" />
-        )}
-
-        {inboxOpen && (
-          <InboxPanel
-            onClose={() => setInboxOpen(false)}
-            onOpenDm={(id) => { setInboxOpen(false); handleOpenDm(id); }}
-          />
         )}
       </div>
 
