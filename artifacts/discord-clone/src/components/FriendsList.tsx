@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, MessageCircle, MoreVertical, Search, Video, UserPlus, Inbox } from "lucide-react";
+import { Users, MessageCircle, MoreVertical, Search, UserPlus } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { Avatar } from "./Avatar";
 import { InProgress } from "./InProgress";
@@ -101,18 +101,6 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
           </button>
         </div>
 
-        {/* Right icons */}
-        <div className="flex items-center gap-1 ml-3 shrink-0">
-          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="New Group DM">
-            <Video className="w-[18px] h-[18px]" />
-          </button>
-          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
-            <Inbox className="w-[18px] h-[18px]" />
-          </button>
-          <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Help">
-            <span className="w-[18px] h-[18px] flex items-center justify-center text-[15px] font-bold leading-none">?</span>
-          </button>
-        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto discord-scrollbar flex flex-col items-center justify-center" style={{ backgroundColor: "#000000" }}>

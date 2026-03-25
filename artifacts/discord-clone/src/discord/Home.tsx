@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Inbox } from "lucide-react";
 import { ServerList } from "@/components/ServerList";
 import { Sidebar } from "@/components/Sidebar";
 import { GuildChannelList } from "@/components/GuildChannelList";
@@ -83,16 +84,41 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
 
       {/* ── Title bar ── */}
       <div
-        className="shrink-0 flex items-center justify-center"
+        className="shrink-0 flex items-center"
         style={{
           height: "38px",
           backgroundColor: "#1a1a1a",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
+          paddingLeft: "16px",
+          paddingRight: "12px",
         }}
       >
-        <span className="text-[13px] font-semibold" style={{ color: "#dbdee1" }}>
+        {/* Centered label */}
+        <span className="flex-1 text-center text-[13px] font-semibold" style={{ color: "#dbdee1" }}>
           {titleBarLabel}
         </span>
+
+        {/* Right-side buttons: Inbox + Help */}
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            className="flex items-center justify-center rounded-[6px] transition-colors"
+            style={{ width: "28px", height: "28px", color: "#87898c" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#dbdee1")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#87898c")}
+            title="Inbox"
+          >
+            <Inbox style={{ width: "18px", height: "18px" }} />
+          </button>
+          <button
+            className="flex items-center justify-center rounded-[6px] transition-colors"
+            style={{ width: "28px", height: "28px", color: "#87898c" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#dbdee1")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#87898c")}
+            title="Help"
+          >
+            <span style={{ fontSize: "15px", fontWeight: "bold", lineHeight: 1 }}>?</span>
+          </button>
+        </div>
       </div>
 
       {/* ── Main layout ── */}
