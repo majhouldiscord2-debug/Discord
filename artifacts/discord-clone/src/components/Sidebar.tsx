@@ -162,7 +162,7 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; la
         isActive ? "bg-[#2a0505] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#1a0505] hover:text-[#dbdee1]"
       )}
     >
-      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76]")}>{icon}</span>
+      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#5865f2]" : "text-[#6d6f76]")}>{icon}</span>
       <span className="font-medium text-[15px] flex-1 text-left tracking-[-0.01em]">{label}</span>
     </button>
   );
