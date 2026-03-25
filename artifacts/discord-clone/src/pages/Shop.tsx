@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 function OrbsIcon({ size = 16 }: { size?: number }) {
   return (
-    <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: size, height: size, background: "linear-gradient(135deg, #1d6ef5 0%, #9b59b6 100%)" }}>
+    <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: size, height: size, background: "linear-gradient(135deg, #cc0000 0%, #8b0000 100%)" }}>
       <div className="rounded-full bg-white/70" style={{ width: size * 0.4, height: size * 0.4 }} />
     </div>
   );
@@ -29,9 +29,9 @@ export default function ShopPage() {
   const [browseOpen, setBrowseOpen] = useState(false);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a0000" }}>
       {/* Top bar */}
-      <div className="h-12 shrink-0 flex items-center px-4 gap-2" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a1220" }}>
+      <div className="h-12 shrink-0 flex items-center px-4 gap-2" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a0000" }}>
         <ShoppingBag className="w-5 h-5 text-[#949ba4]" />
         <span className="text-[#f2f3f5] font-semibold text-[16px] mr-2">Shop</span>
         <div className="w-px h-5 bg-white/10" />
@@ -67,14 +67,14 @@ export default function ShopPage() {
           <input
             placeholder="Search the Shop"
             className="pl-9 pr-4 py-1.5 rounded-md text-[13px] text-[#dbdee1] outline-none placeholder:text-[#4e5058]"
-            style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)", width: 200 }}
+            style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)", width: 200 }}
           />
         </div>
         <button className="w-8 h-8 rounded-full flex items-center justify-center text-[#949ba4] hover:text-[#f2f3f5] hover:bg-white/10 transition-colors">
           <Heart className="w-4 h-4" />
         </button>
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold text-[#f2f3f5]"
-          style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}>
+          style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
           <OrbsIcon size={16} />
           <span>2130</span>
         </div>
@@ -150,7 +150,7 @@ export default function ShopPage() {
           <div className="grid grid-cols-4 gap-3">
             {["Avatar Decorations", "Profile Effects", "Themes", "Sound Packs"].map((label, i) => (
               <div key={i} className="rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.03]"
-                style={{ backgroundColor: ["#1a1f3a","#1a2a1a","#2a1a1a","#1a2a2a"][i], border: "1px solid rgba(255,255,255,0.08)", height: 100 }}>
+                style={{ backgroundColor: ["#1a0505","#1a2a1a","#2a1a1a","#1a2a2a"][i], border: "1px solid rgba(255,255,255,0.08)", height: 100 }}>
                 <div className="h-full flex flex-col items-center justify-center gap-2 p-3">
                   <span className="text-[24px]">{"🎨🌟✨🎵".split("").filter((_,j) => j === i)[0] || "🛒"}</span>
                   <p className="text-[11px] font-semibold text-[#dbdee1] text-center leading-tight">{label}</p>

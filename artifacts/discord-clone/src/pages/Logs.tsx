@@ -117,13 +117,13 @@ export default function Logs() {
   }), [logs]);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#0a0000" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-4 gap-3"
         style={{
           borderBottom: "1px solid rgba(0,0,0,0.28)",
-          background: "linear-gradient(180deg, #0c1530 0%, #0a1220 100%)",
+          background: "linear-gradient(180deg, #150000 0%, #0a0000 100%)",
         }}
       >
         <div className="flex items-center gap-2">
@@ -170,7 +170,7 @@ export default function Logs() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-[180px] text-[#dbdee1] placeholder:text-[#5e6068] text-[12px] py-[5px] pl-3 pr-8 rounded-[5px] outline-none transition-all focus:w-[240px] focus:ring-1 focus:ring-white/10"
-            style={{ backgroundColor: "#060b14" }}
+            style={{ backgroundColor: "#060000" }}
           />
           <Search className="absolute right-2.5 top-[6px] w-3.5 h-3.5 text-[#5e6068]" />
         </div>
@@ -195,7 +195,7 @@ export default function Logs() {
             title="Toggle auto-scroll"
             className={cn(
               "p-1.5 rounded-[5px] transition-colors",
-              autoScroll ? "text-[#5865f2] bg-[#5865f2]/15" : "text-[#5e6068] hover:bg-white/5 hover:text-[#87898c]"
+              autoScroll ? "text-[#cc0000] bg-[#cc0000]/15" : "text-[#5e6068] hover:bg-white/5 hover:text-[#87898c]"
             )}
           >
             <ChevronDown className="w-4 h-4" />
@@ -314,8 +314,8 @@ export default function Logs() {
             style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
           >
             <span className="text-[11px] text-[#23a55a] font-mono">›</span>
-            <span className="text-[10px] text-[#060b14] font-mono animate-pulse">_</span>
-            <span className="ml-auto text-[9px] text-[#060b14] font-mono tabular-nums">
+            <span className="text-[10px] text-[#060000] font-mono animate-pulse">_</span>
+            <span className="ml-auto text-[9px] text-[#060000] font-mono tabular-nums">
               {counts.ERROR > 0 && <span className="text-[#f23f43] mr-2">{counts.ERROR} error{counts.ERROR !== 1 ? "s" : ""}</span>}
               {counts.WARN > 0 && <span className="text-[#f0b232] mr-2">{counts.WARN} warning{counts.WARN !== 1 ? "s" : ""}</span>}
               {logs.length} total

@@ -225,7 +225,7 @@ function MyAccountPage() {
                       <div className="flex items-center gap-2">
                         <span>{showEmail ? user.email : user.email.replace(/(?<=.{2}).(?=.*@)/g, "*")}</span>
                         <button
-                          className="text-[#00b0f4] text-[13px] hover:underline"
+                          className="text-[#cc0000] text-[13px] hover:underline"
                           onClick={() => setShowEmail(!showEmail)}
                         >
                           {showEmail ? "Hide" : "Reveal"}
@@ -412,7 +412,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
             <div className="flex flex-wrap items-center gap-1 mt-1">
               {["Privacy Policy", "Terms of Service", "More"].map((label, i, arr) => (
                 <span key={label} className="flex items-center gap-1">
-                  <button className="text-[11px] hover:underline" style={{ color: "#00b0f4" }}>{label}</button>
+                  <button className="text-[11px] hover:underline" style={{ color: "#cc0000" }}>{label}</button>
                   {i < arr.length - 1 && <span className="text-[11px]" style={{ color: "#6d6f76" }}>•</span>}
                 </span>
               ))}
@@ -433,7 +433,7 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
               </span>
             </div>
             <div className="px-4 py-1.5 rounded-full text-[12px] font-semibold uppercase tracking-widest"
-              style={{ background: "rgba(0,176,244,0.12)", color: "#00b0f4", border: "1px solid rgba(0,176,244,0.2)" }}>
+              style={{ background: "rgba(200,0,0,0.12)", color: "#cc0000", border: "1px solid rgba(200,0,0,0.2)" }}>
               Coming Soon
             </div>
           </div>

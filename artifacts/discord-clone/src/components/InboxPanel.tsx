@@ -43,7 +43,7 @@ export function InboxPanel({ onClose, onOpenDm }: InboxPanelProps) {
   return (
     <div
       className="w-[360px] shrink-0 h-full flex flex-col"
-      style={{ background: "#080e1c", borderLeft: "1px solid rgba(255,255,255,0.06)" }}
+      style={{ background: "#080000", borderLeft: "1px solid rgba(255,255,255,0.06)" }}
     >
       <div className="h-12 flex items-center px-4 gap-2 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <Inbox className="w-4 h-4 text-[#6d6f76]" />
@@ -128,7 +128,7 @@ export function InboxPanel({ onClose, onOpenDm }: InboxPanelProps) {
                     className="flex items-start gap-3 px-4 py-3 hover:bg-white/[0.03] transition-colors cursor-pointer group"
                     onClick={() => { onOpenDm(dm.id); onClose(); }}
                   >
-                    <Avatar initials={recipient.initials} color={recipient.avatarColor} size="md" statusBg="#080e1c" status={recipient.status} />
+                    <Avatar initials={recipient.initials} color={recipient.avatarColor} size="md" statusBg="#080000" status={recipient.status} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2 mb-0.5">
                         <span className="text-[13px] font-semibold text-[#f2f3f5] truncate">{recipient.displayName}</span>

@@ -119,7 +119,7 @@ const SERVERS: DiscordServer[] = [
   },
 ];
 
-const DEFAULT_BANNER = "linear-gradient(135deg, #1a1f3a, #2a2f5a)";
+const DEFAULT_BANNER = "linear-gradient(135deg, #1a0505, #1a0505)";
 
 const SORT_OPTIONS = ["Top Rating", "Top Active", "Top Member", "Top Events"] as const;
 type SortOption = typeof SORT_OPTIONS[number];
@@ -199,7 +199,7 @@ function SortDropdown({ value, onChange }: { value: SortOption; onChange: (v: So
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-        style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}
+        style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}
       >
         {value}
         <ChevronDown className={cn("w-3.5 h-3.5 text-[#949ba4] transition-transform duration-150", open && "rotate-180")} />
@@ -210,7 +210,7 @@ function SortDropdown({ value, onChange }: { value: SortOption; onChange: (v: So
           {SORT_OPTIONS.map((opt) => (
             <button key={opt} onClick={() => { onChange(opt); setOpen(false); }}
               className={cn("w-full text-left px-4 py-2 text-[13px] font-medium transition-colors",
-                value === opt ? "text-[#5865f2] bg-[#5865f2]/10" : "text-[#dbdee1] hover:bg-white/8")}>
+                value === opt ? "text-[#cc0000] bg-[#cc0000]/10" : "text-[#dbdee1] hover:bg-white/8")}>
               {opt}
             </button>
           ))}
@@ -235,10 +235,10 @@ function TagsDropdown({ selected, onChange }: { selected: Set<string>; onChange:
     <div ref={ref} className="relative">
       <button onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-        style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}>
+        style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
         <span>Tags</span>
         {selected.size > 0 && (
-          <span className="flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold text-white" style={{ background: "#5865f2" }}>
+          <span className="flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold text-white" style={{ background: "#cc0000" }}>
             {selected.size}
           </span>
         )}
@@ -257,7 +257,7 @@ function TagsDropdown({ selected, onChange }: { selected: Set<string>; onChange:
               return (
                 <button key={tag} onClick={() => toggle(tag)}
                   className="px-2 py-0.5 rounded-full text-[11px] font-medium transition-all"
-                  style={{ background: active ? "#5865f2" : "rgba(255,255,255,0.07)", color: active ? "#fff" : "#949ba4", border: `1px solid ${active ? "#5865f2" : "rgba(255,255,255,0.1)"}` }}>
+                  style={{ background: active ? "#cc0000" : "rgba(255,255,255,0.07)", color: active ? "#fff" : "#949ba4", border: `1px solid ${active ? "#cc0000" : "rgba(255,255,255,0.1)"}` }}>
                   {tag}
                 </button>
               );
@@ -287,7 +287,7 @@ function ServerCard({ server }: { server: DiscordServer }) {
     <div
       className="rounded-xl flex flex-col transition-all duration-200"
       style={{
-        background: `linear-gradient(180deg, ${server.accentColor}18 0%, #060b14 55%)`,
+        background: `linear-gradient(180deg, ${server.accentColor}18 0%, #060000 55%)`,
         border: `1px solid ${server.accentColor}35`,
         boxShadow: `0 2px 20px rgba(0,0,0,0.4), 0 0 30px ${server.accentColor}0a`,
       }}
@@ -327,7 +327,7 @@ function ServerCard({ server }: { server: DiscordServer }) {
               className="rounded-xl object-cover shrink-0"
               style={{
                 width: 56, height: 56,
-                border: `3px solid #060b14`,
+                border: `3px solid #060000`,
                 boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
                 position: "relative",
                 zIndex: 2,
@@ -339,7 +339,7 @@ function ServerCard({ server }: { server: DiscordServer }) {
               style={{
                 width: 56, height: 56,
                 background: `linear-gradient(135deg, #1a1a2e, ${server.accentColor})`,
-                border: "3px solid #060b14",
+                border: "3px solid #060000",
                 boxShadow: `0 4px 20px rgba(0,0,0,0.8), 0 0 0 1px ${server.accentColor}60`,
                 position: "relative",
                 zIndex: 2,
@@ -430,9 +430,9 @@ export default function ServerBotPage() {
   const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#0a0000" }}>
       {/* Header */}
-      <div className="h-12 shrink-0 flex items-center px-4 gap-6" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a1220" }}>
+      <div className="h-12 shrink-0 flex items-center px-4 gap-6" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a0000" }}>
         <div className="flex items-center gap-2">
           <Server className="w-5 h-5 text-[#949ba4]" />
           <span className="text-[#f2f3f5] font-semibold text-[16px]">Servers</span>
@@ -459,7 +459,7 @@ export default function ServerBotPage() {
             {selectedTags.size > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-3">
                 {[...selectedTags].map((tag) => (
-                  <span key={tag} className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium text-white" style={{ background: "#5865f2" }}>
+                  <span key={tag} className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium text-white" style={{ background: "#cc0000" }}>
                     {tag}
                     <button onClick={() => { const n = new Set(selectedTags); n.delete(tag); setSelectedTags(n); }} className="hover:opacity-70 transition-opacity">
                       <X className="w-2.5 h-2.5" />
@@ -483,9 +483,9 @@ export default function ServerBotPage() {
             <div className="flex flex-col gap-2">
               {allServers.map((s) => (
                 <div key={s.id} className="flex items-center gap-4 px-4 py-3 rounded-lg cursor-pointer transition-colors hover:bg-white/5"
-                  style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 overflow-hidden"
-                    style={{ background: "linear-gradient(135deg, #1a1f3a, #2a2f5a)" }}>
+                    style={{ background: "linear-gradient(135deg, #1a0505, #1a0505)" }}>
                     {"logoUrl" in s && s.logoUrl ? (
                       <img src={s.logoUrl} alt={s.name} className="w-full h-full object-cover" />
                     ) : (
@@ -502,13 +502,13 @@ export default function ServerBotPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-1.5 rounded-md text-[12px] font-semibold text-white transition-all hover:brightness-110 shrink-0 flex items-center gap-1"
-                      style={{ background: "linear-gradient(135deg, #5865f2, #4752c4)" }}
+                      style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)" }}
                     >
                       Join <ArrowUpRight className="w-3 h-3" />
                     </a>
                   ) : (
                     <button className="px-3 py-1.5 rounded-md text-[12px] font-semibold text-white transition-all hover:brightness-110 shrink-0"
-                      style={{ background: "linear-gradient(135deg, #5865f2, #4752c4)" }}>
+                      style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)" }}>
                       Join
                     </button>
                   )}

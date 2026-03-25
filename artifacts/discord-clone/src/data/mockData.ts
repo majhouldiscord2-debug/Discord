@@ -69,7 +69,7 @@ export const users: Record<string, User> = {
     username: "ravencloak",
     displayName: "RavenCloak",
     discriminator: "2345",
-    avatarColor: "#9b59b6",
+    avatarColor: "#8b0000",
     initials: "R",
     status: "offline",
   },
@@ -106,8 +106,8 @@ export const users: Record<string, User> = {
 export const servers: Server[] = [
   { id: "srv-react", name: "Reactiflux", initials: "⚛", iconColor: "#61dafb", ownerId: "user-nova", notificationCount: 3 },
   { id: "srv-nextjs", name: "Next.js", initials: "N", iconColor: "#0f172a", ownerId: "user-pixel" },
-  { id: "srv-tailwind", name: "Tailwind CSS", initials: "T", iconColor: "#06b6d4", ownerId: "user-storm" },
-  { id: "srv-lofi", name: "Lofi Chill Zone", initials: "🎵", iconColor: "#9b59b6", ownerId: "user-drift", notificationCount: 1 },
+  { id: "srv-tailwind", name: "Tailwind CSS", initials: "T", iconColor: "#e05050", ownerId: "user-storm" },
+  { id: "srv-lofi", name: "Lofi Chill Zone", initials: "🎵", iconColor: "#8b0000", ownerId: "user-drift", notificationCount: 1 },
   { id: "srv-games", name: "Game Night HQ", initials: "🎮", iconColor: "#e74c3c", ownerId: "user-ghost" },
   { id: "srv-oss", name: "Open Source Hub", initials: "OS", iconColor: "#27ae60", ownerId: "user-me" },
 ];

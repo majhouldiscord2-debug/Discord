@@ -79,7 +79,7 @@ export const allFriends: User[] = [
     username: "lunarbyte",
     status: "offline",
     statusText: "Last seen 2 hours ago",
-    avatarColor: "#5865f2",
+    avatarColor: "#cc0000",
     initials: "L",
   },
   {
@@ -88,7 +88,7 @@ export const allFriends: User[] = [
     username: "ravencloak",
     status: "offline",
     statusText: "Offline",
-    avatarColor: "#9b59b6",
+    avatarColor: "#8b0000",
     initials: "R",
   },
 ];
@@ -131,7 +131,7 @@ export const dmContacts: User[] = [
     name: "lunarbyte",
     username: "lunarbyte",
     status: "offline",
-    avatarColor: "#5865f2",
+    avatarColor: "#cc0000",
     initials: "L",
   },
   {
@@ -139,7 +139,7 @@ export const dmContacts: User[] = [
     name: "ravencloak",
     username: "ravencloak",
     status: "offline",
-    avatarColor: "#9b59b6",
+    avatarColor: "#8b0000",
     initials: "R",
   },
   {
@@ -190,14 +190,14 @@ export const servers: Server[] = [
     id: 3,
     name: "Tailwind CSS",
     initials: "T",
-    color: "#06b6d4",
+    color: "#e05050",
     hasNotification: false,
   },
   {
     id: 4,
     name: "Lofi Chill Zone",
     initials: "🎵",
-    color: "#9b59b6",
+    color: "#8b0000",
     hasNotification: true,
     notificationCount: 1,
   },

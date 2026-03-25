@@ -39,7 +39,7 @@ export default function QuestsPage() {
             >
               {t === "all" ? "All Quests" : "Claimed Quests"}
               {tab === t && (
-                <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-t-full" style={{ backgroundColor: "#5865f2" }} />
+                <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-t-full" style={{ backgroundColor: "#cc0000" }} />
               )}
             </button>
           ))}

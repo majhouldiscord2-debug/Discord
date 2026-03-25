@@ -37,7 +37,7 @@ const SKILLS: Skill[] = [
     category: "Onboarding",
     level: "Basic",
     icon: <MessageSquare className="w-5 h-5" />,
-    accentColor: "#5865f2",
+    accentColor: "#cc0000",
     enabled: true,
     tags: ["Greet", "Embed", "DM"],
     stats: [{ label: "Members greeted", value: "847" }, { label: "DM open rate", value: "61%" }],
@@ -49,7 +49,7 @@ const SKILLS: Skill[] = [
     category: "Roles",
     level: "Basic",
     icon: <UserCheck className="w-5 h-5" />,
-    accentColor: "#06b6d4",
+    accentColor: "#e05050",
     enabled: true,
     tags: ["Roles", "Reactions", "Self-assign"],
     stats: [{ label: "Roles assigned", value: "3.4K" }, { label: "Active menus", value: "5" }],
@@ -320,9 +320,9 @@ export default function SkillsPage() {
               onClick={() => setActiveCategory(cat)}
               className="px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all"
               style={{
-                background: activeCategory === cat ? "#5865f2" : "rgba(255,255,255,0.05)",
+                background: activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.05)",
                 color: activeCategory === cat ? "#fff" : "#949ba4",
-                border: `1px solid ${activeCategory === cat ? "#5865f2" : "rgba(255,255,255,0.07)"}`,
+                border: `1px solid ${activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.07)"}`,
               }}
             >
               {cat}
@@ -335,9 +335,9 @@ export default function SkillsPage() {
               onClick={() => setActiveLevel(lvl)}
               className="px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all"
               style={{
-                background: activeLevel === lvl ? (lvl === "All" ? "#5865f2" : LEVEL_COLORS[lvl] + "cc") : "rgba(255,255,255,0.05)",
+                background: activeLevel === lvl ? (lvl === "All" ? "#cc0000" : LEVEL_COLORS[lvl] + "cc") : "rgba(255,255,255,0.05)",
                 color: activeLevel === lvl ? "#fff" : "#949ba4",
-                border: `1px solid ${activeLevel === lvl ? (lvl === "All" ? "#5865f2" : LEVEL_COLORS[lvl]) : "rgba(255,255,255,0.07)"}`,
+                border: `1px solid ${activeLevel === lvl ? (lvl === "All" ? "#cc0000" : LEVEL_COLORS[lvl]) : "rgba(255,255,255,0.07)"}`,
               }}
             >
               {lvl}

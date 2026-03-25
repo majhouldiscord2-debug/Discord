@@ -103,7 +103,7 @@ const CATEGORY_ICONS: Record<Quest["category"], React.ReactNode> = {
 };
 
 const CATEGORY_COLORS: Record<Quest["category"], string> = {
-  gaming: "#5865f2",
+  gaming: "#cc0000",
   nitro: "#f59e0b",
   boost: "#23a55a",
 };
@@ -118,8 +118,8 @@ function QuestCard({ quest }: { quest: Quest }) {
       className="rounded-[14px] flex flex-col overflow-hidden transition-all duration-200 group"
       style={{
         background: isClaimed
-          ? "linear-gradient(135deg, #0a1220 0%, #0a1220 100%)"
-          : `linear-gradient(135deg, ${quest.accentColor}12 0%, #0a1220 70%)`,
+          ? "linear-gradient(135deg, #0a0000 0%, #0a0000 100%)"
+          : `linear-gradient(135deg, ${quest.accentColor}12 0%, #0a0000 70%)`,
         border: `1px solid ${isClaimed ? "rgba(255,255,255,0.04)" : quest.accentColor + "30"}`,
         opacity: isClaimed ? 0.65 : 1,
       }}
@@ -243,13 +243,13 @@ export default function Quests() {
   const completedCount = QUESTS.filter((q) => q.status === "completed" || q.status === "claimed").length;
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a0000" }}>
       {/* Header */}
-      <div className="h-12 shrink-0 flex items-center px-4 gap-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", backgroundColor: "#0a1220" }}>
+      <div className="h-12 shrink-0 flex items-center px-4 gap-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", backgroundColor: "#0a0000" }}>
         <Trophy className="w-[18px] h-[18px] text-[#f59e0b]" />
         <span className="text-[#f2f3f5] font-semibold text-[16px]">Quests</span>
         {activeCount > 0 && (
-          <span className="flex items-center justify-center min-w-[18px] h-[18px] rounded-full px-1 text-[10px] font-bold text-white" style={{ background: "#5865f2" }}>
+          <span className="flex items-center justify-center min-w-[18px] h-[18px] rounded-full px-1 text-[10px] font-bold text-white" style={{ background: "#cc0000" }}>
             {activeCount}
           </span>
         )}
@@ -260,10 +260,10 @@ export default function Quests() {
         {/* Intro banner */}
         <div
           className="rounded-[16px] p-4 mb-5 flex items-center gap-4 relative overflow-hidden"
-          style={{ background: "linear-gradient(135deg, #1e0a6e 0%, #0d1a55 50%, #080e1c 100%)", border: "1px solid rgba(88,101,242,0.25)" }}
+          style={{ background: "linear-gradient(135deg, #1e0a6e 0%, #0d1a55 50%, #080000 100%)", border: "1px solid rgba(88,101,242,0.25)" }}
         >
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 10% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 90% 30%, #fff 1px, transparent 1px)", backgroundSize: "35px 35px" }} />
-          <div className="w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 relative" style={{ background: "linear-gradient(135deg, #5865f2, #4752c4)", boxShadow: "0 4px 20px #5865f244" }}>
+          <div className="w-12 h-12 rounded-[14px] flex items-center justify-center shrink-0 relative" style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)", boxShadow: "0 4px 20px #cc000044" }}>
             <Trophy className="w-6 h-6 text-white" />
           </div>
           <div className="relative min-w-0">
@@ -271,7 +271,7 @@ export default function Quests() {
             <p className="text-[11px] text-[#949ba4] mt-0.5">Finish tasks to unlock exclusive Discord rewards, game items, and more.</p>
           </div>
           <div className="shrink-0 relative text-right">
-            <p className="text-[22px] font-extrabold text-[#5865f2] leading-none">{completedCount}</p>
+            <p className="text-[22px] font-extrabold text-[#cc0000] leading-none">{completedCount}</p>
             <p className="text-[10px] text-[#4e5058] font-medium mt-0.5">completed</p>
           </div>
         </div>
@@ -291,7 +291,7 @@ export default function Quests() {
             >
               {tab}
               {tab === "active" && activeCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-bold text-white" style={{ background: "#5865f2" }}>
+                <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-[9px] font-bold text-white" style={{ background: "#cc0000" }}>
                   {activeCount}
                 </span>
               )}

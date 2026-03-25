@@ -46,7 +46,7 @@ function BigStat({ icon, label, value, sub, color, loading }: BigStatProps) {
     <div
       className="flex-1 min-w-0 rounded-[14px] p-5 flex flex-col gap-3 relative overflow-hidden group transition-transform duration-200 hover:scale-[1.02]"
       style={{
-        background: `linear-gradient(135deg, ${color}22 0%, #080f1c 60%)`,
+        background: `linear-gradient(135deg, ${color}22 0%, #0a0000 60%)`,
         border: `1px solid ${color}35`,
         boxShadow: `0 0 30px ${color}12, inset 0 1px 0 ${color}15`,
       }}
@@ -88,7 +88,7 @@ function MiniStat({ icon, label, value, color, sub }: MiniStatProps) {
     <div
       className="rounded-[12px] p-4 flex items-center gap-3 transition-all duration-150 hover:brightness-110"
       style={{
-        background: `linear-gradient(135deg, ${color}15 0%, #080f1c 100%)`,
+        background: `linear-gradient(135deg, ${color}15 0%, #0a0000 100%)`,
         border: `1px solid ${color}25`,
       }}
     >
@@ -167,7 +167,7 @@ function Card({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="rounded-[14px] overflow-hidden"
-      style={{ background: "#080f1c", border: "1px solid rgba(255,255,255,0.055)" }}
+      style={{ background: "#0a0000", border: "1px solid rgba(255,255,255,0.055)" }}
     >
       {children}
     </div>
@@ -221,16 +221,16 @@ export default function Stats() {
   const totalMsg = msgStats ? msgStats.totalMessages : 0;
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#080d18" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#080000" }}>
       {/* Header */}
       <div
         className="h-12 shrink-0 flex items-center px-5 gap-2"
         style={{
           borderBottom: "1px solid rgba(255,255,255,0.06)",
-          background: "linear-gradient(180deg, #0c1530 0%, #090e1e 100%)",
+          background: "linear-gradient(180deg, #150000 0%, #0a0000 100%)",
         }}
       >
-        <BarChart2 className="w-[18px] h-[18px] text-[#5865f2]" />
+        <BarChart2 className="w-[18px] h-[18px] text-[#cc0000]" />
         <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Stats</span>
         <div className="ml-auto flex items-center gap-2">
           <span className="text-[11px] text-[#4e5058] font-medium uppercase tracking-wider">
@@ -255,31 +255,31 @@ export default function Stats() {
           <div
             className="rounded-[16px] overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, #1a1060 0%, #0d1a40 50%, #080f1c 100%)",
+              background: "linear-gradient(135deg, #1a0000 0%, #100000 50%, #0a0000 100%)",
               border: "1px solid rgba(88,101,242,0.25)",
               boxShadow: "0 8px 40px rgba(88,101,242,0.12)",
             }}
           >
-            <div className="h-[70px] w-full relative" style={{ background: "linear-gradient(135deg, #5865f2 0%, #3b4acf 50%, #1a236e 100%)" }}>
+            <div className="h-[70px] w-full relative" style={{ background: "linear-gradient(135deg, #cc0000 0%, #8b0000 50%, #200000 100%)" }}>
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
             </div>
             <div className="px-5 pb-4 -mt-7 flex items-end gap-4">
               <div className="relative shrink-0">
                 {stats.userAvatar ? (
-                  <img src={stats.userAvatar} alt={stats.displayName} className="w-[56px] h-[56px] rounded-full ring-4" style={{ ringColor: "#080f1c" }} />
+                  <img src={stats.userAvatar} alt={stats.displayName} className="w-[56px] h-[56px] rounded-full ring-4" style={{ ringColor: "#0a0000" }} />
                 ) : (
-                  <div className="w-[56px] h-[56px] rounded-full bg-[#5865f2] flex items-center justify-center text-white font-bold text-xl ring-4 ring-[#080f1c]">
+                  <div className="w-[56px] h-[56px] rounded-full bg-[#cc0000] flex items-center justify-center text-white font-bold text-xl ring-4 ring-[#0a0000]">
                     {stats.displayName[0]?.toUpperCase()}
                   </div>
                 )}
-                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#23a55a] ring-2 ring-[#080f1c]" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#23a55a] ring-2 ring-[#0a0000]" />
               </div>
               <div className="pb-1 min-w-0">
                 <div className="font-bold text-[#f2f3f5] text-[17px] leading-tight truncate">{stats.displayName}</div>
                 <div className="text-[#6d6f76] text-[12px] font-medium">@{user.username}{stats.tag}</div>
               </div>
               {stats.isBot && (
-                <div className="ml-auto mb-1 shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-[11px] font-bold" style={{ background: "#5865f222", color: "#5865f2", border: "1px solid #5865f240" }}>
+                <div className="ml-auto mb-1 shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-[6px] text-[11px] font-bold" style={{ background: "#cc000022", color: "#cc0000", border: "1px solid #cc000040" }}>
                   <Bot className="w-3.5 h-3.5" /> BOT
                 </div>
               )}
@@ -295,7 +295,7 @@ export default function Stats() {
               label="Total Messages Sent"
               value={msgStats ? fmt(totalMsg) : "—"}
               sub={msgStats ? `${msgStats.channelsSampled} DM chats · ${msgStats.guildsSampled} servers` : "Full scan in progress"}
-              color="#5865f2"
+              color="#cc0000"
               loading={msgLoading}
             />
             <BigStat
@@ -303,7 +303,7 @@ export default function Stats() {
               label="In Direct Messages"
               value={msgStats ? fmt(msgStats.dmMessages) : "—"}
               sub={msgStats ? `across ${msgStats.channelsSampled} DM chats` : undefined}
-              color="#06b6d4"
+              color="#e05050"
               loading={msgLoading}
             />
             <BigStat
@@ -316,9 +316,9 @@ export default function Stats() {
             />
           </div>
           {msgStats && (
-            <div className="mt-3 rounded-[12px] p-3.5" style={{ background: "#080f1c", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <div className="mt-3 rounded-[12px] p-3.5" style={{ background: "#0a0000", border: "1px solid rgba(255,255,255,0.05)" }}>
               <div className="text-[11px] text-[#4e5058] mb-2.5 font-medium">Message Share</div>
-              <BarRow label="Direct Messages" value={msgStats.dmMessages} max={totalMsg || 1} color="#06b6d4" />
+              <BarRow label="Direct Messages" value={msgStats.dmMessages} max={totalMsg || 1} color="#e05050" />
               <BarRow label="Server Messages" value={msgStats.serverMessages} max={totalMsg || 1} color="#23a55a" />
             </div>
           )}
@@ -349,9 +349,9 @@ export default function Stats() {
         {/* Quick Numbers */}
         <Section title="Overview">
           <div className="grid grid-cols-3 gap-2.5">
-            <MiniStat icon={<Server className="w-4 h-4" />} label="Servers" value={guilds.length} color="#5865f2" sub={stats.ownedServers.length > 0 ? `${stats.ownedServers.length} owned` : undefined} />
+            <MiniStat icon={<Server className="w-4 h-4" />} label="Servers" value={guilds.length} color="#cc0000" sub={stats.ownedServers.length > 0 ? `${stats.ownedServers.length} owned` : undefined} />
             <MiniStat icon={<Users className="w-4 h-4" />} label="Friends" value={stats.friends.length} color="#23a55a" />
-            <MiniStat icon={<MessageCircle className="w-4 h-4" />} label="DM Chats" value={stats.dmChannels.length} color="#06b6d4" />
+            <MiniStat icon={<MessageCircle className="w-4 h-4" />} label="DM Chats" value={stats.dmChannels.length} color="#e05050" />
             <MiniStat icon={<Layers className="w-4 h-4" />} label="Group DMs" value={stats.groupDms.length} color="#f59e0b" />
             <MiniStat icon={<Inbox className="w-4 h-4" />} label="Requests" value={stats.pending.length} color="#e879f9" />
             <MiniStat icon={<UserX className="w-4 h-4" />} label="Blocked" value={stats.blocked.length} color="#f43f5e" />

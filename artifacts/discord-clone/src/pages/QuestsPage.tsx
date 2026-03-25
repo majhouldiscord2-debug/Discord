@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 function OrbsIcon({ size = 16 }: { size?: number }) {
   return (
-    <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: size, height: size, background: "linear-gradient(135deg, #1d6ef5 0%, #9b59b6 100%)" }}>
+    <div className="rounded-full flex items-center justify-center shrink-0" style={{ width: size, height: size, background: "linear-gradient(135deg, #cc0000 0%, #8b0000 100%)" }}>
       <div className="rounded-full bg-white/70" style={{ width: size * 0.4, height: size * 0.4 }} />
     </div>
   );
@@ -15,7 +15,7 @@ function FloatingOrb({ x, y, size, opacity, delay }: { x: number; y: number; siz
     <div className="absolute rounded-full pointer-events-none"
       style={{
         left: `${x}%`, top: `${y}%`, width: size, height: size, opacity,
-        background: "linear-gradient(135deg, #5865f2, #9b59b6, #1d6ef5)",
+        background: "linear-gradient(135deg, #cc0000, #8b0000, #cc0000)",
         boxShadow: `0 0 ${size * 1.5}px rgba(88,101,242,0.4)`,
         animation: `float-orb ${2.5 + delay}s ease-in-out infinite alternate`,
         animationDelay: `${delay * 0.5}s`,
@@ -73,9 +73,9 @@ export default function QuestsPage() {
   const [suggest, setSuggest] = useState("Suggested");
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a1220" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden" style={{ backgroundColor: "#0a0000" }}>
       {/* Header */}
-      <div className="h-12 shrink-0 flex items-center px-4 gap-2" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a1220" }}>
+      <div className="h-12 shrink-0 flex items-center px-4 gap-2" style={{ borderBottom: "1px solid rgba(0,0,0,0.3)", backgroundColor: "#0a0000" }}>
         <Target className="w-5 h-5 text-[#949ba4]" />
         <span className="text-[#f2f3f5] font-semibold text-[16px] mr-2">Quests</span>
         <div className="w-px h-5 bg-white/10" />
@@ -85,7 +85,7 @@ export default function QuestsPage() {
         </div>
         <div className="flex-1" />
         <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[13px] font-bold text-[#f2f3f5]"
-          style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}>
+          style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
           <OrbsIcon size={16} />
           <span>2130</span>
         </div>
@@ -97,7 +97,7 @@ export default function QuestsPage() {
           <>
             {/* Hero Banner */}
             <div className="relative w-full overflow-hidden" style={{ minHeight: 220 }}>
-              <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 40% 50%, #1a0a2e 0%, #0a0a1a 50%, #060b14 100%)" }} />
+              <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 40% 50%, #1a0a2e 0%, #0a0a1a 50%, #060000 100%)" }} />
               <FloatingOrb x={60} y={10} size={80} opacity={0.7} delay={0} />
               <FloatingOrb x={75} y={50} size={120} opacity={0.5} delay={1} />
               <FloatingOrb x={85} y={20} size={50} opacity={0.6} delay={0.5} />
@@ -131,7 +131,7 @@ export default function QuestsPage() {
                   <div className="relative">
                     <button onClick={() => setSuggestOpen((v) => !v)}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-                      style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
                       {suggest}
                       <ChevronDown className={cn("w-3.5 h-3.5 text-[#949ba4] transition-transform", suggestOpen && "rotate-180")} />
                     </button>
@@ -141,7 +141,7 @@ export default function QuestsPage() {
                         {SUGGEST_OPTIONS.map((opt) => (
                           <button key={opt} onClick={() => { setSuggest(opt); setSuggestOpen(false); }}
                             className={cn("w-full text-left px-4 py-2 text-[13px] font-medium transition-colors",
-                              suggest === opt ? "text-[#5865f2] bg-[#5865f2]/10" : "text-[#dbdee1] hover:bg-white/8")}>
+                              suggest === opt ? "text-[#cc0000] bg-[#cc0000]/10" : "text-[#dbdee1] hover:bg-white/8")}>
                             {opt}
                           </button>
                         ))}
@@ -150,7 +150,7 @@ export default function QuestsPage() {
                   </div>
                   {/* Filters button */}
                   <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[13px] font-medium text-[#dbdee1] transition-colors hover:bg-white/10"
-                    style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.1)" }}>
+                    style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
                     Filters <SlidersHorizontal className="w-3.5 h-3.5 text-[#949ba4]" />
                   </button>
                 </div>
@@ -166,7 +166,7 @@ export default function QuestsPage() {
         ) : (
           <div className="flex flex-col items-center justify-center h-full py-20 gap-3">
             <div className="w-16 h-16 rounded-full flex items-center justify-center mb-2" style={{ background: "rgba(88,101,242,0.15)", border: "1px solid rgba(88,101,242,0.3)" }}>
-              <Target className="w-7 h-7 text-[#5865f2]" />
+              <Target className="w-7 h-7 text-[#cc0000]" />
             </div>
             <p className="text-[#f2f3f5] text-[16px] font-bold">No Claimed Quests Yet</p>
             <p className="text-[#949ba4] text-[13px]">Complete quests to earn Discord Orbs!</p>
@@ -187,7 +187,7 @@ export default function QuestsPage() {
 function QuestCard({ quest }: { quest: QuestItem }) {
   return (
     <div className="rounded-xl overflow-hidden transition-all duration-200 cursor-pointer"
-      style={{ backgroundColor: "#060b14", border: "1px solid rgba(255,255,255,0.08)" }}
+      style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.08)" }}
       onMouseEnter={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.transform = "translateY(-2px)"; el.style.boxShadow = "0 6px 24px rgba(0,0,0,0.4)"; }}
       onMouseLeave={(e) => { const el = e.currentTarget as HTMLDivElement; el.style.transform = ""; el.style.boxShadow = ""; }}>
       {/* Banner */}
