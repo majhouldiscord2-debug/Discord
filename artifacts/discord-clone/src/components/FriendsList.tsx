@@ -46,36 +46,44 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
   return (
     <div className="flex-1 h-full flex flex-col min-w-0" style={{ backgroundColor: "#000000" }}>
       <div
-        className="h-12 shrink-0 flex items-center px-4 gap-3"
+        className="h-12 shrink-0 flex items-center px-4 gap-0"
         style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", backgroundColor: "#000000" }}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mr-3 shrink-0">
           <Users className="w-5 h-5 text-[#7d8188]" />
-          <span className="text-[#f2f3f5] font-semibold text-[15px] tracking-[-0.01em]">Friends</span>
+          <span className="text-[#f2f3f5] font-semibold text-[15px]">Friends</span>
         </div>
-        <div className="w-px h-5 bg-white/10 mx-1" />
-        <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
-          <TabBtn label="Online" isActive={activeTab === "online"} onClick={() => setActiveTab("online")} />
-          <TabBtn label="All" isActive={activeTab === "all"} onClick={() => setActiveTab("all")} />
-          <TabBtn label="Pending" isActive={activeTab === "pending"} onClick={() => setActiveTab("pending")} badge={pendingFriends.length || undefined} />
-          <TabBtn label="Blocked" isActive={activeTab === "blocked"} onClick={() => setActiveTab("blocked")} />
+        <div className="w-px h-5 bg-white/10 mx-3 shrink-0" />
+        <div className="flex items-center gap-0 flex-1 overflow-x-auto no-scrollbar">
+          {(["online", "all", "pending", "blocked"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveTab(t)}
+              className={cn(
+                "relative px-3 py-[14px] text-[14px] font-medium transition-all duration-150 whitespace-nowrap flex items-center gap-1.5",
+                activeTab === t ? "text-[#f2f3f5]" : "text-[#87898c] hover:text-[#dbdee1]"
+              )}
+            >
+              {t === "online" ? "Online" : t === "all" ? "All" : t === "pending" ? "Pending" : "Blocked"}
+              {t === "pending" && pendingFriends.length > 0 && (
+                <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full leading-none bg-[#ed4245] text-white">{pendingFriends.length}</span>
+              )}
+              {activeTab === t && (
+                <span className="absolute bottom-0 left-2 right-2 h-[2px] rounded-t-full" style={{ backgroundColor: "#5865f2" }} />
+              )}
+            </button>
+          ))}
           <button
             onClick={() => setActiveTab("add")}
-            className={cn(
-              "px-3 py-1 text-[13px] font-semibold rounded-[5px] transition-all duration-150 whitespace-nowrap",
-              activeTab === "add"
-                ? "text-[#dbdee1] bg-[#404249]"
-                : "bg-[#23a55a] text-white hover:bg-[#1f9350] hover:shadow-[0_2px_12px_rgba(35,165,90,0.35)]"
-            )}
+            className="ml-2 px-3 py-1.5 text-[13px] font-semibold rounded-[6px] transition-all duration-150 whitespace-nowrap bg-[#5865f2] text-white hover:bg-[#4752c4] hover:shadow-[0_2px_12px_rgba(88,101,242,0.35)]"
           >
             Add Friend
           </button>
         </div>
-        <div className="flex items-center gap-1 ml-2 shrink-0">
+        <div className="flex items-center gap-1 ml-3 shrink-0">
           <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="New Group DM">
             <Video className="w-[18px] h-[18px]" />
           </button>
-          <div className="w-px h-5 bg-white/10 mx-1" />
           <button className="text-[#87898c] hover:text-[#dbdee1] p-1.5 rounded-[6px] transition-colors hover:bg-white/8" title="Inbox">
             <Inbox className="w-[18px] h-[18px]" />
           </button>

@@ -9,6 +9,7 @@ import { InProgressPage } from "@/components/InProgress";
 import ShopPage from "@/discord/Shop";
 import QuestsPage from "@/discord/Quests";
 import MessageRequestsPage from "@/discord/MessageRequests";
+import NitroPage from "@/discord/Nitro";
 import { useAppStore } from "@/store/useAppStore";
 import type { Channel } from "@/types";
 
@@ -123,13 +124,15 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
           <QuestsPage />
         ) : view === "requests" ? (
           <MessageRequestsPage />
+        ) : view === "nitro" ? (
+          <NitroPage />
         ) : view === "friends" || view === "dm" ? (
           <>
             <FriendsList />
             <ActiveNow />
           </>
         ) : (
-          <InProgressPage title="Nitro Home" subtitle="Nitro Home and other features are currently being built. Coming soon!" />
+          <InProgressPage title="Coming Soon" subtitle="This feature is being built." />
         )}
       </div>
     </div>
