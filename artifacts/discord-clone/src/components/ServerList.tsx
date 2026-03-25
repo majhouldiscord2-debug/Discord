@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Compass, Download } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
+import { InProgress } from "./InProgress";
 
 function DiscordLogo() {
   return (
@@ -108,100 +109,9 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
       <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
 
       {!isBotMode && (
-        <>
-          {servers.map((server) => {
-            const isActive = activeServer === server.id;
-            return (
-              <ServerButton
-                key={server.id}
-                name={server.name}
-                isActive={isActive}
-                hasNotification={!!server.notificationCount}
-                notificationCount={server.notificationCount}
-                onClick={() => onSelectServer(server.id)}
-                glowColor={server.iconColor}
-              >
-                <div
-                  className="w-12 h-12 flex items-center justify-center transition-all duration-200 text-[16px] font-bold text-white"
-                  style={{
-                    borderRadius: isActive ? 16 : 24,
-                    backgroundColor: server.iconColor,
-                    boxShadow: isActive ? `inset 0 1px 0 rgba(255,255,255,0.15)` : undefined,
-                  }}
-                >
-                  {server.initials}
-                </div>
-              </ServerButton>
-            );
-          })}
-
-          <div className="w-8 h-px shrink-0 mt-1" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
-
-          <ServerButton name="Add a Server" isActive={false} onClick={() => {}}>
-            <div
-              className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
-              style={{ borderRadius: 24, background: "#0a1420" }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "16px";
-                el.style.background = "#1db954";
-                el.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "24px";
-                el.style.background = "#0a1420";
-                el.style.color = "#1db954";
-              }}
-            >
-              <Plus className="w-6 h-6" />
-            </div>
-          </ServerButton>
-
-          <ServerButton name="Explore Servers" isActive={false} onClick={() => {}}>
-            <div
-              className="w-12 h-12 flex items-center justify-center text-[#1db954] transition-all duration-200"
-              style={{ borderRadius: 24, background: "#0a1420" }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "16px";
-                el.style.background = "#1db954";
-                el.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "24px";
-                el.style.background = "#0a1420";
-                el.style.color = "#1db954";
-              }}
-            >
-              <Compass className="w-6 h-6" />
-            </div>
-          </ServerButton>
-
-          <div className="w-8 h-px shrink-0" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }} />
-
-          <ServerButton name="Download Apps" isActive={false} onClick={() => {}}>
-            <div
-              className="w-12 h-12 flex items-center justify-center text-[#1d6ef5] transition-all duration-200"
-              style={{ borderRadius: 24, background: "#0a1420" }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "16px";
-                el.style.background = "#1d6ef5";
-                el.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget as HTMLDivElement;
-                el.style.borderRadius = "24px";
-                el.style.background = "#0a1420";
-                el.style.color = "#1d6ef5";
-              }}
-            >
-              <Download className="w-[22px] h-[22px]" />
-            </div>
-          </ServerButton>
-        </>
+        <div className="flex flex-col items-center w-full mt-1">
+          <InProgress size="sm" label="Servers" description="Coming soon" />
+        </div>
       )}
     </div>
   );

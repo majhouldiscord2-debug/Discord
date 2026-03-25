@@ -422,10 +422,20 @@ export function SettingsModal({ open, onClose }: SettingsModalProps) {
 
       {/* Content pane */}
       <div className="flex-1 flex overflow-hidden" style={{ backgroundColor: "#313338" }}>
-        <div key={pageKey} className="flex-1 flex flex-col overflow-hidden min-w-0 animate-page-slide-right">
-          {activePage === "my-account"
-            ? <MyAccountPage />
-            : <PlaceholderPage title={pageTitles[activePage] ?? activePage} />}
+        <div key={pageKey} className="flex-1 flex flex-col overflow-hidden min-w-0 animate-page-slide-right items-center justify-center">
+          <div className="flex flex-col items-center gap-5 py-16">
+            <img src="/in-progress.png" alt="In Progress" style={{ width: 80, height: 80, opacity: 0.9 }} />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span className="text-[20px] font-bold text-[#dbdee1]">{pageTitles[activePage] ?? activePage === "my-account" ? "My Account" : activePage}</span>
+              <span className="text-[14px] text-[#5e6068] max-w-[320px] leading-relaxed">
+                This settings section is currently being built.
+              </span>
+            </div>
+            <div className="px-4 py-1.5 rounded-full text-[12px] font-semibold uppercase tracking-widest"
+              style={{ background: "rgba(0,176,244,0.12)", color: "#00b0f4", border: "1px solid rgba(0,176,244,0.2)" }}>
+              Coming Soon
+            </div>
+          </div>
         </div>
 
         <div className="shrink-0 flex flex-col items-center pt-[72px] px-5">

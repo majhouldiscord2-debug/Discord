@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { Avatar } from "./Avatar";
+import { InProgress } from "./InProgress";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -75,39 +76,8 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
             <p className="text-[12px] text-[#4e5058] text-center">DMs are unavailable in bot management mode</p>
           </div>
         ) : (
-          <div className="space-y-[1px] pb-2">
-            {dmChannels.map((dm, i) => {
-              const recipient = users[dm.recipientId];
-              if (!recipient) return null;
-              const isActive = activeDmId === dm.id;
-              return (
-                <button
-                  key={dm.id}
-                  onClick={() => onOpenDm?.(dm.id)}
-                  className={cn(
-                    "w-full flex items-center gap-3 px-2 py-[5px] rounded-[6px] transition-all duration-150 animate-fade-slide-up",
-                    isActive ? "bg-[#404249] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#35373c] hover:text-[#dbdee1]"
-                  )}
-                  style={{ animationDelay: `${i * 30}ms` }}
-                >
-                  <div className="relative shrink-0">
-                    <Avatar
-                      initials={recipient.initials}
-                      color={recipient.avatarColor}
-                      size="sm"
-                      statusBg={isActive ? "#152438" : "#080f1c"}
-                      status={recipient.status}
-                    />
-                  </div>
-                  <span className="truncate text-[14px] font-medium flex-1">{recipient.displayName}</span>
-                  {dm.unreadCount ? (
-                    <span className="bg-[#ed4245] text-white text-[10px] font-bold rounded-full px-1 min-w-[16px] h-4 flex items-center justify-center shrink-0">
-                      {dm.unreadCount}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
+          <div className="pb-2">
+            <InProgress size="sm" label="Direct Messages" description="Coming soon" />
           </div>
         )}
       </div>
@@ -116,33 +86,60 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
         style={{ background: "linear-gradient(180deg, #050c16 0%, #060e1a 100%)", borderTop: "1px solid rgba(0,0,0,0.2)" }}
       >
-        <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
-          <Avatar
-            initials={currentUser?.initials ?? "?"}
-            color={currentUser?.avatarColor ?? "#5865f2"}
-            status={currentUser?.status ?? "online"}
-            size="sm"
-            statusBg="#1e2022"
-            className="mr-2"
-          />
-          <div className="flex flex-col text-left min-w-0">
-            <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">{currentUser?.displayName}</span>
-            <span className="text-[11px] text-[#6d6f76] leading-tight truncate">@{currentUser?.username}</span>
-          </div>
-        </button>
-        <div className="flex items-center gap-0.5 shrink-0">
-          <IconBtn title={micMuted ? "Unmute" : "Mute"} onClick={() => setMicMuted(!micMuted)} danger={micMuted}>
-            {micMuted ? <MicOff className="w-[17px] h-[17px]" /> : <Mic className="w-[17px] h-[17px]" />}
-          </IconBtn>
-          <IconBtn title={deafened ? "Undeafen" : "Deafen"} onClick={() => setDeafened(!deafened)} danger={deafened}>
-            <Headphones className="w-[17px] h-[17px]" />
-          </IconBtn>
-          <div className="group">
-            <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
-              <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
-            </IconBtn>
-          </div>
-        </div>
+        {!isBotMode ? (
+          <>
+            <div className="flex items-center flex-1 gap-2 p-1 min-w-0 mr-1">
+              <img src="/in-progress.png" alt="in progress" className="w-8 h-8 rounded-full shrink-0 opacity-80" />
+              <div className="flex flex-col text-left min-w-0">
+                <span className="text-[12px] font-semibold text-[#6d6f76] leading-tight truncate">User Info</span>
+                <span className="text-[10px] text-[#4e5058] leading-tight truncate">In Progress</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-0.5 shrink-0">
+              <IconBtn title={micMuted ? "Unmute" : "Mute"} onClick={() => setMicMuted(!micMuted)} danger={micMuted}>
+                {micMuted ? <MicOff className="w-[17px] h-[17px]" /> : <Mic className="w-[17px] h-[17px]" />}
+              </IconBtn>
+              <IconBtn title={deafened ? "Undeafen" : "Deafen"} onClick={() => setDeafened(!deafened)} danger={deafened}>
+                <Headphones className="w-[17px] h-[17px]" />
+              </IconBtn>
+              <div className="group">
+                <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
+                  <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
+                </IconBtn>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <button className="flex items-center flex-1 hover:bg-white/8 p-1 rounded-[6px] transition-colors min-w-0 mr-1">
+              <Avatar
+                initials={currentUser?.initials ?? "?"}
+                color={currentUser?.avatarColor ?? "#5865f2"}
+                status={currentUser?.status ?? "online"}
+                size="sm"
+                statusBg="#1e2022"
+                className="mr-2"
+              />
+              <div className="flex flex-col text-left min-w-0">
+                <span className="text-[13px] font-semibold text-[#f2f3f5] leading-tight truncate">{currentUser?.displayName}</span>
+                <span className="text-[11px] text-[#6d6f76] leading-tight truncate">@{currentUser?.username}</span>
+              </div>
+            </button>
+            <div className="flex items-center gap-0.5 shrink-0">
+              <IconBtn title={micMuted ? "Unmute" : "Mute"} onClick={() => setMicMuted(!micMuted)} danger={micMuted}>
+                {micMuted ? <MicOff className="w-[17px] h-[17px]" /> : <Mic className="w-[17px] h-[17px]" />}
+              </IconBtn>
+              <IconBtn title={deafened ? "Undeafen" : "Deafen"} onClick={() => setDeafened(!deafened)} danger={deafened}>
+                <Headphones className="w-[17px] h-[17px]" />
+              </IconBtn>
+              <div className="group">
+                <IconBtn title="User Settings" onClick={() => onOpenSettings?.()}>
+                  <Settings className="w-[17px] h-[17px] transition-transform duration-300 group-hover:rotate-45" />
+                </IconBtn>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
