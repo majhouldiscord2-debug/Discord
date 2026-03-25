@@ -57,7 +57,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
         </div>
 
         {/* Dot separator */}
-        <span className="mx-3 text-[#4e5058] font-bold text-[16px] select-none shrink-0">·</span>
+        <span className="mx-3 text-[#6d6f76] font-bold text-[16px] select-none shrink-0">·</span>
 
         {/* Tabs */}
         <div className="flex items-center gap-1 flex-1 overflow-x-auto no-scrollbar">
@@ -68,8 +68,8 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
               className={cn(
                 "relative px-3 py-1.5 text-[14px] font-medium transition-all duration-150 whitespace-nowrap flex items-center gap-1.5 rounded-[5px]",
                 activeTab === t
-                  ? "bg-[#1a1a1a] text-[#f2f3f5]"
-                  : "text-[#87898c] hover:bg-[#111111] hover:text-[#dbdee1]"
+                  ? "bg-[#35373c] text-[#f2f3f5]"
+                  : "text-[#87898c] hover:bg-[#2e3035] hover:text-[#dbdee1]"
               )}
             >
               {t === "online" ? "Online" : t === "all" ? "All" : t === "pending" ? "Pending" : "Blocked"}
