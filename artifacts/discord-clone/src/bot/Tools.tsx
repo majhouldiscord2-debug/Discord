@@ -120,14 +120,14 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
 
 function SettingRow({ icon, label, description, children }: { icon: React.ReactNode; label: string; description?: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-3.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+    <div className="flex items-center justify-between gap-4 py-3.5" style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
       <div className="flex items-center gap-3 min-w-0">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.07)" }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
           {icon}
         </div>
         <div className="min-w-0">
-          <div className="text-[13px] font-semibold text-[#f2f3f5]">{label}</div>
-          {description && <div className="text-[11px] text-[#949ba4] mt-0.5 truncate">{description}</div>}
+          <div className="text-[13px] font-semibold text-[#111]">{label}</div>
+          {description && <div className="text-[11px] text-[#888] mt-0.5 truncate">{description}</div>}
         </div>
       </div>
       <div className="shrink-0">{children}</div>
@@ -137,7 +137,11 @@ function SettingRow({ icon, label, description, children }: { icon: React.ReactN
 
 function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
-    <button onClick={onToggle} className="transition-all duration-200" style={{ color: on ? "#23a55a" : "#4e5058" }}>
+    <button
+      onClick={onToggle}
+      className="transition-all duration-200"
+      style={{ color: on ? "#cc0000" : "rgba(0,0,0,0.2)" }}
+    >
       {on ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
     </button>
   );
@@ -181,69 +185,69 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
 
   if (loading) {
     return (
-      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#050a12" }}>
+      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#000" }}>
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${glowColor} transparent transparent transparent` }} />
-          <span className="text-[13px] text-[#949ba4]">Loading settings…</span>
+          <span className="text-[13px] text-[#999]">Loading settings…</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#050a12" }}>
-      <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-        <button onClick={onBack} className="flex items-center gap-1.5 text-[#949ba4] hover:text-[#f2f3f5] transition-colors group">
+    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#000" }}>
+      <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(204,0,0,0.15)" }}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-[#999] hover:text-white transition-colors group">
           <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
             <ChevronLeft className="w-5 h-5" />
           </div>
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: glowColor, boxShadow: `0 0 6px ${glowColor}` }} />
-          <span className="text-[15px] font-bold text-[#f2f3f5]">{item.name} — Settings</span>
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 8px #cc0000, 0 0 16px rgba(204,0,0,0.5)" }} />
+          <span className="text-[15px] font-bold text-white">{item.name} — Settings</span>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto discord-scrollbar px-5 py-4">
         <div className="mb-1">
-          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Behaviour</p>
-          <div className="rounded-xl px-3" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <SettingRow icon={<AtSign className="w-4 h-4 text-[#949ba4]" />} label="Smart Mentions" description="Target active members only">
+          <p className="text-[10px] font-black tracking-widest uppercase mb-2 mt-1" style={{ color: "#cc0000" }}>Behaviour</p>
+          <div className="rounded-2xl px-3 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
+            <SettingRow icon={<AtSign className="w-4 h-4" />} label="Smart Mentions" description="Target active members only">
               <ToggleSwitch on={smartMention} onToggle={() => setSmartMention(v => !v)} />
             </SettingRow>
-            <SettingRow icon={<Server className="w-4 h-4 text-[#949ba4]" />} label="Auto-Join Servers" description="Join servers before mentioning">
+            <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers" description="Join servers before mentioning">
               <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin(v => !v)} />
             </SettingRow>
-            <SettingRow icon={<MessageSquare className="w-4 h-4 text-[#949ba4]" />} label="DM Mode" description="Send via direct messages">
+            <SettingRow icon={<MessageSquare className="w-4 h-4" />} label="DM Mode" description="Send via direct messages">
               <ToggleSwitch on={dmMode} onToggle={() => setDmMode(v => !v)} />
             </SettingRow>
             <div className="flex items-center justify-between gap-4 py-3.5">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.07)" }}>
-                  <Clock className="w-4 h-4 text-[#949ba4]" />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
+                  <Clock className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="text-[13px] font-semibold text-[#f2f3f5]">Delay (seconds)</div>
-                  <div className="text-[11px] text-[#949ba4] mt-0.5">Pause between each action</div>
+                  <div className="text-[13px] font-semibold text-[#111]">Delay (seconds)</div>
+                  <div className="text-[11px] text-[#888] mt-0.5">Pause between each action</div>
                 </div>
               </div>
               <input type="number" min="1" max="60" value={delay} onChange={e => setDelay(e.target.value)}
-                className="w-16 text-center text-[13px] font-semibold rounded-lg py-1.5 outline-none text-[#f2f3f5]"
-                style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.12)" }} />
+                className="w-16 text-center text-[13px] font-bold rounded-xl py-1.5 outline-none text-[#111]"
+                style={{ backgroundColor: "rgba(204,0,0,0.06)", border: "1.5px solid rgba(204,0,0,0.2)" }} />
             </div>
           </div>
         </div>
 
-        <div className="mt-4 mb-1">
-          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Target Servers</p>
-          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="mt-5 mb-1">
+          <p className="text-[10px] font-black tracking-widest uppercase mb-2" style={{ color: "#cc0000" }}>Target Servers</p>
+          <div className="rounded-2xl px-3 pb-2 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
             {servers.map((s, i) => (
-              <div key={i} className="flex items-center justify-between py-2.5" style={{ borderBottom: i < servers.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
+              <div key={i} className="flex items-center justify-between py-2.5" style={{ borderBottom: i < servers.length - 1 ? "1px solid rgba(0,0,0,0.06)" : undefined }}>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: glowColor }} />
-                  <span className="text-[13px] text-[#dbdee1]">{s}</span>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 6px rgba(204,0,0,0.6)" }} />
+                  <span className="text-[13px] text-[#222]">{s}</span>
                 </div>
-                <button onClick={() => setServers(servers.filter((_, j) => j !== i))} className="text-[#4e5058] hover:text-[#ed4245] transition-colors">
+                <button onClick={() => setServers(servers.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -251,25 +255,25 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
             <div className="flex items-center gap-2 pt-2">
               <input type="text" placeholder="Add server name…" value={newServer} onChange={e => setNewServer(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
-                className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
-                style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.08)" }} />
+                className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
+                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
               <button onClick={() => { if (newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors hover:brightness-110"
-                style={{ backgroundColor: glowColor + "cc" }}>
+                className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
+                style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
                 <Plus className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="mt-4 mb-1">
-          <p className="text-[10px] font-bold tracking-widest uppercase mb-1" style={{ color: glowColor }}>Message Templates</p>
-          <div className="rounded-xl px-3 pb-2" style={{ backgroundColor: "#080e1a", border: "1px solid rgba(255,255,255,0.07)" }}>
+        <div className="mt-5 mb-1">
+          <p className="text-[10px] font-black tracking-widest uppercase mb-2" style={{ color: "#cc0000" }}>Message Templates</p>
+          <div className="rounded-2xl px-3 pb-2 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
             {messages.map((m, i) => (
-              <div key={i} className="flex items-start gap-2 py-2.5" style={{ borderBottom: i < messages.length - 1 ? "1px solid rgba(255,255,255,0.06)" : undefined }}>
-                <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: glowColor }} />
-                <span className="flex-1 text-[12px] text-[#dbdee1] leading-relaxed">{m}</span>
-                <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#4e5058] hover:text-[#ed4245] transition-colors shrink-0">
+              <div key={i} className="flex items-start gap-2 py-2.5" style={{ borderBottom: i < messages.length - 1 ? "1px solid rgba(0,0,0,0.06)" : undefined }}>
+                <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#cc0000]" />
+                <span className="flex-1 text-[12px] text-[#333] leading-relaxed">{m}</span>
+                <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors shrink-0">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -277,11 +281,11 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
             <div className="flex items-center gap-2 pt-2">
               <input type="text" placeholder="Add message template…" value={newMessage} onChange={e => setNewMessage(e.target.value)}
                 onKeyDown={e => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
-                className="flex-1 text-[12px] rounded-lg px-3 py-1.5 outline-none text-[#dbdee1] placeholder:text-[#4e5058]"
-                style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.08)" }} />
+                className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
+                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
               <button onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-white transition-colors hover:brightness-110"
-                style={{ backgroundColor: glowColor + "cc" }}>
+                className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
+                style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
                 <Plus className="w-4 h-4" />
               </button>
             </div>
@@ -289,11 +293,16 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
         </div>
       </div>
 
-      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.07)", backgroundColor: "#080e1a" }}>
+      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(204,0,0,0.15)", backgroundColor: "#050505" }}>
         <button
           onClick={handleSave} disabled={saving}
-          className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
-          style={{ background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : `linear-gradient(135deg, ${item.darkBg ?? "#cc0000"}, ${glowColor})` }}
+          className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
+          style={{
+            background: saved
+              ? "linear-gradient(135deg, #23a55a, #1a8b48)"
+              : "linear-gradient(135deg, #cc0000, #ff2222)",
+            boxShadow: saved ? "0 0 16px rgba(35,165,90,0.45)" : "0 0 16px rgba(204,0,0,0.5), 0 0 32px rgba(204,0,0,0.25)",
+          }}
         >
           {saving ? (
             <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Saving…</>
@@ -313,11 +322,11 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#050a12" }}>
+    <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#000" }}>
       {editing && <EditPanel item={item} onBack={() => setEditing(false)} glowColor={item.glowColor} />}
 
-      <div className="shrink-0 flex items-center px-4 pt-4 pb-2">
-        <button onClick={onClose} className="flex items-center gap-1.5 text-[#949ba4] hover:text-[#f2f3f5] transition-colors group">
+      <div className="shrink-0 flex items-center px-4 pt-4 pb-2" style={{ borderBottom: "1px solid rgba(204,0,0,0.12)" }}>
+        <button onClick={onClose} className="flex items-center gap-1.5 text-[#999] hover:text-white transition-colors group">
           <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
             <ChevronLeft className="w-5 h-5" />
           </div>
@@ -327,12 +336,12 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 relative flex items-center justify-center"
-          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}30 0%, ${item.darkBg ?? "#1a0a2e"} 45%, #050a12 100%)` }}>
-          <div className="absolute rounded-full opacity-10" style={{ width: 340, height: 340, border: `1px solid ${item.glowColor}`, boxShadow: `0 0 60px ${item.glowColor}40` }} />
-          <div className="absolute rounded-full opacity-20" style={{ width: 240, height: 240, border: `1px solid ${item.glowColor}` }} />
+          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}25 0%, ${item.darkBg ?? "#1a0000"} 45%, #000 100%)` }}>
+          <div className="absolute rounded-full" style={{ width: 340, height: 340, border: `1px solid ${item.glowColor}22`, boxShadow: `0 0 60px ${item.glowColor}30` }} />
+          <div className="absolute rounded-full" style={{ width: 240, height: 240, border: `1px solid ${item.glowColor}30` }} />
           <div className="relative flex flex-col items-center gap-3">
             <div className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center overflow-hidden"
-              style={{ borderColor: item.glowColor, backgroundColor: item.darkBg ?? "#0a0000", boxShadow: `0 0 40px ${item.glowColor}60, inset 0 0 20px ${item.glowColor}15` }}>
+              style={{ borderColor: item.glowColor, backgroundColor: item.darkBg ?? "#0a0000", boxShadow: `0 0 40px ${item.glowColor}55, inset 0 0 20px ${item.glowColor}15` }}>
               {item.icon === "mentionitor" ? (
                 <MentionitorAvatar size={144} />
               ) : (
@@ -347,47 +356,50 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
                 </svg>
               )}
             </div>
-            <div className="w-24 h-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.15)" }} />
-            <div className="w-16 h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.08)" }} />
+            <div className="w-24 h-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.12)" }} />
+            <div className="w-16 h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.07)" }} />
           </div>
         </div>
 
-        <div className="shrink-0 px-6 py-5" style={{ backgroundColor: "#080e1a", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        {/* Bottom white card info panel */}
+        <div className="shrink-0 px-6 py-5 rounded-t-3xl"
+          style={{ backgroundColor: "#fff", borderTop: "2px solid rgba(204,0,0,0.2)", boxShadow: "0 -8px 40px rgba(0,0,0,0.35)" }}>
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h2 className="text-[22px] font-bold text-[#f2f3f5] mb-0.5">{item.name}</h2>
+              <h2 className="text-[22px] font-black text-[#0a0000] mb-0.5" style={{ letterSpacing: "-0.02em" }}>{item.name}</h2>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-0.5">
                   {[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />)}
                 </div>
-                <span className="text-[12px] text-[#949ba4]">4.8 · 2.3k reviews</span>
+                <span className="text-[12px] text-[#888]">4.8 · 2.3k reviews</span>
               </div>
             </div>
             <button
               onClick={() => setEnabled(v => !v)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-semibold transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold transition-all"
               style={{
-                backgroundColor: enabled ? "rgba(35,165,90,0.15)" : "rgba(237,66,69,0.15)",
-                color: enabled ? "#23a55a" : "#ed4245",
-                border: `1px solid ${enabled ? "rgba(35,165,90,0.3)" : "rgba(237,66,69,0.3)"}`,
+                backgroundColor: enabled ? "rgba(35,165,90,0.1)" : "rgba(204,0,0,0.08)",
+                color: enabled ? "#1a8b48" : "#cc0000",
+                border: `1.5px solid ${enabled ? "rgba(35,165,90,0.35)" : "rgba(204,0,0,0.3)"}`,
+                boxShadow: enabled ? "none" : "0 0 10px rgba(204,0,0,0.15)",
               }}
             >
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: enabled ? "#23a55a" : "#ed4245" }} />
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: enabled ? "#23a55a" : "#cc0000", boxShadow: enabled ? "none" : "0 0 6px rgba(204,0,0,0.7)" }} />
               {enabled ? "On" : "Off"}
             </button>
           </div>
 
-          <p className="text-[#949ba4] text-[13px] leading-relaxed mb-4 whitespace-pre-line">
+          <p className="text-[#555] text-[13px] leading-relaxed mb-4 whitespace-pre-line">
             {item.description ?? "A sleek animated avatar style inspired by futuristic AI companions. Comes with a glowing ring effect that reacts to your voice activity."}
           </p>
 
           <button
             onClick={() => setEditing(true)}
-            className="w-full py-2.5 rounded-lg text-[14px] font-semibold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ background: `linear-gradient(135deg, ${item.darkBg ?? "#cc0000"}, ${item.glowColor})` }}
+            className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
+            style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 18px rgba(204,0,0,0.45), 0 0 36px rgba(204,0,0,0.2)" }}
           >
             <Zap className="w-4 h-4" />
-            Edit
+            Configure
           </button>
         </div>
       </div>
@@ -401,13 +413,16 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
 
   return (
     <div
-      className="relative rounded-lg overflow-hidden cursor-pointer group ring-1 ring-white/10 hover:ring-white/30 animate-fade-slide-up"
+      className="relative rounded-2xl overflow-hidden cursor-pointer animate-fade-slide-up"
       style={{
-        backgroundColor: "#080e1a",
+        backgroundColor: "#fff",
         animationDelay: `${delay}ms`,
-        transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease",
-        transform: hovered ? "translateY(-3px) scale(1.02)" : "translateY(0) scale(1)",
-        boxShadow: hovered ? `0 8px 32px ${item.glowColor}25` : "0 2px 8px rgba(0,0,0,0.3)",
+        border: hovered ? "1.5px solid rgba(204,0,0,0.5)" : "1.5px solid rgba(204,0,0,0.15)",
+        transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease, border-color 0.2s ease",
+        transform: hovered ? "translateY(-4px) scale(1.02)" : "translateY(0) scale(1)",
+        boxShadow: hovered
+          ? `0 12px 36px rgba(0,0,0,0.22), 0 0 20px rgba(204,0,0,0.2)`
+          : "0 3px 12px rgba(0,0,0,0.14)",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -415,12 +430,15 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
     >
       <div className={cn("relative h-[188px] overflow-hidden", `bg-gradient-to-br ${item.gradient}`)}>
         <div className="absolute inset-0 transition-opacity duration-300"
-          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}20 0%, transparent 70%)`, opacity: hovered ? 1 : 0 }} />
+          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}22 0%, transparent 70%)`, opacity: hovered ? 1 : 0 }} />
         <WumpusIcon item={item} />
       </div>
       <div className="px-3 py-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[14px] font-semibold text-[#f2f3f5] transition-colors duration-150 group-hover:text-white">{item.name}</span>
+          <span className="text-[14px] font-bold text-[#0a0000]">{item.name}</span>
+          {hovered && (
+            <div className="w-1.5 h-1.5 rounded-full bg-[#cc0000]" style={{ boxShadow: "0 0 6px #cc0000" }} />
+          )}
         </div>
       </div>
     </div>
@@ -439,13 +457,13 @@ export default function Tools() {
   const [selectedItem, setSelectedItem] = useState<AutomationItem | null>(null);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#050a12" }}>
+    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#000" }}>
       {selectedItem && (
         <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
       )}
-      <div className="shrink-0 flex items-center px-5 gap-6 h-14 border-b" style={{ borderColor: "rgba(255,255,255,0.08)", backgroundColor: "#050a12" }}>
+      <div className="shrink-0 flex items-center px-5 gap-6 h-14" style={{ borderBottom: "1px solid rgba(204,0,0,0.15)", backgroundColor: "#000" }}>
         <div className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)" }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)", boxShadow: "0 0 10px rgba(204,0,0,0.5)" }}>
             <WumpusFace size="xs" />
           </div>
         </div>
@@ -456,8 +474,10 @@ export default function Tools() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={cn(
-                "flex items-center gap-1 px-3 py-1.5 text-[14px] font-medium transition-colors rounded-sm",
-                activeTab === tab ? "text-white border-b-2 border-white rounded-none" : "text-[#949ba4] hover:text-[#dbdee1]"
+                "flex items-center gap-1 px-3 py-1.5 text-[14px] font-semibold transition-colors rounded-sm",
+                activeTab === tab
+                  ? "text-white border-b-2 border-[#cc0000] rounded-none"
+                  : "text-[rgba(255,255,255,0.4)] hover:text-white"
               )}
             >
               {tab}
@@ -468,53 +488,58 @@ export default function Tools() {
 
         <div className="flex-1" />
 
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-md w-52" style={{ backgroundColor: "#060000" }}>
-          <Search className="w-4 h-4 text-[#949ba4] shrink-0" />
+        <div
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl w-52"
+          style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(204,0,0,0.2)" }}
+        >
+          <Search className="w-4 h-4 shrink-0" style={{ color: "rgba(255,255,255,0.35)" }} />
           <input
             type="text"
             placeholder="Search Tools"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="bg-transparent text-[13px] text-[#dbdee1] placeholder:text-[#949ba4] outline-none flex-1 w-full"
+            className="bg-transparent text-[13px] outline-none flex-1 w-full"
+            style={{ color: "#fff" }}
           />
         </div>
 
         <button
           onClick={() => setWishlist(!wishlist)}
-          className="w-9 h-9 rounded-full flex items-center justify-center text-[#949ba4] hover:text-[#dbdee1] hover:bg-white/10 transition-colors"
+          className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
+          style={{ color: wishlist ? "#ed4245" : "rgba(255,255,255,0.35)" }}
         >
-          <Heart className={cn("w-5 h-5", wishlist && "fill-[#ed4245] text-[#ed4245]")} />
+          <Heart className={cn("w-5 h-5", wishlist && "fill-[#ed4245]")} />
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto discord-scrollbar px-6 py-5">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <h2 className="text-[20px] font-bold text-[#f2f3f5]">Automation Tools</h2>
-            <button className="text-[#949ba4] hover:text-[#dbdee1] transition-colors">
+            <h2 className="text-[20px] font-black text-white" style={{ letterSpacing: "-0.02em" }}>Automation Tools</h2>
+            <button style={{ color: "rgba(255,255,255,0.25)" }} className="hover:text-white transition-colors">
               <Info className="w-4 h-4" />
             </button>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] text-[#949ba4]">Sort by</span>
+              <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.38)" }}>Sort by</span>
               <div className="relative">
                 <button
                   onClick={() => setShowSort(!showSort)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md text-[14px] font-medium text-[#f2f3f5] hover:bg-white/10 transition-colors"
-                  style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[13px] font-semibold text-white hover:brightness-110 transition-all"
+                  style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(204,0,0,0.22)" }}
                 >
                   {sortBy}
-                  <ChevronDown className="w-4 h-4 text-[#949ba4]" />
+                  <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.4)" }} />
                 </button>
                 {showSort && (
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-md overflow-hidden shadow-xl z-20"
-                    style={{ backgroundColor: "#060000", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl overflow-hidden shadow-2xl z-20"
+                    style={{ backgroundColor: "#111", border: "1px solid rgba(204,0,0,0.25)" }}>
                     {sortOptions.map((opt) => (
                       <button key={opt} onClick={() => { setSortBy(opt); setShowSort(false); }}
-                        className={cn("w-full text-left px-3 py-2 text-[14px] transition-colors",
-                          sortBy === opt ? "text-[#cc0000] bg-[#cc0000]/10" : "text-[#dbdee1] hover:bg-white/5")}>
+                        className={cn("w-full text-left px-3 py-2 text-[13px] transition-colors",
+                          sortBy === opt ? "text-[#cc0000] bg-[rgba(204,0,0,0.1)]" : "text-[rgba(255,255,255,0.7)] hover:bg-white/5")}>
                         {opt}
                       </button>
                     ))}
@@ -524,8 +549,8 @@ export default function Tools() {
             </div>
 
             <button
-              className="flex items-center gap-2 px-4 py-1.5 rounded-md text-[14px] font-semibold text-[#f2f3f5] transition-colors hover:brightness-110"
-              style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)" }}
+              className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[13px] font-bold text-white transition-all hover:brightness-110"
+              style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 12px rgba(204,0,0,0.4)" }}
             >
               <Shuffle className="w-4 h-4" />
               Shuffle!
@@ -533,7 +558,7 @@ export default function Tools() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 pb-6">
+        <div className="grid grid-cols-3 gap-4 pb-6">
           {automationItems
             .filter((item) => searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase()))
             .map((item, i) => (
@@ -545,9 +570,9 @@ export default function Tools() {
           searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase())
         ).length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Search className="w-12 h-12 text-[#949ba4] mb-4 opacity-50" />
-            <p className="text-[#f2f3f5] font-semibold text-lg mb-1">No results found</p>
-            <p className="text-[#949ba4] text-sm">Try a different search term</p>
+            <Search className="w-12 h-12 mb-4 opacity-30" style={{ color: "rgba(204,0,0,0.8)" }} />
+            <p className="text-white font-bold text-lg mb-1">No results found</p>
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.38)" }}>Try a different search term</p>
           </div>
         )}
       </div>
