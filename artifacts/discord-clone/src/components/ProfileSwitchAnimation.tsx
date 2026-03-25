@@ -244,100 +244,9 @@ export default function ProfileSwitchAnimation({ onSwitch, onComplete, targetMod
           to   { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* ─── Targeting reticle ────────────────────── */
-        .psa-reticle {
-          position: relative; width: 140px; height: 140px;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .psa-reticle-ring {
-          position: absolute; border-radius: 50%;
-          border: 1px solid transparent;
-        }
-        .psa-reticle-ring.r1 {
-          inset: 0;
-          border-color: rgba(200,0,0,0.8);
-          border-style: solid;
-          border-width: 2px;
-          box-shadow: 0 0 20px rgba(200,0,0,0.3), inset 0 0 20px rgba(200,0,0,0.1);
-          animation: psaReticleSpin1 2s linear infinite;
-        }
-        .psa-reticle-ring.r2 {
-          inset: 14px;
-          border-top-color: #cc0000;
-          border-right-color: rgba(200,0,0,0.2);
-          border-bottom-color: rgba(200,0,0,0.2);
-          border-left-color: #cc0000;
-          border-width: 1.5px;
-          animation: psaReticleSpin2 1.1s linear infinite;
-        }
-        .psa-reticle-ring.r3 {
-          inset: 28px;
-          border-top-color: rgba(200,0,0,0.5);
-          border-right-color: transparent;
-          border-bottom-color: rgba(200,0,0,0.5);
-          border-left-color: transparent;
-          border-width: 1px;
-          animation: psaReticleSpin2 0.7s linear infinite reverse;
-        }
-        .psa-reticle-ring.r4 {
-          inset: 40px;
-          border-color: rgba(200,0,0,0.15);
-          border-width: 1px;
-          border-style: dashed;
-        }
-        @keyframes psaReticleSpin1 {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes psaReticleSpin2 {
-          to { transform: rotate(360deg); }
-        }
-
-        /* crosshair */
-        .psa-cross { position: absolute; inset: 0; pointer-events: none; }
-        .psa-cross::before, .psa-cross::after {
-          content: ''; position: absolute; background: rgba(200,0,0,0.35);
-        }
-        .psa-cross::before { /* horizontal */
-          top: 50%; left: 8px; right: 8px; height: 1px;
-          transform: translateY(-50%);
-        }
-        .psa-cross::after { /* vertical */
-          left: 50%; top: 8px; bottom: 8px; width: 1px;
-          transform: translateX(-50%);
-        }
-
-        /* center dot */
-        .psa-dot {
-          position: relative; z-index: 2;
-          width: 10px; height: 10px;
-          border-radius: 50%;
-          background: #cc0000;
-          box-shadow: 0 0 0 3px rgba(200,0,0,0.2), 0 0 20px #cc0000;
-          animation: psaDotPulse 0.5s ease-in-out infinite alternate;
-        }
-        @keyframes psaDotPulse {
-          from { box-shadow: 0 0 0 3px rgba(200,0,0,0.2), 0 0 12px #cc0000; transform: scale(1); }
-          to   { box-shadow: 0 0 0 6px rgba(200,0,0,0.1), 0 0 28px #ff4444; transform: scale(1.2); }
-        }
-
-        /* tick marks around r1 ring */
-        .psa-tick-mark {
-          position: absolute; width: 6px; height: 2px;
-          background: rgba(200,0,0,0.8);
-          top: 50%; transform-origin: -63px 0;
-          transform: translateY(-1px) rotate(var(--a));
-        }
-
         /* ─── Logo ─────────────────────────────────── */
         .psa-logo-wrap {
-          position: absolute; z-index: 5;
-          display: flex; align-items: center; justify-content: center;
-        }
-        .psa-logo-wrap svg {
-          width: 32px; height: 32px;
-          fill: #cc0000;
-          filter: drop-shadow(0 0 12px rgba(200,0,0,0.8));
-          animation: psaLogoGlow 0.6s ease-in-out infinite alternate;
+          display: none;
         }
         @keyframes psaLogoGlow {
           from { filter: drop-shadow(0 0 8px #cc0000); }
@@ -563,21 +472,6 @@ export default function ProfileSwitchAnimation({ onSwitch, onComplete, targetMod
 
       {/* Center content */}
       <div className="psa-center">
-        <div className="psa-reticle">
-          <div className="psa-reticle-ring r1" />
-          <div className="psa-reticle-ring r2" />
-          <div className="psa-reticle-ring r3" />
-          <div className="psa-reticle-ring r4" />
-          <div className="psa-cross" />
-          {TICK_ANGLES.map((a, i) => (
-            <div key={i} className="psa-tick-mark" style={{ "--a": `${a}deg` } as React.CSSProperties} />
-          ))}
-          <div className="psa-logo-wrap">
-            <LogoSVG />
-          </div>
-          <div className="psa-dot" />
-        </div>
-
         <div>
           <div className="psa-mode-title">SWITCHING TO {modeLabel}</div>
           <div className="psa-mode-sub">IDENTITY PROTOCOL ENGAGED</div>
