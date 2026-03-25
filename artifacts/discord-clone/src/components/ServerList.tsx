@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Plus, Compass, Download } from "lucide-react";
-import { useAppStore } from "@/store/useAppStore";
 import { cn } from "@/lib/utils";
 import { InProgressClock } from "./InProgress";
 
@@ -79,8 +78,6 @@ interface ServerListProps {
 }
 
 export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBotMode }: ServerListProps) {
-  const servers = useAppStore((s) => s.servers);
-  const profile2Servers = servers.filter((s) => s.profile === 2);
 
   return (
     <div
@@ -129,72 +126,6 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
         </div>
       )}
 
-      {isBotMode && profile2Servers.length > 0 && (
-        <div className="flex flex-col items-center w-full gap-2 mt-1 px-2">
-          {profile2Servers.map((server) => (
-            <ServerButton
-              key={server.id}
-              name={server.name}
-              isActive={activeServer === server.id}
-              notificationCount={server.notificationCount}
-              hasNotification={!!server.notificationCount}
-              onClick={() => onSelectServer(server.id)}
-              glowColor={server.iconColor}
-              tooltip={
-                <div
-                  className="rounded-lg shadow-2xl overflow-hidden"
-                  style={{ background: "#06090f", border: "1px solid rgba(255,255,255,0.08)", maxWidth: 220, minWidth: 180 }}
-                >
-                  <div className="absolute left-[-6px] top-6 -translate-y-1/2 border-4 border-transparent border-r-[#06090f]" />
-                  {server.iconUrl && (
-                    <img
-                      src={server.iconUrl}
-                      alt={server.name}
-                      className="w-full h-16 object-cover"
-                      style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-                    />
-                  )}
-                  <div className="px-3 py-2">
-                    <div className="text-white text-[13px] font-bold leading-tight mb-1">{server.name}</div>
-                    {server.description && (
-                      <div className="text-[11px] text-gray-400 leading-snug mb-2" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                        {server.description}
-                      </div>
-                    )}
-                    {server.invite && (
-                      <a
-                        href={server.invite}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[11px] text-[#5865f2] hover:underline pointer-events-auto"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {server.invite.replace("https://", "")}
-                      </a>
-                    )}
-                  </div>
-                </div>
-              }
-            >
-              {server.iconUrl ? (
-                <img
-                  src={server.iconUrl}
-                  alt={server.name}
-                  className="w-12 h-12 object-cover"
-                  style={{ borderRadius: "inherit" }}
-                />
-              ) : (
-                <div
-                  className="w-12 h-12 flex items-center justify-center text-white font-bold text-base"
-                  style={{ background: server.iconColor }}
-                >
-                  {server.initials}
-                </div>
-              )}
-            </ServerButton>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
