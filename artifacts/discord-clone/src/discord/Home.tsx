@@ -68,8 +68,35 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
   const dmRecipient = activeDmId ? getDmRecipient(activeDmId) : null;
   const showGuildSidebar = activeServerPanel !== "dms" && activeServer !== null;
 
+  const titleBarLabel =
+    showGuildSidebar ? (activeServer?.name ?? "Server") :
+    view === "friends" ? "Friends" :
+    view === "nitro" ? "Nitro" :
+    view === "shop" ? "Shop" :
+    view === "quests" ? "Quests" :
+    view === "requests" ? "Message Requests" :
+    view === "dm" && dmRecipient ? dmRecipient.displayName :
+    "Discord";
+
   return (
-    <div className="flex h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#000000" }}>
+    <div className="flex flex-col h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#000000" }}>
+
+      {/* ── Title bar ── */}
+      <div
+        className="shrink-0 flex items-center justify-center"
+        style={{
+          height: "38px",
+          backgroundColor: "#1a1a1a",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+        }}
+      >
+        <span className="text-[13px] font-semibold" style={{ color: "#dbdee1" }}>
+          {titleBarLabel}
+        </span>
+      </div>
+
+      {/* ── Main layout ── */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
       <ServerList
         activeServer={activeServerPanel}
         onSelectServer={handleSelectServer}
@@ -134,6 +161,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
         ) : (
           <InProgressPage title="Coming Soon" subtitle="This feature is being built." />
         )}
+      </div>
       </div>
     </div>
   );
