@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Shield, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useDiscord } from "@/hooks/useDiscord";
 
 function SpaceCanvas() {
@@ -10,20 +10,14 @@ function SpaceCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
     let animId: number;
-
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     };
     resize();
     window.addEventListener("resize", resize);
-
-    const NUM_STARS = 220;
-    const NUM_NEBULA = 6;
-
-    const stars = Array.from({ length: NUM_STARS }, () => ({
+    const stars = Array.from({ length: 220 }, () => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
       r: Math.random() * 1.6 + 0.2,
@@ -32,45 +26,30 @@ function SpaceCanvas() {
       twinkleOffset: Math.random() * Math.PI * 2,
       twinkleSpeed: Math.random() * 0.02 + 0.005,
     }));
-
-    const nebulae = Array.from({ length: NUM_NEBULA }, () => ({
+    const nebulae = Array.from({ length: 5 }, () => ({
       x: Math.random() * window.innerWidth,
       y: Math.random() * window.innerHeight,
       rx: Math.random() * 300 + 150,
       ry: Math.random() * 200 + 100,
-      color: [
-        "rgba(29,110,245,",
-        "rgba(80,0,180,",
-        "rgba(0,180,220,",
-        "rgba(120,0,255,",
-        "rgba(0,60,180,",
-        "rgba(30,0,100,",
-      ][Math.floor(Math.random() * 6)],
-      opacity: Math.random() * 0.07 + 0.02,
-      driftX: (Math.random() - 0.5) * 0.08,
+      color: ["rgba(29,110,245,", "rgba(80,0,180,", "rgba(0,120,200,", "rgba(60,0,160,", "rgba(0,60,180,"][Math.floor(Math.random() * 5)],
+      opacity: Math.random() * 0.06 + 0.02,
+      driftX: (Math.random() - 0.5) * 0.07,
       driftY: (Math.random() - 0.5) * 0.05,
     }));
-
     let frame = 0;
-
     const draw = () => {
       frame++;
       const W = canvas.width;
       const H = canvas.height;
-
       ctx.clearRect(0, 0, W, H);
-
       ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, W, H);
-
       nebulae.forEach((n) => {
-        n.x += n.driftX;
-        n.y += n.driftY;
+        n.x += n.driftX; n.y += n.driftY;
         if (n.x < -n.rx) n.x = W + n.rx;
         if (n.x > W + n.rx) n.x = -n.rx;
         if (n.y < -n.ry) n.y = H + n.ry;
         if (n.y > H + n.ry) n.y = -n.ry;
-
         const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.rx);
         grad.addColorStop(0, n.color + n.opacity + ")");
         grad.addColorStop(1, n.color + "0)");
@@ -79,61 +58,118 @@ function SpaceCanvas() {
         ctx.fillStyle = grad;
         ctx.fill();
       });
-
       stars.forEach((s) => {
         s.y += s.speed;
-        if (s.y > H) {
-          s.y = 0;
-          s.x = Math.random() * W;
-        }
+        if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
         const twinkle = 0.5 + 0.5 * Math.sin(frame * s.twinkleSpeed + s.twinkleOffset);
-        const op = s.opacity * (0.6 + 0.4 * twinkle);
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${op})`;
+        ctx.fillStyle = `rgba(255,255,255,${s.opacity * (0.6 + 0.4 * twinkle)})`;
         ctx.fill();
       });
-
-      const shootingChance = Math.random();
-      if (shootingChance < 0.003) {
-        const sx = Math.random() * W;
-        const sy = Math.random() * H * 0.5;
-        const len = Math.random() * 120 + 60;
-        const grad = ctx.createLinearGradient(sx, sy, sx + len, sy + len * 0.4);
-        grad.addColorStop(0, "rgba(255,255,255,0)");
-        grad.addColorStop(0.5, "rgba(255,255,255,0.7)");
-        grad.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.beginPath();
-        ctx.moveTo(sx, sy);
-        ctx.lineTo(sx + len, sy + len * 0.4);
-        ctx.strokeStyle = grad;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
+      if (Math.random() < 0.003) {
+        const sx = Math.random() * W, sy = Math.random() * H * 0.5, len = Math.random() * 120 + 60;
+        const g = ctx.createLinearGradient(sx, sy, sx + len, sy + len * 0.4);
+        g.addColorStop(0, "rgba(255,255,255,0)"); g.addColorStop(0.5, "rgba(255,255,255,0.7)"); g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + len, sy + len * 0.4);
+        ctx.strokeStyle = g; ctx.lineWidth = 1.2; ctx.stroke();
       }
-
       animId = requestAnimationFrame(draw);
     };
-
     draw();
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
   }, []);
 
+  return <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", zIndex: 0, pointerEvents: "none" }} />;
+}
+
+function DotRobot() {
+  const S = 7;
+  const G = 11;
+
+  // 0=none, 1=dim, 2=med, 3=bright, 4=eye(cyan), 5=accent
+  const grid = [
+    [0,0,0,0,0,0,3,0,0,0,0,0,0],
+    [0,0,0,0,0,0,3,0,0,0,0,0,0],
+    [0,0,0,0,0,3,1,3,0,0,0,0,0],
+    [0,0,0,3,3,3,3,3,3,3,0,0,0],
+    [0,0,3,2,2,2,2,2,2,2,3,0,0],
+    [0,0,3,2,4,4,2,4,4,2,3,0,0],
+    [0,0,3,2,4,4,2,4,4,2,3,0,0],
+    [0,0,3,2,2,2,2,2,2,2,3,0,0],
+    [0,0,3,2,3,2,2,2,3,2,3,0,0],
+    [0,0,0,3,3,3,3,3,3,3,0,0,0],
+    [0,0,0,0,2,2,2,2,2,0,0,0,0],
+    [0,3,0,3,3,3,3,3,3,3,0,3,0],
+    [0,3,0,3,2,2,2,2,2,3,0,3,0],
+    [0,3,0,3,2,1,1,1,2,3,0,3,0],
+    [0,0,0,3,3,3,3,3,3,3,0,0,0],
+    [0,0,0,0,3,2,0,2,3,0,0,0,0],
+    [0,0,0,0,3,2,0,2,3,0,0,0,0],
+    [0,0,0,0,3,0,0,0,3,0,0,0,0],
+  ];
+
+  const colorMap: Record<number, { fill: string; glow?: string; r?: number }> = {
+    1: { fill: "rgba(100,160,255,0.25)", r: S * 0.38 },
+    2: { fill: "rgba(140,190,255,0.45)", r: S * 0.42 },
+    3: { fill: "rgba(200,225,255,0.82)", r: S * 0.46 },
+    4: { fill: "rgba(0,220,255,0.95)", glow: "rgba(0,200,255,0.6)", r: S * 0.5 },
+    5: { fill: "rgba(100,200,255,0.9)", r: S * 0.44 },
+  };
+
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const W = cols * G;
+  const H = rows * G;
+
+  const dots: { cx: number; cy: number; type: number }[] = [];
+  grid.forEach((row, ri) => {
+    row.forEach((val, ci) => {
+      if (val > 0) dots.push({ cx: ci * G + G / 2, cy: ri * G + G / 2, type: val });
+    });
+  });
+
   return (
-    <canvas
-      ref={canvasRef}
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 0,
-        pointerEvents: "none",
-      }}
-    />
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block" }}>
+      <defs>
+        {dots.filter(d => d.type === 4).map((_, i) => (
+          <radialGradient key={i} id={`eg${i}`} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(0,240,255,1)" />
+            <stop offset="100%" stopColor="rgba(0,180,255,0)" />
+          </radialGradient>
+        ))}
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="eyeglow">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      {dots.map((d, i) => {
+        const c = colorMap[d.type];
+        const r = c.r ?? S * 0.42;
+        const isEye = d.type === 4;
+        return (
+          <circle
+            key={i}
+            cx={d.cx}
+            cy={d.cy}
+            r={r}
+            fill={c.fill}
+            filter={isEye ? "url(#eyeglow)" : d.type >= 3 ? "url(#glow)" : undefined}
+            style={isEye ? { animation: `eyePulse 2.4s ease-in-out infinite ${i * 0.15}s` } : undefined}
+          />
+        );
+      })}
+      <style>{`
+        @keyframes eyePulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.55; }
+        }
+      `}</style>
+    </svg>
   );
 }
 
@@ -149,113 +185,193 @@ export default function Login() {
     setLoading(true);
     const res = await login(token.trim(), "user");
     setLoading(false);
-    if (!res.success) {
-      setError(res.error ?? "Invalid token. Check and try again.");
-    }
+    if (!res.success) setError(res.error ?? "Invalid token. Check and try again.");
   }
 
   return (
-    <div
-      className="flex h-screen w-full items-center justify-center"
-      style={{ background: "#000000", position: "relative" }}
-    >
+    <div className="flex h-screen w-full items-center justify-center" style={{ background: "#000000", position: "relative" }}>
       <SpaceCanvas />
 
-      <div className="w-full max-w-[400px] mx-4" style={{ position: "relative", zIndex: 1 }}>
+      <div
+        className="animate-scale-in"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          width: "min(860px, 94vw)",
+          minHeight: 420,
+          borderRadius: 24,
+          overflow: "hidden",
+          background: "rgba(5,8,18,0.72)",
+          border: "1px solid rgba(255,255,255,0.07)",
+          boxShadow: "0 32px 80px rgba(0,0,0,0.9), 0 0 0 1px rgba(29,100,245,0.08), inset 0 1px 0 rgba(255,255,255,0.05)",
+          backdropFilter: "blur(32px)",
+        }}
+      >
+        {/* LEFT — form panel */}
         <div
-          className="rounded-[28px] px-10 py-11 animate-scale-in"
           style={{
-            backgroundColor: "#000000",
-            border: "1px solid rgba(29, 110, 245, 0.18)",
-            boxShadow:
-              "0 40px 100px rgba(0,0,0,1), 0 0 60px rgba(29,110,245,0.06), inset 0 1px 0 rgba(255,255,255,0.03)",
-            backdropFilter: "blur(0px)",
+            flex: "0 0 46%",
+            padding: "44px 40px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            borderRight: "1px solid rgba(255,255,255,0.055)",
           }}
         >
-          {/* Shield Icon */}
-          <div className="flex justify-center mb-7">
-            <div
-              className="w-[68px] h-[68px] rounded-full flex items-center justify-center"
-              style={{
-                background: "linear-gradient(145deg, #1d6ef5 0%, #1252cc 100%)",
-                boxShadow:
-                  "0 10px 32px rgba(29, 110, 245, 0.5), 0 0 0 1px rgba(29,110,245,0.25), 0 0 40px rgba(29,110,245,0.2)",
-              }}
-            >
-              <Shield className="w-8 h-8 text-white" fill="white" strokeWidth={0} />
-            </div>
-          </div>
-
-          {/* Title */}
           <h1
-            className="text-center text-[28px] font-black italic text-white mb-5 tracking-tight"
             style={{
-              letterSpacing: "-0.01em",
-              textShadow: "0 0 30px rgba(29,110,245,0.4)",
+              fontSize: 26,
+              fontWeight: 900,
+              color: "#ffffff",
+              marginBottom: 6,
+              letterSpacing: "-0.02em",
+              fontStyle: "italic",
             }}
           >
             TG Works
           </h1>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.28)", marginBottom: 32, letterSpacing: "0.02em" }}>
+            Secure access portal
+          </p>
 
-          {/* Registry Token label */}
-          <div className="mb-3.5">
-            <label
-              className="block text-[10px] font-bold text-[#3a5070] mb-2.5"
-              style={{ letterSpacing: "0.2em", fontFamily: "'Courier New', monospace" }}
-            >
-              REGISTRY TOKEN
-            </label>
-            <input
-              type="password"
-              placeholder="MTQxxx.xxx.xxx-yyyy-A"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-              className="w-full rounded-xl px-4 py-3.5 text-[13px] text-[#6a90b8] outline-none transition-all placeholder:text-[#1e3450]"
-              style={{
-                backgroundColor: "#000000",
-                border: "1px solid rgba(29, 110, 245, 0.15)",
-                caretColor: "#1d6ef5",
-                fontFamily: "'Courier New', monospace",
-              }}
-              autoComplete="off"
-              spellCheck={false}
-            />
-          </div>
+          <label
+            style={{
+              display: "block",
+              fontSize: 9.5,
+              fontWeight: 700,
+              color: "rgba(100,140,200,0.7)",
+              letterSpacing: "0.22em",
+              fontFamily: "'Courier New', monospace",
+              marginBottom: 8,
+            }}
+          >
+            REGISTRY TOKEN
+          </label>
+          <input
+            type="password"
+            placeholder="MTQxxx.xxx.xxx-yyyy-A"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              background: "rgba(0,0,0,0.55)",
+              border: "1px solid rgba(255,255,255,0.09)",
+              borderRadius: 10,
+              padding: "11px 14px",
+              fontSize: 13,
+              color: "rgba(160,200,255,0.85)",
+              fontFamily: "'Courier New', monospace",
+              outline: "none",
+              caretColor: "#1d6ef5",
+              marginBottom: 16,
+            }}
+            autoComplete="off"
+            spellCheck={false}
+          />
 
           {error && (
             <div
-              className="flex items-start gap-2 mb-4 px-3 py-2.5 rounded-xl"
               style={{
-                backgroundColor: "rgba(237,66,69,0.08)",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 8,
+                marginBottom: 14,
+                padding: "10px 12px",
+                borderRadius: 10,
+                background: "rgba(237,66,69,0.08)",
                 border: "1px solid rgba(237,66,69,0.2)",
               }}
             >
-              <AlertCircle className="w-4 h-4 text-[#ed4245] mt-0.5 shrink-0" />
-              <p className="text-[12px] text-[#ed4245] leading-relaxed">{error}</p>
+              <AlertCircle size={14} color="#ed4245" style={{ marginTop: 1, flexShrink: 0 }} />
+              <p style={{ fontSize: 11.5, color: "#ed4245", margin: 0, lineHeight: 1.5 }}>{error}</p>
             </div>
           )}
 
-          {/* Initialize Uplink button */}
           <button
             onClick={handleLogin}
             disabled={!token.trim() || loading}
-            className="w-full py-4 rounded-full text-[12.5px] font-black text-white uppercase transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-3"
             style={{
-              background: "linear-gradient(145deg, #1d6ef5 0%, #1458d8 100%)",
-              boxShadow: "0 8px 28px rgba(29, 110, 245, 0.5), 0 2px 8px rgba(0,0,0,0.4)",
-              letterSpacing: "0.16em",
+              width: "100%",
+              padding: "13px 0",
+              borderRadius: 50,
+              border: "none",
+              background: "linear-gradient(135deg, #1d6ef5 0%, #1252cc 100%)",
+              color: "#fff",
+              fontSize: 11.5,
+              fontWeight: 900,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              cursor: token.trim() && !loading ? "pointer" : "not-allowed",
+              opacity: !token.trim() || loading ? 0.35 : 1,
+              boxShadow: "0 8px 26px rgba(29,110,245,0.45)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              transition: "opacity 0.2s, transform 0.1s",
             }}
           >
             {loading ? (
               <>
-                <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                <div style={{ width: 14, height: 14, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", animation: "spin 0.7s linear infinite" }} />
                 CONNECTING…
               </>
-            ) : (
-              "INITIALIZE UPLINK"
-            )}
+            ) : "INITIALIZE UPLINK"}
           </button>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+
+        {/* RIGHT — robot panel */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px 32px",
+            background: "rgba(0,0,0,0.18)",
+            position: "relative",
+          }}
+        >
+          <div style={{ marginBottom: 22, filter: "drop-shadow(0 0 18px rgba(0,180,255,0.35))" }}>
+            <DotRobot />
+          </div>
+
+          <h2
+            style={{
+              fontSize: 20,
+              fontWeight: 900,
+              color: "#ffffff",
+              letterSpacing: "0.08em",
+              marginBottom: 6,
+              textAlign: "center",
+            }}
+          >
+            TG Works
+          </h2>
+          <p
+            style={{
+              fontSize: 11,
+              color: "rgba(255,255,255,0.35)",
+              textAlign: "center",
+              letterSpacing: "0.04em",
+              lineHeight: 1.6,
+              maxWidth: 200,
+              marginBottom: 20,
+            }}
+          >
+            The secure gateway that understands your workflow
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            {["✦  High-security token auth", "✦  Encrypted session layer", "✦  Full audit trail"].map((t) => (
+              <p key={t} style={{ fontSize: 10.5, color: "rgba(100,180,255,0.6)", margin: 0, letterSpacing: "0.02em" }}>{t}</p>
+            ))}
+          </div>
         </div>
       </div>
     </div>
