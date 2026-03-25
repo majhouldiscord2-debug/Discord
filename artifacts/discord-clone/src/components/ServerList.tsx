@@ -90,7 +90,7 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
           if (!isBotMode) onSelectServer("dms");
           onToggleBotMode();
         }}
-        glowColor="#1d6ef5"
+        glowColor="rgba(255,255,255,0.25)"
       >
         <div
           className="w-12 h-12 flex items-center justify-center transition-all duration-200"
@@ -98,8 +98,8 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
             borderRadius: (!isBotMode && activeServer === "dms") || isBotMode ? 16 : 24,
             background:
               (!isBotMode && activeServer === "dms") || isBotMode
-                ? "linear-gradient(135deg, #1d6ef5 0%, #1a5fd4 100%)"
-                : "#0a1420",
+                ? "#1a1a1a"
+                : "#0d0d0d",
           }}
         >
           <DiscordLogo />

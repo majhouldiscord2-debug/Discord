@@ -95,7 +95,7 @@ export function FriendsList({ onInboxToggle }: FriendsListProps) {
           {/* Add Friend button */}
           <button
             onClick={() => setActiveTab("add")}
-            className="ml-1 px-3 py-1.5 text-[13px] font-semibold rounded-[6px] transition-all duration-150 whitespace-nowrap bg-[#5865f2] text-white hover:bg-[#4752c4] hover:shadow-[0_2px_12px_rgba(88,101,242,0.35)]"
+            className="ml-1 px-3 py-1.5 text-[13px] font-semibold rounded-[6px] transition-all duration-150 whitespace-nowrap bg-[#222222] text-[#dbdee1] hover:bg-[#2e2e2e]"
           >
             Add Friend
           </button>
@@ -138,8 +138,8 @@ function ActionBtn({ children, title, danger }: { children: React.ReactNode; tit
       className={cn(
         "w-9 h-9 rounded-full flex items-center justify-center transition-all duration-150",
         danger
-          ? "bg-[#060b14] text-[#ed4245] hover:text-white hover:bg-[#ed4245] hover:shadow-[0_2px_8px_rgba(237,66,69,0.4)]"
-          : "bg-[#060b14] text-[#87898c] hover:text-[#f2f3f5] hover:bg-[#0d1a2e]"
+          ? "bg-[#111111] text-[#ed4245] hover:text-white hover:bg-[#ed4245] hover:shadow-[0_2px_8px_rgba(237,66,69,0.4)]"
+          : "bg-[#111111] text-[#87898c] hover:text-[#f2f3f5] hover:bg-[#1c1c1c]"
       )}
     >
       {children}
@@ -154,8 +154,8 @@ function AddFriendView() {
       <h2 className="text-[18px] font-bold text-[#f2f3f5] mb-1 tracking-[-0.02em]">Add Friend</h2>
       <p className="text-[#87898c] text-[14px] mb-5">You can add friends with their Discord username.</p>
       <div
-        className="flex items-center rounded-[8px] px-4 py-3 gap-3 transition-all duration-150 focus-within:ring-1 focus-within:ring-[#5865f2]/40"
-        style={{ backgroundColor: "#060b14" }}
+        className="flex items-center rounded-[8px] px-4 py-3 gap-3 transition-all duration-150 focus-within:ring-1 focus-within:ring-white/10"
+        style={{ backgroundColor: "#0d0d0d" }}
       >
         <input
           type="text"
@@ -168,8 +168,8 @@ function AddFriendView() {
           className={cn(
             "px-4 py-1.5 rounded-[5px] text-[13px] font-semibold transition-all duration-150",
             value.length > 0
-              ? "bg-[#5865f2] hover:bg-[#4752c4] text-white hover:shadow-[0_2px_12px_rgba(88,101,242,0.4)]"
-              : "bg-[#5865f2]/30 text-white/30 cursor-not-allowed"
+              ? "bg-[#222222] hover:bg-[#2e2e2e] text-white"
+              : "bg-[#1a1a1a] text-white/30 cursor-not-allowed"
           )}
           disabled={value.length === 0}
         >
