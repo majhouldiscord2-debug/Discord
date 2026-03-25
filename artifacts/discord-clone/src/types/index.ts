@@ -59,6 +59,11 @@ export interface Server {
   iconColor: string;
   ownerId: string;
   notificationCount?: number;
+  iconUrl?: string;
+  profile?: number;
+  invite?: string;
+  description?: string;
+  tags?: string[];
 }
 
 export interface DmChannel {
