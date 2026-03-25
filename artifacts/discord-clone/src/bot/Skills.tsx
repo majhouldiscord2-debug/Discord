@@ -25,7 +25,7 @@ const SKILLS: Skill[] = [
     category: "Moderation",
     level: "Advanced",
     icon: <Shield className="w-5 h-5" />,
-    accentColor: "#22c55e",
+    accentColor: "#cc0000",
     enabled: true,
     tags: ["Spam", "Filter", "Auto-delete"],
     stats: [{ label: "Messages filtered", value: "2.1K" }, { label: "False positives", value: "0.3%" }],
@@ -37,7 +37,7 @@ const SKILLS: Skill[] = [
     category: "Onboarding",
     level: "Basic",
     icon: <MessageSquare className="w-5 h-5" />,
-    accentColor: "#cc0000",
+    accentColor: "#ff4444",
     enabled: true,
     tags: ["Greet", "Embed", "DM"],
     stats: [{ label: "Members greeted", value: "847" }, { label: "DM open rate", value: "61%" }],
@@ -49,7 +49,7 @@ const SKILLS: Skill[] = [
     category: "Roles",
     level: "Basic",
     icon: <UserCheck className="w-5 h-5" />,
-    accentColor: "#e05050",
+    accentColor: "#dd1111",
     enabled: true,
     tags: ["Roles", "Reactions", "Self-assign"],
     stats: [{ label: "Roles assigned", value: "3.4K" }, { label: "Active menus", value: "5" }],
@@ -61,7 +61,7 @@ const SKILLS: Skill[] = [
     category: "Messaging",
     level: "Advanced",
     icon: <Bell className="w-5 h-5" />,
-    accentColor: "#f59e0b",
+    accentColor: "#aa0000",
     enabled: false,
     tags: ["Schedule", "Ping", "Recurring"],
     stats: [{ label: "Messages sent", value: "128" }, { label: "Scheduled", value: "12" }],
@@ -73,7 +73,7 @@ const SKILLS: Skill[] = [
     category: "Insights",
     level: "Expert",
     icon: <BarChart2 className="w-5 h-5" />,
-    accentColor: "#8b5cf6",
+    accentColor: "#ff2222",
     enabled: true,
     tags: ["Stats", "Growth", "Activity"],
     stats: [{ label: "Data points", value: "18K" }, { label: "Active since", value: "90d" }],
@@ -85,7 +85,7 @@ const SKILLS: Skill[] = [
     category: "Engagement",
     level: "Basic",
     icon: <Gift className="w-5 h-5" />,
-    accentColor: "#ec4899",
+    accentColor: "#e03535",
     enabled: false,
     tags: ["Giveaway", "Random", "Reactions"],
     stats: [{ label: "Giveaways run", value: "14" }, { label: "Unique winners", value: "14" }],
@@ -97,7 +97,7 @@ const SKILLS: Skill[] = [
     category: "Engagement",
     level: "Advanced",
     icon: <Trophy className="w-5 h-5" />,
-    accentColor: "#f97316",
+    accentColor: "#cc2222",
     enabled: true,
     tags: ["XP", "Levels", "Leaderboard"],
     stats: [{ label: "Active users", value: "312" }, { label: "Top level", value: "47" }],
@@ -109,7 +109,7 @@ const SKILLS: Skill[] = [
     category: "Support",
     level: "Advanced",
     icon: <Ticket className="w-5 h-5" />,
-    accentColor: "#14b8a6",
+    accentColor: "#ff5555",
     enabled: false,
     tags: ["Support", "Tickets", "Staff"],
     stats: [{ label: "Tickets opened", value: "203" }, { label: "Avg. resolution", value: "4h" }],
@@ -121,7 +121,7 @@ const SKILLS: Skill[] = [
     category: "Engagement",
     level: "Basic",
     icon: <Star className="w-5 h-5" />,
-    accentColor: "#eab308",
+    accentColor: "#bb0000",
     enabled: true,
     tags: ["Stars", "Highlight", "Content"],
     stats: [{ label: "Posts starred", value: "89" }, { label: "Reaction threshold", value: "5" }],
@@ -133,7 +133,7 @@ const SKILLS: Skill[] = [
     category: "Entertainment",
     level: "Expert",
     icon: <Music className="w-5 h-5" />,
-    accentColor: "#10b981",
+    accentColor: "#ee2222",
     enabled: false,
     tags: ["Music", "Voice", "Queue"],
     stats: [{ label: "Songs played", value: "1.8K" }, { label: "Queue max", value: "200" }],
@@ -145,7 +145,7 @@ const SKILLS: Skill[] = [
     category: "Engagement",
     level: "Basic",
     icon: <Hash className="w-5 h-5" />,
-    accentColor: "#6366f1",
+    accentColor: "#dd0000",
     enabled: false,
     tags: ["Poll", "Vote", "Results"],
     stats: [{ label: "Polls created", value: "34" }, { label: "Total votes", value: "2.2K" }],
@@ -157,7 +157,7 @@ const SKILLS: Skill[] = [
     category: "Roles",
     level: "Basic",
     icon: <Zap className="w-5 h-5" />,
-    accentColor: "#f43f5e",
+    accentColor: "#ff3333",
     enabled: true,
     tags: ["Roles", "Auto-assign", "New members"],
     stats: [{ label: "Roles assigned", value: "847" }, { label: "Delay", value: "10m" }],
@@ -169,7 +169,7 @@ const SKILLS: Skill[] = [
     category: "Onboarding",
     level: "Basic",
     icon: <BookOpen className="w-5 h-5" />,
-    accentColor: "#38bdf8",
+    accentColor: "#990000",
     enabled: true,
     tags: ["Rules", "Verification", "Onboarding"],
     stats: [{ label: "Verified members", value: "612" }, { label: "Acceptance rate", value: "94%" }],
@@ -181,7 +181,7 @@ const SKILLS: Skill[] = [
     category: "Moderation",
     level: "Advanced",
     icon: <Clock className="w-5 h-5" />,
-    accentColor: "#a78bfa",
+    accentColor: "#ff6666",
     enabled: false,
     tags: ["Slowmode", "Flood", "Dynamic"],
     stats: [{ label: "Activations", value: "47" }, { label: "Avg slowmode", value: "8s" }],
@@ -192,9 +192,9 @@ const CATEGORIES = ["All", "Moderation", "Onboarding", "Roles", "Messaging", "In
 const LEVELS = ["All", "Basic", "Advanced", "Expert"];
 
 const LEVEL_COLORS: Record<string, string> = {
-  Basic: "#22c55e",
-  Advanced: "#f59e0b",
-  Expert: "#ef4444",
+  Basic:    "#cc0000",
+  Advanced: "#ff4444",
+  Expert:   "#ff6666",
 };
 
 function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) => void }) {
@@ -202,26 +202,26 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
     <div
       className="rounded-xl flex flex-col gap-3 p-4 transition-all duration-200 cursor-default"
       style={{
-        background: `linear-gradient(160deg, ${skill.accentColor}12 0%, #0a0f1e 60%)`,
-        border: `1px solid ${skill.accentColor}30`,
-        boxShadow: `0 2px 16px rgba(0,0,0,0.3)`,
+        background: `linear-gradient(160deg, ${skill.accentColor}10 0%, #0a0a0a 60%)`,
+        border: `1px solid ${skill.accentColor}28`,
+        boxShadow: `0 2px 16px rgba(0,0,0,0.4)`,
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "translateY(-2px)";
-        el.style.boxShadow = `0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px ${skill.accentColor}50`;
-        el.style.borderColor = `${skill.accentColor}55`;
+        el.style.boxShadow = `0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px ${skill.accentColor}45`;
+        el.style.borderColor = `${skill.accentColor}50`;
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "";
-        el.style.boxShadow = "0 2px 16px rgba(0,0,0,0.3)";
-        el.style.borderColor = `${skill.accentColor}30`;
+        el.style.boxShadow = "0 2px 16px rgba(0,0,0,0.4)";
+        el.style.borderColor = `${skill.accentColor}28`;
       }}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5">
-          <div className="rounded-lg p-2 shrink-0" style={{ background: `${skill.accentColor}20`, color: skill.accentColor }}>
+          <div className="rounded-lg p-2 shrink-0" style={{ background: `${skill.accentColor}18`, color: skill.accentColor }}>
             {skill.icon}
           </div>
           <div>
@@ -242,7 +242,7 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
           className="shrink-0 rounded-full transition-all duration-300 relative"
           style={{
             width: 36, height: 20,
-            background: skill.enabled ? skill.accentColor : "rgba(255,255,255,0.1)",
+            background: skill.enabled ? skill.accentColor : "rgba(255,255,255,0.08)",
             boxShadow: skill.enabled ? `0 0 10px ${skill.accentColor}60` : "none",
           }}
         >
@@ -253,7 +253,7 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
         </button>
       </div>
 
-      <p className="text-[11px] text-[#949ba4] leading-relaxed line-clamp-2">{skill.description}</p>
+      <p className="text-[11px] text-[#72767d] leading-relaxed line-clamp-2">{skill.description}</p>
 
       {skill.stats && (
         <div className="flex gap-3">
@@ -271,7 +271,7 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
           <span
             key={tag}
             className="px-1.5 py-0.5 rounded text-[9px] font-medium"
-            style={{ background: `${skill.accentColor}15`, color: skill.accentColor, border: `1px solid ${skill.accentColor}25` }}
+            style={{ background: `${skill.accentColor}12`, color: skill.accentColor, border: `1px solid ${skill.accentColor}22` }}
           >
             {tag}
           </span>
@@ -299,15 +299,15 @@ export default function SkillsPage() {
   const enabledCount = skills.filter((s) => s.enabled).length;
 
   return (
-    <div className="flex-1 h-full flex flex-col overflow-hidden" style={{ backgroundColor: "#0a0f1e" }}>
-      <div className="px-6 pt-5 pb-4 shrink-0" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+    <div className="flex-1 h-full flex flex-col overflow-hidden" style={{ backgroundColor: "#080808" }}>
+      <div className="px-6 pt-5 pb-4 shrink-0" style={{ borderBottom: "1px solid rgba(200,0,0,0.12)" }}>
         <div className="flex items-center justify-between mb-3">
           <div>
             <h1 className="text-[18px] font-bold text-[#f2f3f5]">Bot Skills</h1>
             <p className="text-[12px] text-[#4e5058] mt-0.5">Manage and configure your bot's capabilities</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="w-2 h-2 rounded-full bg-[#22c55e]" style={{ boxShadow: "0 0 6px #22c55e" }} />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: "rgba(200,0,0,0.06)", border: "1px solid rgba(200,0,0,0.18)" }}>
+            <div className="w-2 h-2 rounded-full bg-[#cc0000]" style={{ boxShadow: "0 0 6px #cc0000" }} />
             <span className="text-[12px] font-semibold text-[#f2f3f5]">{enabledCount} active</span>
             <span className="text-[12px] text-[#4e5058]">/ {skills.length} skills</span>
           </div>
@@ -320,24 +320,24 @@ export default function SkillsPage() {
               onClick={() => setActiveCategory(cat)}
               className="px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all"
               style={{
-                background: activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.05)",
-                color: activeCategory === cat ? "#fff" : "#949ba4",
-                border: `1px solid ${activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.07)"}`,
+                background: activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.04)",
+                color: activeCategory === cat ? "#fff" : "#72767d",
+                border: `1px solid ${activeCategory === cat ? "#cc0000" : "rgba(255,255,255,0.06)"}`,
               }}
             >
               {cat}
             </button>
           ))}
-          <div className="w-px h-4 mx-1" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div className="w-px h-4 mx-1" style={{ background: "rgba(200,0,0,0.2)" }} />
           {LEVELS.map((lvl) => (
             <button
               key={lvl}
               onClick={() => setActiveLevel(lvl)}
               className="px-2.5 py-1 rounded-md text-[11px] font-semibold transition-all"
               style={{
-                background: activeLevel === lvl ? (lvl === "All" ? "#cc0000" : LEVEL_COLORS[lvl] + "cc") : "rgba(255,255,255,0.05)",
-                color: activeLevel === lvl ? "#fff" : "#949ba4",
-                border: `1px solid ${activeLevel === lvl ? (lvl === "All" ? "#cc0000" : LEVEL_COLORS[lvl]) : "rgba(255,255,255,0.07)"}`,
+                background: activeLevel === lvl ? "#cc0000" : "rgba(255,255,255,0.04)",
+                color: activeLevel === lvl ? "#fff" : "#72767d",
+                border: `1px solid ${activeLevel === lvl ? "#cc0000" : "rgba(255,255,255,0.06)"}`,
               }}
             >
               {lvl}
