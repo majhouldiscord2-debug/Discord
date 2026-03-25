@@ -27,7 +27,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
   return (
     <div
       className="w-[240px] h-full flex flex-col shrink-0"
-      style={{ backgroundColor: "#000000" }}
+      style={{ backgroundColor: "#2b2d31" }}
     >
       <button
         className="h-12 shrink-0 flex items-center px-3 gap-2 transition-colors hover:bg-white/5"
@@ -92,7 +92,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
 
       <div
         className="h-[52px] shrink-0 flex items-center px-2 gap-1"
-        style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        style={{ backgroundColor: "#2b2d31", borderTop: "1px solid rgba(255,255,255,0.06)" }}
       >
         {!isBotMode ? (
           <>
@@ -159,7 +159,7 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; la
       onClick={onClick}
       className={cn(
         "w-full flex items-center px-2 py-[7px] rounded-[6px] transition-all duration-150 gap-3",
-        isActive ? "bg-[#1a1a1a] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#111111] hover:text-[#dbdee1]"
+        isActive ? "bg-[#3d3f45] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#3d3f45]/60 hover:text-[#dbdee1]"
       )}
     >
       <span className={cn("shrink-0 transition-colors", isActive ? "text-[#f2f3f5]" : "text-[#6d6f76]")}>{icon}</span>

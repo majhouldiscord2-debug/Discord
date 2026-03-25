@@ -5,7 +5,7 @@ export function ActiveNow() {
     <div
       className="w-[340px] h-full hidden lg:flex flex-col shrink-0"
       style={{
-        background: "#000000",
+        background: "#2b2d31",
         borderLeft: "1px solid rgba(255,255,255,0.06)",
       }}
     >

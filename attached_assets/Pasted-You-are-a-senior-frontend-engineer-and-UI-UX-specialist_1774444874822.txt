@@ -1,0 +1,132 @@
+You are a senior frontend engineer and UI/UX specialist.
+
+Your task is to refactor and upgrade my existing project UI to match the official **Discord Friends page layout** exactly (desktop version).
+
+## 🎯 Goal
+
+Transform my current interface into a pixel-accurate recreation of the Discord Friends page, including layout structure, spacing, hierarchy, and styling.
+
+---
+
+## 🧱 REQUIRED LAYOUT STRUCTURE
+
+Rebuild the UI into a **4-section layout system**:
+
+1. LEFT SIDEBAR (Navigation panel)
+2. TOP HEADER (Friends navigation bar)
+3. MAIN CONTENT (Friends list area)
+4. RIGHT PANEL (Active Now section)
+
+---
+
+## 📌 LEFT SIDEBAR (IMPORTANT — CURRENTLY MISSING)
+
+Create a vertical sidebar that includes:
+
+* A "Friends" button (ACTIVE state)
+
+  * Rounded rectangle background
+  * Icon + label aligned horizontally
+  * Highlighted background when selected
+* Proper padding and spacing
+* Hover and active states
+
+Style:
+
+* Background: #1e1f22
+* Active item: #2b2d31
+* Text: white
+* Border radius: 8px
+* Smooth hover transitions
+
+---
+
+## 📌 TOP HEADER (Friends Navigation Bar)
+
+Include:
+
+* Search input: "Find or start a conversation"
+* Tabs:
+
+  * Online (ACTIVE)
+  * All
+  * Pending (with notification badge)
+  * Blocked
+* "Add Friend" button (blue/purple style)
+
+Style:
+
+* Horizontal flex layout
+* Proper spacing between tabs
+* Active tab highlighted with underline
+* Clean divider lines
+
+---
+
+## 📌 MAIN CONTENT
+
+* Friends list container
+* Empty state or placeholder if no data
+* Proper padding and scroll behavior
+
+---
+
+## 📌 RIGHT PANEL (Active Now)
+
+* Vertical panel on the right
+* Title: "Active Now"
+* Divider line separating it from main content
+* Subtle dark background
+
+---
+
+## 🎨 DESIGN REQUIREMENTS
+
+Match **Discord design system**:
+
+* Font: similar to gg sans / Inter / system-ui
+* Colors:
+
+  * Background: #313338 (main)
+  * Sidebar: #1e1f22
+  * Header: #2b2d31
+* Spacing: consistent 8px grid system
+* Border radius: 6–10px
+* Icons aligned properly with text
+* Smooth hover + transition effects
+
+---
+
+## ⚙️ TECHNICAL REQUIREMENTS
+
+* DO NOT rebuild from scratch — MODIFY my existing code
+* Keep component structure clean and modular
+* Use flexbox or grid for layout
+* Ensure responsiveness (desktop priority)
+* Avoid unnecessary libraries
+
+---
+
+## 🚫 DO NOT
+
+* Do not leave missing sections
+* Do not approximate layout — match Discord closely
+* Do not break existing functionality
+
+---
+
+## ✅ OUTPUT
+
+* Return full updated code
+* Clearly separate components (Sidebar, Header, Content, RightPanel)
+* Add comments explaining major changes
+
+---
+
+## 💡 REFERENCE
+
+Use the official **Discord Friends page UI as the visual and structural reference.
+
+---
+
+Now analyze my current code and apply all required changes to achieve a complete and accurate Discord-style Friends page.

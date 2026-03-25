@@ -69,7 +69,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
   const showGuildSidebar = activeServerPanel !== "dms" && activeServer !== null;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#000000" }}>
+    <div className="flex h-screen w-full overflow-hidden text-foreground font-sans selection:bg-primary/30" style={{ backgroundColor: "#313338" }}>
       <ServerList
         activeServer={activeServerPanel}
         onSelectServer={handleSelectServer}
@@ -106,7 +106,7 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
               isDm={false}
             />
           ) : (
-            <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#000000" }}>
+            <div className="flex-1 h-full flex flex-col items-center justify-center gap-3" style={{ backgroundColor: "#313338" }}>
               <p className="text-[#87898c] text-[15px] font-semibold">{activeServer?.name}</p>
               <p className="text-[#5e6068] text-[13px]">Select a channel to start chatting</p>
             </div>
