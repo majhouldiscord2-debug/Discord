@@ -90,16 +90,16 @@ export function ServerList({ activeServer, onSelectServer, isBotMode, onToggleBo
           if (!isBotMode) onSelectServer("dms");
           onToggleBotMode();
         }}
-        glowColor="rgba(255,255,255,0.25)"
+        glowColor="rgba(88,101,242,0.6)"
       >
         <div
           className="w-12 h-12 flex items-center justify-center transition-all duration-200"
           style={{
             borderRadius: (!isBotMode && activeServer === "dms") || isBotMode ? 16 : 24,
-            background:
-              (!isBotMode && activeServer === "dms") || isBotMode
-                ? "#1a1a1a"
-                : "#0d0d0d",
+            background: "#5865f2",
+            boxShadow: ((!isBotMode && activeServer === "dms") || isBotMode)
+              ? "0 4px 18px rgba(88,101,242,0.55)"
+              : "none",
           }}
         >
           <DiscordLogo />
