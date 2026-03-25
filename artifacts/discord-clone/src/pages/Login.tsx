@@ -87,17 +87,8 @@ export default function Login() {
     <div className="flex h-screen w-full items-center justify-center" style={{ background: "#000000", position: "relative" }}>
       <SpaceBackground />
 
-      {/* Wrapper for corner brackets */}
+      {/* Card wrapper */}
       <div style={{ position: "relative", zIndex: 2, width: "min(860px, 94vw)" }}>
-        {/* Corner brackets */}
-        {[
-          { top: -6, left: -6, borderTop: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
-          { top: -6, right: -6, borderTop: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
-          { bottom: -6, left: -6, borderBottom: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
-          { bottom: -6, right: -6, borderBottom: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
-        ].map((s, i) => (
-          <div key={i} style={{ position: "absolute", width: 20, height: 20, pointerEvents: "none", zIndex: 10, ...s }} />
-        ))}
 
       <div
         className="animate-scale-in"

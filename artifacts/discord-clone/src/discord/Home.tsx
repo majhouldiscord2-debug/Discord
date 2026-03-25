@@ -85,28 +85,8 @@ export default function DiscordHome({ onSwitchMode }: DiscordHomeProps) {
       style={{
         backgroundColor: "#000000",
         position: "relative",
-        boxShadow: "0 0 0 1px rgba(255,255,255,0.08), inset 0 0 80px rgba(0,0,0,0.8)",
       }}
     >
-      {/* ── Frame corner accents ── */}
-      {[
-        { top: 0, left: 0, borderTop: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
-        { top: 0, right: 0, borderTop: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
-        { bottom: 0, left: 0, borderBottom: "2px solid rgba(255,255,255,0.85)", borderLeft: "2px solid rgba(255,255,255,0.85)" },
-        { bottom: 0, right: 0, borderBottom: "2px solid rgba(255,255,255,0.85)", borderRight: "2px solid rgba(255,255,255,0.85)" },
-      ].map((style, i) => (
-        <div
-          key={i}
-          style={{
-            position: "absolute",
-            width: 22,
-            height: 22,
-            zIndex: 50,
-            pointerEvents: "none",
-            ...style,
-          }}
-        />
-      ))}
 
       {/* ── Title bar ── */}
       <div
