@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText } from "lucide-react";
+import { Users, Zap, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { Avatar } from "./Avatar";
 import { InProgressClock } from "./InProgress";
@@ -52,10 +52,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
           ) : (
             <>
               <NavItem icon={<Users className="w-[18px] h-[18px]" />} label="Friends" isActive={activeItem === "friends"} onClick={() => onNavigate?.("friends")} />
-              <NavItem icon={<MailCheck className="w-[18px] h-[18px]" />} label="Message Requests" isActive={activeItem === "requests"} onClick={() => onNavigate?.("requests")} />
               <NavItem icon={<Sparkles className="w-[18px] h-[18px]" />} label="Nitro Home" isActive={activeItem === "nitro"} onClick={() => onNavigate?.("nitro")} />
-              <NavItem icon={<ShoppingBag className="w-[18px] h-[18px]" />} label="Shop" isActive={activeItem === "shop"} onClick={() => onNavigate?.("shop")} />
-              <NavItem icon={<Target className="w-[18px] h-[18px]" />} label="Quests" isActive={activeItem === "quests"} onClick={() => onNavigate?.("quests")} />
             </>
           )}
         </div>
