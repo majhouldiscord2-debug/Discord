@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText } from "lucide-react";
+import { Users, ShoppingBag, Zap, Target, MailCheck, Plus, Mic, MicOff, Headphones, Settings, Search, Sparkles, BarChart2, Wrench, Server, ScrollText, Cog } from "lucide-react";
 import { useAppStore } from "@/store/useAppStore";
 import { Avatar } from "./Avatar";
 import { InProgressClock } from "./InProgress";
@@ -44,7 +44,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
           {isBotMode ? (
             <>
               <NavItem icon={<BarChart2 className="w-[18px] h-[18px]" />} label="Overview" isActive={activeItem === "friends"} onClick={() => onNavigate?.("friends")} />
-              <NavItem icon={<Zap className="w-[18px] h-[18px]" />} label="Bot Skills" isActive={activeItem === "skills"} onClick={() => onNavigate?.("skills")} />
+              <NavItem icon={<Cog className="w-[18px] h-[18px]" />} label="Bot Skills" isActive={activeItem === "skills"} onClick={() => onNavigate?.("skills")} activeColor="#cc0000" />
               <NavItem icon={<ScrollText className="w-[18px] h-[18px]" />} label="Audit Logs" isActive={activeItem === "logs"} onClick={() => onNavigate?.("logs")} />
               <NavItem icon={<Wrench className="w-[18px] h-[18px]" />} label="Configuration" isActive={activeItem === "tools"} onClick={() => onNavigate?.("tools")} />
               <NavItem icon={<Server className="w-[18px] h-[18px]" />} label="Servers" isActive={activeItem === "servers"} onClick={() => onNavigate?.("servers")} />
@@ -153,7 +153,7 @@ export function Sidebar({ activeView = "friends", onNavigate, onOpenDm, activeDm
   );
 }
 
-function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void }) {
+function NavItem({ icon, label, isActive, onClick, activeColor = "#5865f2" }: { icon: React.ReactNode; label: string; isActive: boolean; onClick: () => void; activeColor?: string }) {
   return (
     <button
       onClick={onClick}
@@ -162,7 +162,7 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode; la
         isActive ? "bg-[#2a0505] text-[#f2f3f5]" : "text-[#87898c] hover:bg-[#1a0505] hover:text-[#dbdee1]"
       )}
     >
-      <span className={cn("shrink-0 transition-colors", isActive ? "text-[#5865f2]" : "text-[#6d6f76]")}>{icon}</span>
+      <span className="shrink-0 transition-colors" style={{ color: isActive ? activeColor : "#6d6f76" }}>{icon}</span>
       <span className="font-medium text-[15px] flex-1 text-left tracking-[-0.01em]">{label}</span>
     </button>
   );
