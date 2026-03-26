@@ -10,6 +10,9 @@ export const toolSettingsTable = pgTable("tool_settings", {
   delay: integer("delay").notNull().default(3),
   servers: jsonb("servers").notNull().default([]),
   messages: jsonb("messages").notNull().default([]),
+  serverConfigs: jsonb("server_configs"),
+  safeMode: boolean("safe_mode").notNull().default(false),
+  quickWave: boolean("quick_wave").notNull().default(false),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

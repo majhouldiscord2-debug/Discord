@@ -1,13 +1,30 @@
 const API_BASE = "/api";
 
+export interface ServerMentioConfig {
+  serverId: number;
+  guildId: string;
+  name: string;
+  inviteCode: string;
+  logoUrl: string;
+  accentColor: string;
+  enabled: boolean;
+  mentionCount: number;
+  cooldownMin: number;
+  channelHook: string;
+  activityOnly: boolean;
+}
+
 export interface ToolSettings {
   toolId: number;
   autoJoin: boolean;
   smartMention: boolean;
   dmMode: boolean;
   delay: number;
+  safeMode: boolean;
+  quickWave: boolean;
   servers: string[];
   messages: string[];
+  serverConfigs: ServerMentioConfig[] | null;
 }
 
 export async function getToolSettings(toolId: number): Promise<ToolSettings> {

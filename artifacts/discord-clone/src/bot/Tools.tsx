@@ -1,6 +1,10 @@
 import { useState, useId, useEffect } from "react";
-import { getToolSettings, saveToolSettings } from "@/lib/api";
-import { Search, Heart, ChevronDown, Shuffle, Info, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight, Clock, MessageSquare, Server, AtSign } from "lucide-react";
+import { getToolSettings, saveToolSettings, type ServerMentioConfig } from "@/lib/api";
+import {
+  ChevronDown, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight,
+  Clock, MessageSquare, Server, AtSign, Shield, Radio, Users, Hash,
+  ChevronUp, Wifi,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AutomationItem {
@@ -35,23 +39,75 @@ const automationItems: AutomationItem[] = [
   { id: 9,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
 ];
 
+// ─── Linked servers for Mentio (IDs 10–14 from bot/Server.tsx) ────────────────
+const MENTIO_SERVERS: Omit<ServerMentioConfig, "enabled" | "mentionCount" | "cooldownMin" | "channelHook" | "activityOnly">[] = [
+  {
+    serverId: 10,
+    guildId: "1320917906346868876",
+    name: "Blox Fruits Trading Server",
+    inviteCode: "legacytrading",
+    logoUrl: "https://cdn.discordapp.com/icons/1320917906346868876/a_204d5b403207b4a8fe13b5ba628c86f8.gif?size=64",
+    accentColor: "#f97316",
+  },
+  {
+    serverId: 11,
+    guildId: "1320854419532812431",
+    name: "Blox Fruits Trading Server",
+    inviteCode: "blox-fruit",
+    logoUrl: "https://cdn.discordapp.com/icons/1320854419532812431/a_4113fa484c36bab0bd7df1224d9365c4.gif?size=64",
+    accentColor: "#eab308",
+  },
+  {
+    serverId: 12,
+    guildId: "1165018533349044315",
+    name: "BF Trading | Stock Notifier",
+    inviteCode: "bfts",
+    logoUrl: "https://cdn.discordapp.com/icons/1320917906346868876/a_204d5b403207b4a8fe13b5ba628c86f8.gif?size=64",
+    accentColor: "#d97706",
+  },
+  {
+    serverId: 13,
+    guildId: "1218556281539788840",
+    name: "Blox Fruits Trading Server",
+    inviteCode: "bloxfruitstrading",
+    logoUrl: "https://cdn.discordapp.com/icons/1218556281539788840/6850a0401154036ae4d319e0396fbf8e.png?size=64",
+    accentColor: "#22c55e",
+  },
+  {
+    serverId: 14,
+    guildId: "888721743601094678",
+    name: "ScammerAlert!",
+    inviteCode: "scammeralert",
+    logoUrl: "https://cdn.discordapp.com/icons/888721743601094678/a_96b48c1c030b62740af6ca673eeea8d7.gif?size=64",
+    accentColor: "#ef4444",
+  },
+];
+
+function defaultServerConfigs(): ServerMentioConfig[] {
+  return MENTIO_SERVERS.map((s) => ({
+    ...s,
+    enabled: true,
+    mentionCount: 3,
+    cooldownMin: 5,
+    channelHook: "",
+    activityOnly: true,
+  }));
+}
+
+// ─── SVG icons ────────────────────────────────────────────────────────────────
+
 function MentionitorAvatar({ size = 72 }: { size?: number }) {
   const uid = useId().replace(/:/g, "m");
-  const bgId = `${uid}bg`;
-  const glowId = `${uid}glow`;
+  const bgId = `${uid}bg`; const glowId = `${uid}glow`;
   return (
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id={bgId} cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#004695" />
-          <stop offset="100%" stopColor="#001a3a" />
+          <stop offset="0%" stopColor="#004695" /><stop offset="100%" stopColor="#001a3a" />
         </radialGradient>
         <filter id={glowId}>
           <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
+          <feMerge><feMergeNode in="coloredBlur" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
       <circle cx="50" cy="50" r="48" fill={`url(#${bgId})`} />
@@ -68,19 +124,14 @@ function MentionitorAvatar({ size = 72 }: { size?: number }) {
       <line x1="22" y1="22" x2="28" y2="28" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
       <line x1="78" y1="78" x2="72" y2="72" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
       <line x1="22" y1="78" x2="28" y2="72" stroke="#1CF8FF" strokeWidth="0.8" strokeOpacity="0.3" />
-      <circle cx="78" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" />
-      <circle cx="22" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" />
-      <circle cx="78" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
-      <circle cx="22" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="78" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" /><circle cx="22" cy="22" r="1" fill="#B5FFFE" fillOpacity="0.5" />
+      <circle cx="78" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" /><circle cx="22" cy="78" r="1" fill="#B5FFFE" fillOpacity="0.5" />
       <circle cx="50" cy="50" r="26" fill="#002855" fillOpacity="0.8" />
       <circle cx="50" cy="50" r="26" stroke="#1CF8FF" strokeWidth="1.5" strokeOpacity="0.8" filter={`url(#${glowId})`} />
       <text x="50" y="57" textAnchor="middle" fontSize="28" fontFamily="Arial, sans-serif" fontWeight="bold" fill="#1CF8FF" filter={`url(#${glowId})`}>@</text>
-      <circle cx="30" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
-      <circle cx="70" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
-      <circle cx="20" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
-      <circle cx="80" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
-      <circle cx="20" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
-      <circle cx="80" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+      <circle cx="30" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" /><circle cx="70" cy="20" r="1.2" fill="#1CF8FF" fillOpacity="0.5" />
+      <circle cx="20" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" /><circle cx="80" cy="35" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
+      <circle cx="20" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" /><circle cx="80" cy="65" r="0.8" fill="#B5FFFE" fillOpacity="0.4" />
     </svg>
   );
 }
@@ -105,29 +156,48 @@ function WumpusIcon({ item }: { item: AutomationItem }) {
     <div className="relative w-full h-full flex items-center justify-center">
       <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 50% 45%, ${item.glowColor}25 0%, transparent 65%)` }} />
       <div className="relative flex flex-col items-center gap-1">
-        <div
-          className="w-20 h-20 rounded-full border-4 flex items-center justify-center overflow-hidden"
-          style={{ borderColor: item.glowColor, backgroundColor: item.darkBg ?? "#0a0000", boxShadow: `0 0 20px ${item.glowColor}50` }}
-        >
+        <div className="w-20 h-20 rounded-full border-4 flex items-center justify-center overflow-hidden"
+          style={{ borderColor: item.glowColor, backgroundColor: item.darkBg ?? "#0a0000", boxShadow: `0 0 20px ${item.glowColor}50` }}>
           {item.icon === "mentionitor" ? <MentionitorAvatar size={56} /> : <WumpusFace size="md" />}
         </div>
-        <div className="w-16 h-2 bg-white/15 rounded-full" />
-        <div className="w-12 h-1.5 bg-white/10 rounded-full" />
+        <div className="w-16 h-2 bg-white/15 rounded-full" /><div className="w-12 h-1.5 bg-white/10 rounded-full" />
       </div>
     </div>
   );
 }
 
-function SettingRow({ icon, label, description, children }: { icon: React.ReactNode; label: string; description?: string; children: React.ReactNode }) {
+// ─── Shared primitives ────────────────────────────────────────────────────────
+
+function ToggleSwitch({ on, onToggle, color = "#cc0000" }: { on: boolean; onToggle: () => void; color?: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 py-3.5" style={{ borderBottom: "1px solid rgba(0,0,0,0.07)" }}>
+    <button onClick={onToggle} className="transition-all duration-200" style={{ color: on ? color : "rgba(0,0,0,0.2)" }}>
+      {on ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
+    </button>
+  );
+}
+
+function SectionLabel({ label }: { label: string }) {
+  return <p className="text-[10px] font-black tracking-widest uppercase mb-2 mt-5" style={{ color: "#cc0000" }}>{label}</p>;
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl px-3 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
+      {children}
+    </div>
+  );
+}
+
+function SettingRow({ icon, label, description, children, last }: { icon: React.ReactNode; label: string; description?: string; children: React.ReactNode; last?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-3" style={last ? undefined : { borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
       <div className="flex items-center gap-3 min-w-0">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(204,0,0,0.07)", color: "#cc0000" }}>
           {icon}
         </div>
         <div className="min-w-0">
           <div className="text-[13px] font-semibold text-[#111]">{label}</div>
-          {description && <div className="text-[11px] text-[#888] mt-0.5 truncate">{description}</div>}
+          {description && <div className="text-[11px] text-[#888] mt-0.5">{description}</div>}
         </div>
       </div>
       <div className="shrink-0">{children}</div>
@@ -135,17 +205,318 @@ function SettingRow({ icon, label, description, children }: { icon: React.ReactN
   );
 }
 
-function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
+// ─── Per-server accordion row ─────────────────────────────────────────────────
+
+function ServerConfigRow({
+  config,
+  onChange,
+  last,
+}: {
+  config: ServerMentioConfig;
+  onChange: (updated: ServerMentioConfig) => void;
+  last?: boolean;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const ac = config.accentColor;
+
+  function set<K extends keyof ServerMentioConfig>(key: K, val: ServerMentioConfig[K]) {
+    onChange({ ...config, [key]: val });
+  }
+
   return (
-    <button
-      onClick={onToggle}
-      className="transition-all duration-200"
-      style={{ color: on ? "#cc0000" : "rgba(0,0,0,0.2)" }}
-    >
-      {on ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
-    </button>
+    <div style={last ? undefined : { borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+      {/* Header row */}
+      <div className="flex items-center gap-3 py-3">
+        <img src={config.logoUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 border-2"
+          style={{ borderColor: ac + "60" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+        <div className="flex-1 min-w-0">
+          <div className="text-[12px] font-bold text-[#111] truncate">{config.name}</div>
+          <div className="text-[10px] font-mono text-[#999]">discord.gg/{config.inviteCode}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Enabled badge */}
+          <div className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+            style={{
+              backgroundColor: config.enabled ? ac + "18" : "rgba(0,0,0,0.06)",
+              color: config.enabled ? ac : "#aaa",
+              border: `1px solid ${config.enabled ? ac + "40" : "transparent"}`,
+            }}>
+            {config.enabled ? "ON" : "OFF"}
+          </div>
+          <ToggleSwitch on={config.enabled} onToggle={() => set("enabled", !config.enabled)} color={ac} />
+          <button onClick={() => setExpanded((v) => !v)} className="w-6 h-6 flex items-center justify-center text-[#aaa] hover:text-[#555] transition-colors">
+            {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Expanded settings */}
+      {expanded && (
+        <div className="pb-4 pl-12 pr-2 flex flex-col gap-3">
+
+          {/* Mention count */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <AtSign className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
+              <div>
+                <div className="text-[12px] font-semibold text-[#222]">Mentions per run</div>
+                <div className="text-[10px] text-[#999]">@ pings to send each cycle</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => set("mentionCount", Math.max(1, config.mentionCount - 1))}
+                className="w-6 h-6 rounded-lg text-[#666] hover:text-white hover:bg-[#cc0000] flex items-center justify-center transition-colors text-[14px] font-bold">−</button>
+              <span className="w-7 text-center text-[13px] font-bold text-[#111]">{config.mentionCount}</span>
+              <button onClick={() => set("mentionCount", Math.min(20, config.mentionCount + 1))}
+                className="w-6 h-6 rounded-lg text-[#666] hover:text-white hover:bg-[#cc0000] flex items-center justify-center transition-colors text-[14px] font-bold">+</button>
+            </div>
+          </div>
+
+          {/* Cooldown */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Clock className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
+              <div>
+                <div className="text-[12px] font-semibold text-[#222]">Cooldown</div>
+                <div className="text-[10px] text-[#999]">Minutes between runs</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number" min="1" max="1440" value={config.cooldownMin}
+                onChange={(e) => set("cooldownMin", Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-16 text-center text-[12px] font-bold rounded-xl py-1 outline-none text-[#111]"
+                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1.5px solid rgba(204,0,0,0.18)" }}
+              />
+              <span className="text-[10px] text-[#aaa]">min</span>
+            </div>
+          </div>
+
+          {/* Channel hook */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 shrink-0">
+              <Hash className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
+              <div>
+                <div className="text-[12px] font-semibold text-[#222]">Channel hook</div>
+                <div className="text-[10px] text-[#999]">Specific channel ID / name</div>
+              </div>
+            </div>
+            <input
+              type="text" placeholder="general" value={config.channelHook}
+              onChange={(e) => set("channelHook", e.target.value)}
+              className="w-28 text-[11px] rounded-xl px-2 py-1 outline-none text-[#222] placeholder:text-[#ccc] font-mono"
+              style={{ backgroundColor: "rgba(204,0,0,0.04)", border: "1.5px solid rgba(204,0,0,0.15)" }}
+            />
+          </div>
+
+          {/* Activity only */}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Users className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
+              <div>
+                <div className="text-[12px] font-semibold text-[#222]">Active members only</div>
+                <div className="text-[10px] text-[#999]">Skip offline / idle users</div>
+              </div>
+            </div>
+            <ToggleSwitch on={config.activityOnly} onToggle={() => set("activityOnly", !config.activityOnly)} color={ac} />
+          </div>
+
+        </div>
+      )}
+    </div>
   );
 }
+
+// ─── Mentio-specific full edit panel ─────────────────────────────────────────
+
+function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () => void }) {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const [smartMention, setSmartMention] = useState(true);
+  const [dmMode, setDmMode] = useState(false);
+  const [autoJoin, setAutoJoin] = useState(true);
+  const [safeMode, setSafeMode] = useState(false);
+  const [quickWave, setQuickWave] = useState(false);
+  const [delay, setDelay] = useState("3");
+  const [serverConfigs, setServerConfigs] = useState<ServerMentioConfig[]>(defaultServerConfigs);
+  const [messages, setMessages] = useState<string[]>(["Hey! Check this out 👋", "Join us! 🚀"]);
+  const [newMessage, setNewMessage] = useState("");
+
+  useEffect(() => {
+    getToolSettings(item.id).then((s) => {
+      setSmartMention(s.smartMention);
+      setDmMode(s.dmMode);
+      setAutoJoin(s.autoJoin);
+      setSafeMode(s.safeMode ?? false);
+      setQuickWave(s.quickWave ?? false);
+      setDelay(String(s.delay));
+      if (Array.isArray(s.messages) && s.messages.length) setMessages(s.messages);
+      if (Array.isArray(s.serverConfigs) && s.serverConfigs.length) {
+        // Merge saved configs onto current MENTIO_SERVERS list (preserves new servers added later)
+        const saved = s.serverConfigs as ServerMentioConfig[];
+        setServerConfigs(
+          MENTIO_SERVERS.map((base) => saved.find((c) => c.serverId === base.serverId) ?? { ...base, enabled: true, mentionCount: 3, cooldownMin: 5, channelHook: "", activityOnly: true })
+        );
+      }
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, [item.id]);
+
+  function updateServerConfig(index: number, updated: ServerMentioConfig) {
+    setServerConfigs((prev) => prev.map((c, i) => (i === index ? updated : c)));
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await saveToolSettings({
+        toolId: item.id,
+        autoJoin,
+        smartMention,
+        dmMode,
+        delay: parseInt(delay, 10) || 3,
+        safeMode,
+        quickWave,
+        servers: serverConfigs.filter((c) => c.enabled).map((c) => c.name),
+        messages,
+        serverConfigs,
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2200);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const enabledCount = serverConfigs.filter((c) => c.enabled).length;
+
+  if (loading) {
+    return (
+      <div className="absolute inset-0 z-50 flex items-center justify-center" style={{ backgroundColor: "#000" }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#1CF8FF transparent transparent transparent" }} />
+          <span className="text-[13px] text-[#999]">Loading settings…</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#000" }}>
+      {/* Header */}
+      <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(204,0,0,0.15)" }}>
+        <button onClick={onBack} className="flex items-center gap-1.5 text-[#999] hover:text-white transition-colors group">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5" />
+          </div>
+        </button>
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: "#1CF8FF", boxShadow: "0 0 8px #1CF8FF" }} />
+          <span className="text-[15px] font-bold text-white truncate">Mentio — Settings</span>
+        </div>
+        {/* Quick summary badge */}
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold"
+          style={{ backgroundColor: "rgba(28,248,255,0.1)", color: "#1CF8FF", border: "1px solid rgba(28,248,255,0.25)" }}>
+          <Wifi className="w-3 h-3" />
+          {enabledCount}/{serverConfigs.length} servers
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto discord-scrollbar px-5 pb-4 pt-1">
+
+        {/* ── Global toggles ── */}
+        <SectionLabel label="Global Settings" />
+        <Card>
+          <SettingRow icon={<Shield className="w-4 h-4" />} label="SAFE Mode"
+            description="Slower rate, no mass-pings — stays under radar">
+            <ToggleSwitch on={safeMode} onToggle={() => setSafeMode((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<Zap className="w-4 h-4" />} label="Quick Wave"
+            description="Pre-set burst: 5 mentions, 2 min CD, all servers">
+            <ToggleSwitch on={quickWave} onToggle={() => setQuickWave((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<AtSign className="w-4 h-4" />} label="Smart Mentions"
+            description="Target recently active members only">
+            <ToggleSwitch on={smartMention} onToggle={() => setSmartMention((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers"
+            description="Join servers before mentioning">
+            <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<MessageSquare className="w-4 h-4" />} label="DM Mode"
+            description="Send mentions via direct messages">
+            <ToggleSwitch on={dmMode} onToggle={() => setDmMode((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<Clock className="w-4 h-4" />} label="Global Delay" description="Seconds between each action" last>
+            <input type="number" min="1" max="120" value={delay} onChange={(e) => setDelay(e.target.value)}
+              className="w-16 text-center text-[13px] font-bold rounded-xl py-1.5 outline-none text-[#111]"
+              style={{ backgroundColor: "rgba(204,0,0,0.06)", border: "1.5px solid rgba(204,0,0,0.2)" }} />
+          </SettingRow>
+        </Card>
+
+        {/* ── Per-server config ── */}
+        <SectionLabel label={`Linked Servers (${enabledCount} active)`} />
+        <Card>
+          {serverConfigs.map((cfg, i) => (
+            <ServerConfigRow
+              key={cfg.serverId}
+              config={cfg}
+              onChange={(updated) => updateServerConfig(i, updated)}
+              last={i === serverConfigs.length - 1}
+            />
+          ))}
+        </Card>
+
+        {/* ── Message templates ── */}
+        <SectionLabel label="Message Templates" />
+        <div className="rounded-2xl px-3 pb-2" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
+          {messages.map((m, i) => (
+            <div key={i} className="flex items-start gap-2 py-2.5" style={i < messages.length - 1 ? { borderBottom: "1px solid rgba(0,0,0,0.06)" } : undefined}>
+              <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#cc0000]" />
+              <span className="flex-1 text-[12px] text-[#333] leading-relaxed">{m}</span>
+              <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors shrink-0">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+          <div className="flex items-center gap-2 pt-2">
+            <input type="text" placeholder="Add message template…" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+              className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
+              style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
+            <button onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+              className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
+              style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
+              <Plus className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Save footer */}
+      <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(204,0,0,0.15)", backgroundColor: "#050505" }}>
+        <button onClick={handleSave} disabled={saving}
+          className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
+          style={{
+            background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : "linear-gradient(135deg, #cc0000, #ff2222)",
+            boxShadow: saved ? "0 0 16px rgba(35,165,90,0.45)" : "0 0 16px rgba(204,0,0,0.5)",
+          }}>
+          {saving ? (
+            <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Saving…</>
+          ) : saved ? (
+            <><Star className="w-4 h-4 fill-white" />Saved!</>
+          ) : (
+            <><Zap className="w-4 h-4" />Save Changes</>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Generic edit panel (for all other tools) ─────────────────────────────────
 
 function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: () => void; glowColor: string }) {
   const [loading, setLoading] = useState(true);
@@ -162,12 +533,10 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
 
   useEffect(() => {
     getToolSettings(item.id).then((s) => {
-      setAutoJoin(s.autoJoin);
-      setSmartMention(s.smartMention);
-      setDmMode(s.dmMode);
+      setAutoJoin(s.autoJoin); setSmartMention(s.smartMention); setDmMode(s.dmMode);
       setDelay(String(s.delay));
-      setServers(s.servers as string[]);
-      setMessages(s.messages as string[]);
+      if (Array.isArray(s.servers) && s.servers.length) setServers(s.servers as string[]);
+      if (Array.isArray(s.messages) && s.messages.length) setMessages(s.messages as string[]);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [item.id]);
@@ -175,12 +544,9 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
   async function handleSave() {
     setSaving(true);
     try {
-      await saveToolSettings({ toolId: item.id, autoJoin, smartMention, dmMode, delay: parseInt(delay, 10) || 3, servers, messages });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } finally {
-      setSaving(false);
-    }
+      await saveToolSettings({ toolId: item.id, autoJoin, smartMention, dmMode, delay: parseInt(delay, 10) || 3, safeMode: false, quickWave: false, servers, messages, serverConfigs: null });
+      setSaved(true); setTimeout(() => setSaved(false), 2000);
+    } finally { setSaving(false); }
   }
 
   if (loading) {
@@ -198,124 +564,97 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
     <div className="absolute inset-0 z-50 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#000" }}>
       <div className="shrink-0 flex items-center gap-3 px-4 pt-4 pb-3" style={{ borderBottom: "1px solid rgba(204,0,0,0.15)" }}>
         <button onClick={onBack} className="flex items-center gap-1.5 text-[#999] hover:text-white transition-colors group">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
-            <ChevronLeft className="w-5 h-5" />
-          </div>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10"><ChevronLeft className="w-5 h-5" /></div>
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 8px #cc0000, 0 0 16px rgba(204,0,0,0.5)" }} />
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 8px #cc0000" }} />
           <span className="text-[15px] font-bold text-white">{item.name} — Settings</span>
         </div>
       </div>
-
       <div className="flex-1 overflow-y-auto discord-scrollbar px-5 py-4">
-        <div className="mb-1">
-          <p className="text-[10px] font-black tracking-widest uppercase mb-2 mt-1" style={{ color: "#cc0000" }}>Behaviour</p>
-          <div className="rounded-2xl px-3 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
-            <SettingRow icon={<AtSign className="w-4 h-4" />} label="Smart Mentions" description="Target active members only">
-              <ToggleSwitch on={smartMention} onToggle={() => setSmartMention(v => !v)} />
-            </SettingRow>
-            <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers" description="Join servers before mentioning">
-              <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin(v => !v)} />
-            </SettingRow>
-            <SettingRow icon={<MessageSquare className="w-4 h-4" />} label="DM Mode" description="Send via direct messages">
-              <ToggleSwitch on={dmMode} onToggle={() => setDmMode(v => !v)} />
-            </SettingRow>
-            <div className="flex items-center justify-between gap-4 py-3.5">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
-                  <Clock className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-[13px] font-semibold text-[#111]">Delay (seconds)</div>
-                  <div className="text-[11px] text-[#888] mt-0.5">Pause between each action</div>
-                </div>
+        <p className="text-[10px] font-black tracking-widest uppercase mb-2 mt-1" style={{ color: "#cc0000" }}>Behaviour</p>
+        <Card>
+          <SettingRow icon={<AtSign className="w-4 h-4" />} label="Smart Mentions" description="Target active members only">
+            <ToggleSwitch on={smartMention} onToggle={() => setSmartMention((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers" description="Join servers before mentioning">
+            <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<MessageSquare className="w-4 h-4" />} label="DM Mode" description="Send via direct messages">
+            <ToggleSwitch on={dmMode} onToggle={() => setDmMode((v) => !v)} />
+          </SettingRow>
+          <SettingRow icon={<Clock className="w-4 h-4" />} label="Delay (seconds)" description="Pause between each action" last>
+            <input type="number" min="1" max="60" value={delay} onChange={(e) => setDelay(e.target.value)}
+              className="w-16 text-center text-[13px] font-bold rounded-xl py-1.5 outline-none text-[#111]"
+              style={{ backgroundColor: "rgba(204,0,0,0.06)", border: "1.5px solid rgba(204,0,0,0.2)" }} />
+          </SettingRow>
+        </Card>
+        <SectionLabel label="Target Servers" />
+        <div className="rounded-2xl px-3 pb-2" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
+          {servers.map((s, i) => (
+            <div key={i} className="flex items-center justify-between py-2.5" style={i < servers.length - 1 ? { borderBottom: "1px solid rgba(0,0,0,0.06)" } : undefined}>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 6px rgba(204,0,0,0.6)" }} />
+                <span className="text-[13px] text-[#222]">{s}</span>
               </div>
-              <input type="number" min="1" max="60" value={delay} onChange={e => setDelay(e.target.value)}
-                className="w-16 text-center text-[13px] font-bold rounded-xl py-1.5 outline-none text-[#111]"
-                style={{ backgroundColor: "rgba(204,0,0,0.06)", border: "1.5px solid rgba(204,0,0,0.2)" }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5 mb-1">
-          <p className="text-[10px] font-black tracking-widest uppercase mb-2" style={{ color: "#cc0000" }}>Target Servers</p>
-          <div className="rounded-2xl px-3 pb-2 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
-            {servers.map((s, i) => (
-              <div key={i} className="flex items-center justify-between py-2.5" style={{ borderBottom: i < servers.length - 1 ? "1px solid rgba(0,0,0,0.06)" : undefined }}>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#cc0000", boxShadow: "0 0 6px rgba(204,0,0,0.6)" }} />
-                  <span className="text-[13px] text-[#222]">{s}</span>
-                </div>
-                <button onClick={() => setServers(servers.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
-            <div className="flex items-center gap-2 pt-2">
-              <input type="text" placeholder="Add server name…" value={newServer} onChange={e => setNewServer(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter" && newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
-                className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
-                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
-              <button onClick={() => { if (newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
-                className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
-                style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
-                <Plus className="w-4 h-4" />
+              <button onClick={() => setServers(servers.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors">
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
+          ))}
+          <div className="flex items-center gap-2 pt-2">
+            <input type="text" placeholder="Add server name…" value={newServer} onChange={(e) => setNewServer(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
+              className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
+              style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
+            <button onClick={() => { if (newServer.trim()) { setServers([...servers, newServer.trim()]); setNewServer(""); } }}
+              className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
+              style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         </div>
-
-        <div className="mt-5 mb-1">
-          <p className="text-[10px] font-black tracking-widest uppercase mb-2" style={{ color: "#cc0000" }}>Message Templates</p>
-          <div className="rounded-2xl px-3 pb-2 overflow-hidden" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.18)" }}>
-            {messages.map((m, i) => (
-              <div key={i} className="flex items-start gap-2 py-2.5" style={{ borderBottom: i < messages.length - 1 ? "1px solid rgba(0,0,0,0.06)" : undefined }}>
-                <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#cc0000]" />
-                <span className="flex-1 text-[12px] text-[#333] leading-relaxed">{m}</span>
-                <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors shrink-0">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
-            <div className="flex items-center gap-2 pt-2">
-              <input type="text" placeholder="Add message template…" value={newMessage} onChange={e => setNewMessage(e.target.value)}
-                onKeyDown={e => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
-                className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
-                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
-              <button onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
-                className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
-                style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
-                <Plus className="w-4 h-4" />
+        <SectionLabel label="Message Templates" />
+        <div className="rounded-2xl px-3 pb-2" style={{ backgroundColor: "#fff", border: "1.5px solid rgba(204,0,0,0.15)", boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
+          {messages.map((m, i) => (
+            <div key={i} className="flex items-start gap-2 py-2.5" style={i < messages.length - 1 ? { borderBottom: "1px solid rgba(0,0,0,0.06)" } : undefined}>
+              <MessageSquare className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#cc0000]" />
+              <span className="flex-1 text-[12px] text-[#333] leading-relaxed">{m}</span>
+              <button onClick={() => setMessages(messages.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-[#ed4245] transition-colors shrink-0">
+                <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
+          ))}
+          <div className="flex items-center gap-2 pt-2">
+            <input type="text" placeholder="Add message template…" value={newMessage} onChange={(e) => setNewMessage(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+              className="flex-1 text-[12px] rounded-xl px-3 py-1.5 outline-none text-[#222] placeholder:text-[#aaa]"
+              style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1px solid rgba(204,0,0,0.18)" }} />
+            <button onClick={() => { if (newMessage.trim()) { setMessages([...messages, newMessage.trim()]); setNewMessage(""); } }}
+              className="w-7 h-7 rounded-xl flex items-center justify-center text-white transition-colors hover:brightness-110"
+              style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 10px rgba(204,0,0,0.45)" }}>
+              <Plus className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </div>
-
       <div className="shrink-0 px-5 py-4" style={{ borderTop: "1px solid rgba(204,0,0,0.15)", backgroundColor: "#050505" }}>
-        <button
-          onClick={handleSave} disabled={saving}
+        <button onClick={handleSave} disabled={saving}
           className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2 disabled:opacity-70"
           style={{
-            background: saved
-              ? "linear-gradient(135deg, #23a55a, #1a8b48)"
-              : "linear-gradient(135deg, #cc0000, #ff2222)",
-            boxShadow: saved ? "0 0 16px rgba(35,165,90,0.45)" : "0 0 16px rgba(204,0,0,0.5), 0 0 32px rgba(204,0,0,0.25)",
-          }}
-        >
-          {saving ? (
-            <><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Saving…</>
-          ) : saved ? (
-            <><Star className="w-4 h-4 fill-white" />Saved!</>
-          ) : (
-            <><Zap className="w-4 h-4" />Save Changes</>
-          )}
+            background: saved ? "linear-gradient(135deg, #23a55a, #1a8b48)" : "linear-gradient(135deg, #cc0000, #ff2222)",
+            boxShadow: saved ? "0 0 16px rgba(35,165,90,0.45)" : "0 0 16px rgba(204,0,0,0.5)",
+          }}>
+          {saving ? (<><div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Saving…</>)
+            : saved ? (<><Star className="w-4 h-4 fill-white" />Saved!</>)
+            : (<><Zap className="w-4 h-4" />Save Changes</>)}
         </button>
       </div>
     </div>
   );
 }
+
+// ─── Item detail modal ────────────────────────────────────────────────────────
 
 function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () => void }) {
   const [enabled, setEnabled] = useState(false);
@@ -323,13 +662,15 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
 
   return (
     <div className="absolute inset-0 z-40 flex flex-col animate-modal-slide-in" style={{ backgroundColor: "#000" }}>
-      {editing && <EditPanel item={item} onBack={() => setEditing(false)} glowColor={item.glowColor} />}
+      {editing && (
+        item.id === 1
+          ? <MentioEditPanel item={item} onBack={() => setEditing(false)} />
+          : <EditPanel item={item} onBack={() => setEditing(false)} glowColor={item.glowColor} />
+      )}
 
       <div className="shrink-0 flex items-center px-4 pt-4 pb-2" style={{ borderBottom: "1px solid rgba(204,0,0,0.12)" }}>
         <button onClick={onClose} className="flex items-center gap-1.5 text-[#999] hover:text-white transition-colors group">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10">
-            <ChevronLeft className="w-5 h-5" />
-          </div>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center transition-colors group-hover:bg-white/10"><ChevronLeft className="w-5 h-5" /></div>
           <span className="text-[14px] font-medium">Back</span>
         </button>
       </div>
@@ -342,9 +683,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
           <div className="relative flex flex-col items-center gap-3">
             <div className="w-36 h-36 rounded-full border-[5px] flex items-center justify-center overflow-hidden"
               style={{ borderColor: item.glowColor, backgroundColor: item.darkBg ?? "#0a0000", boxShadow: `0 0 40px ${item.glowColor}55, inset 0 0 20px ${item.glowColor}15` }}>
-              {item.icon === "mentionitor" ? (
-                <MentionitorAvatar size={144} />
-              ) : (
+              {item.icon === "mentionitor" ? <MentionitorAvatar size={144} /> : (
                 <svg width="72" height="72" viewBox="0 0 40 40" fill="none">
                   <ellipse cx="20" cy="22" rx="16" ry="14" fill="#4a4b51" />
                   <ellipse cx="20" cy="20" rx="12" ry="11" fill="#36373d" />
@@ -361,51 +700,42 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
           </div>
         </div>
 
-        {/* Bottom white card info panel */}
         <div className="shrink-0 px-6 py-5 rounded-t-3xl"
           style={{ backgroundColor: "#fff", borderTop: "2px solid rgba(204,0,0,0.2)", boxShadow: "0 -8px 40px rgba(0,0,0,0.35)" }}>
           <div className="flex items-start justify-between mb-3">
             <div>
               <h2 className="text-[22px] font-black text-[#0a0000] mb-0.5" style={{ letterSpacing: "-0.02em" }}>{item.name}</h2>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-0.5">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />)}
-                </div>
+                <div className="flex items-center gap-0.5">{[1,2,3,4,5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-[#f59e0b] text-[#f59e0b]" />)}</div>
                 <span className="text-[12px] text-[#888]">4.8 · 2.3k reviews</span>
               </div>
             </div>
-            <button
-              onClick={() => setEnabled(v => !v)}
+            <button onClick={() => setEnabled((v) => !v)}
               className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold transition-all"
               style={{
                 backgroundColor: enabled ? "rgba(35,165,90,0.1)" : "rgba(204,0,0,0.08)",
                 color: enabled ? "#1a8b48" : "#cc0000",
                 border: `1.5px solid ${enabled ? "rgba(35,165,90,0.35)" : "rgba(204,0,0,0.3)"}`,
-                boxShadow: enabled ? "none" : "0 0 10px rgba(204,0,0,0.15)",
-              }}
-            >
+              }}>
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: enabled ? "#23a55a" : "#cc0000", boxShadow: enabled ? "none" : "0 0 6px rgba(204,0,0,0.7)" }} />
               {enabled ? "On" : "Off"}
             </button>
           </div>
-
           <p className="text-[#555] text-[13px] leading-relaxed mb-4 whitespace-pre-line">
-            {item.description ?? "A sleek animated avatar style inspired by futuristic AI companions. Comes with a glowing ring effect that reacts to your voice activity."}
+            {item.description ?? "A sleek automation tool with advanced controls."}
           </p>
-
-          <button
-            onClick={() => setEditing(true)}
+          <button onClick={() => setEditing(true)}
             className="w-full py-2.5 rounded-xl text-[14px] font-bold text-white transition-all hover:brightness-110 flex items-center justify-center gap-2"
-            style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 18px rgba(204,0,0,0.45), 0 0 36px rgba(204,0,0,0.2)" }}
-          >
-            <Zap className="w-4 h-4" />
-            Configure
+            style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 18px rgba(204,0,0,0.45), 0 0 36px rgba(204,0,0,0.2)" }}>
+            <Zap className="w-4 h-4" />Configure
           </button>
         </div>
       </div>
     </div>
   );
 }
+
+// ─── Automation card ──────────────────────────────────────────────────────────
 
 function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onOpen?: () => void; index?: number }) {
   const [hovered, setHovered] = useState(false);
@@ -418,163 +748,43 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
         backgroundColor: "#fff",
         animationDelay: `${delay}ms`,
         border: hovered ? "1.5px solid rgba(204,0,0,0.5)" : "1.5px solid rgba(204,0,0,0.15)",
-        transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease, border-color 0.2s ease",
-        transform: hovered ? "translateY(-4px) scale(1.02)" : "translateY(0) scale(1)",
-        boxShadow: hovered
-          ? `0 12px 36px rgba(0,0,0,0.22), 0 0 20px rgba(204,0,0,0.2)`
-          : "0 3px 12px rgba(0,0,0,0.14)",
+        boxShadow: hovered ? "0 8px 32px rgba(204,0,0,0.18), 0 0 0 1px rgba(204,0,0,0.06)" : "0 2px 12px rgba(0,0,0,0.08)",
+        transition: "all 0.18s cubic-bezier(0.4,0,0.2,1)",
+        transform: hovered ? "translateY(-2px)" : undefined,
+        aspectRatio: "1",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onOpen}
     >
-      <div className={cn("relative h-[188px] overflow-hidden", `bg-gradient-to-br ${item.gradient}`)}>
-        <div className="absolute inset-0 transition-opacity duration-300"
-          style={{ background: `radial-gradient(ellipse at 50% 50%, ${item.glowColor}22 0%, transparent 70%)`, opacity: hovered ? 1 : 0 }} />
-        <WumpusIcon item={item} />
-      </div>
-      <div className="px-3 py-2.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[14px] font-bold text-[#0a0000]">{item.name}</span>
-          {hovered && (
-            <div className="w-1.5 h-1.5 rounded-full bg-[#cc0000]" style={{ boxShadow: "0 0 6px #cc0000" }} />
-          )}
-        </div>
+      <div className={cn("absolute inset-0 bg-gradient-to-br opacity-90", item.gradient)} />
+      <div className="relative w-full h-full"><WumpusIcon item={item} /></div>
+      <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
+        <span className="text-[11px] font-bold text-white/90 drop-shadow">{item.name}</span>
       </div>
     </div>
   );
 }
 
-const sortOptions = ["For You", "Price: Low to High", "Price: High to Low", "Newest"];
-const tabs = ["Featured", "Browse"];
+// ─── Root export ──────────────────────────────────────────────────────────────
 
-export default function Tools() {
-  const [activeTab, setActiveTab] = useState("Featured");
-  const [sortBy, setSortBy] = useState("For You");
-  const [showSort, setShowSort] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [wishlist, setWishlist] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<AutomationItem | null>(null);
+export default function ToolsPage() {
+  const [selected, setSelected] = useState<AutomationItem | null>(null);
 
   return (
-    <div className="flex-1 h-full flex flex-col min-w-0 overflow-hidden relative" style={{ backgroundColor: "#000" }}>
-      {selectedItem && (
-        <ItemDetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
-      )}
-      <div className="shrink-0 flex items-center px-5 gap-6 h-14" style={{ borderBottom: "1px solid rgba(204,0,0,0.15)", backgroundColor: "#000" }}>
-        <div className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg, #cc0000, #8b0000)", boxShadow: "0 0 10px rgba(204,0,0,0.5)" }}>
-            <WumpusFace size="xs" />
-          </div>
-        </div>
+    <div className="relative h-full w-full overflow-hidden" style={{ backgroundColor: "#060000" }}>
+      {selected && <ItemDetailModal item={selected} onClose={() => setSelected(null)} />}
 
-        <div className="flex items-center gap-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "flex items-center gap-1 px-3 py-1.5 text-[14px] font-semibold transition-colors rounded-sm",
-                activeTab === tab
-                  ? "text-white border-b-2 border-[#cc0000] rounded-none"
-                  : "text-[rgba(255,255,255,0.4)] hover:text-white"
-              )}
-            >
-              {tab}
-              {tab === "Browse" && <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
+      <div className="h-full overflow-y-auto discord-scrollbar px-4 pt-4 pb-6">
+        <div className="mb-4">
+          <h1 className="text-[18px] font-black text-white mb-0.5">Automation Tools</h1>
+          <p className="text-[12px] text-[#666]">Tap a tool to view and configure it</p>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {automationItems.map((item, i) => (
+            <AutomationCard key={item.id} item={item} index={i} onOpen={() => setSelected(item)} />
           ))}
         </div>
-
-        <div className="flex-1" />
-
-        <div
-          className="flex items-center gap-2 px-3 py-1.5 rounded-xl w-52"
-          style={{ backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(204,0,0,0.2)" }}
-        >
-          <Search className="w-4 h-4 shrink-0" style={{ color: "rgba(255,255,255,0.35)" }} />
-          <input
-            type="text"
-            placeholder="Search Tools"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="bg-transparent text-[13px] outline-none flex-1 w-full"
-            style={{ color: "#fff" }}
-          />
-        </div>
-
-        <button
-          onClick={() => setWishlist(!wishlist)}
-          className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
-          style={{ color: wishlist ? "#ed4245" : "rgba(255,255,255,0.35)" }}
-        >
-          <Heart className={cn("w-5 h-5", wishlist && "fill-[#ed4245]")} />
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto discord-scrollbar px-6 py-5">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-2">
-            <h2 className="text-[20px] font-black text-white" style={{ letterSpacing: "-0.02em" }}>Automation Tools</h2>
-            <button style={{ color: "rgba(255,255,255,0.25)" }} className="hover:text-white transition-colors">
-              <Info className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-[13px]" style={{ color: "rgba(255,255,255,0.38)" }}>Sort by</span>
-              <div className="relative">
-                <button
-                  onClick={() => setShowSort(!showSort)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-[13px] font-semibold text-white hover:brightness-110 transition-all"
-                  style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(204,0,0,0.22)" }}
-                >
-                  {sortBy}
-                  <ChevronDown className="w-4 h-4" style={{ color: "rgba(255,255,255,0.4)" }} />
-                </button>
-                {showSort && (
-                  <div className="absolute right-0 top-full mt-1 w-48 rounded-xl overflow-hidden shadow-2xl z-20"
-                    style={{ backgroundColor: "#111", border: "1px solid rgba(204,0,0,0.25)" }}>
-                    {sortOptions.map((opt) => (
-                      <button key={opt} onClick={() => { setSortBy(opt); setShowSort(false); }}
-                        className={cn("w-full text-left px-3 py-2 text-[13px] transition-colors",
-                          sortBy === opt ? "text-[#cc0000] bg-[rgba(204,0,0,0.1)]" : "text-[rgba(255,255,255,0.7)] hover:bg-white/5")}>
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <button
-              className="flex items-center gap-2 px-4 py-1.5 rounded-xl text-[13px] font-bold text-white transition-all hover:brightness-110"
-              style={{ background: "linear-gradient(135deg, #cc0000, #ff2222)", boxShadow: "0 0 12px rgba(204,0,0,0.4)" }}
-            >
-              <Shuffle className="w-4 h-4" />
-              Shuffle!
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 pb-6">
-          {automationItems
-            .filter((item) => searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase()))
-            .map((item, i) => (
-              <AutomationCard key={item.id} item={item} index={i} onOpen={() => setSelectedItem(item)} />
-            ))}
-        </div>
-
-        {automationItems.filter((item) =>
-          searchValue === "" || item.name.toLowerCase().includes(searchValue.toLowerCase())
-        ).length === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <Search className="w-12 h-12 mb-4 opacity-30" style={{ color: "rgba(204,0,0,0.8)" }} />
-            <p className="text-white font-bold text-lg mb-1">No results found</p>
-            <p className="text-sm" style={{ color: "rgba(255,255,255,0.38)" }}>Try a different search term</p>
-          </div>
-        )}
       </div>
     </div>
   );
