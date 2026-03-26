@@ -47,10 +47,9 @@ export default function ProfileSwitchAnimation({ onSwitch, onComplete, targetMod
           6%   { opacity: 1; }
           8%   { opacity: 0.6; }
           10%  { opacity: 1; }
-          82%  { opacity: 1; }
-          88%  { opacity: 0.1; }
-          91%  { opacity: 0.9; }
-          94%  { opacity: 0; }
+          80%  { opacity: 1; }
+          86%  { opacity: 0.8; }
+          90%  { opacity: 0; }
           100% { opacity: 0; }
         }
 
