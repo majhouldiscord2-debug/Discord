@@ -12,6 +12,7 @@ export interface ServerMentioConfig {
   cooldownMin: number;
   channelHook: string;
   activityOnly: boolean;
+  customMessages: string[];
 }
 
 export interface ToolSettings {
@@ -40,6 +41,52 @@ export async function saveToolSettings(settings: ToolSettings): Promise<void> {
     body: JSON.stringify(settings),
   });
   if (!res.ok) throw new Error("Failed to save settings");
+}
+
+export async function joinServer(inviteCode: string): Promise<{ success: boolean; alreadyMember?: boolean; guild?: { id: string; name: string } | null; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/join-server`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ inviteCode }),
+    });
+    const data = await res.json();
+    if (!res.ok) return { success: false, error: data.error ?? "Failed to join" };
+    return data;
+  } catch {
+    return { success: false, error: "Network error" };
+  }
+}
+
+export async function checkGuildMembership(guildId: string): Promise<{ member: boolean }> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/guild-membership/${guildId}`);
+    if (!res.ok) return { member: false };
+    return res.json();
+  } catch {
+    return { member: false };
+  }
+}
+
+export async function runAutoMention(params: {
+  guildId: string;
+  channelHook: string;
+  message: string;
+  mentionCount: number;
+  delayMs: number;
+}): Promise<{ success: boolean; messageId?: string; channel?: string; mentionedCount?: number; error?: string }> {
+  try {
+    const res = await fetch(`${API_BASE}/discord/auto-mention`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json();
+    if (!res.ok) return { success: false, error: data.error ?? "Failed" };
+    return data;
+  } catch {
+    return { success: false, error: "Network error" };
+  }
 }
 
 export interface DiscordUser {

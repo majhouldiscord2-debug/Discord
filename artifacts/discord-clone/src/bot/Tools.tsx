@@ -1,9 +1,9 @@
-import { useState, useId, useEffect } from "react";
-import { getToolSettings, saveToolSettings, type ServerMentioConfig } from "@/lib/api";
+import { useState, useId, useEffect, useRef } from "react";
+import { getToolSettings, saveToolSettings, joinServer, checkGuildMembership, runAutoMention, type ServerMentioConfig } from "@/lib/api";
 import {
   ChevronDown, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight,
-  Clock, MessageSquare, Server, AtSign, Shield, Radio, Users, Hash,
-  ChevronUp, Wifi,
+  Clock, MessageSquare, Server, AtSign, Shield, Users, Hash,
+  ChevronUp, Wifi, Play, CheckCircle2, XCircle, Loader2, LogIn,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,22 +25,69 @@ const automationItems: AutomationItem[] = [
     gradient: "from-[#001a3a] via-[#004695] to-[#002855]",
     glowColor: "#1CF8FF",
     ring: "border-cyan-400",
-    description: "Grow your Discord server FAST with active joins and smart @ mentions\nPerfect adversting services — start boosting your members instantly!",
+    description: "Grow your Discord server FAST with active joins and smart @ mentions. Perfect advertising service — start boosting your members instantly!",
     icon: "mentionitor",
     darkBg: "#001a3a",
   },
-  { id: 2,  name: "Inboxer",    gradient: "from-[#2a0030] via-[#6a0060] to-[#180020]", glowColor: "#e879f9", ring: "border-fuchsia-400", darkBg: "#2a0030" },
-  { id: 3,  name: "Questor",   gradient: "from-[#002a00] via-[#0a5a0a] to-[#001800]", glowColor: "#22c55e", ring: "border-green-500", darkBg: "#002a00" },
-  { id: 4,  name: "Replify",    gradient: "from-[#1a1000] via-[#3d2a00] to-[#0d0800]", glowColor: "#f59e0b", ring: "border-amber-400", darkBg: "#1a1000" },
-  { id: 5,  name: "GuildJoiner", gradient: "from-[#1a0000] via-[#2a0000] to-[#080000]", glowColor: "#e05050", ring: "border-red-700", darkBg: "#1a0000" },
-  { id: 6,  name: "Bumper",     gradient: "from-[#2e0a0a] via-[#4e0a1a] to-[#1a0d0d]", glowColor: "#f43f5e", ring: "border-rose-500" },
-  { id: 7,  name: "Messager",   gradient: "from-[#001e2e] via-[#003a52] to-[#000f1a]", glowColor: "#0ea5e9", ring: "border-sky-500" },
-  { id: 8,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
-  { id: 9,  name: "Automation", gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600" },
+  {
+    id: 2, name: "Inboxer",
+    gradient: "from-[#2a0030] via-[#6a0060] to-[#180020]", glowColor: "#e879f9", ring: "border-fuchsia-400", darkBg: "#2a0030",
+    description: "Blast personalized DMs to your target list — template rotation, rate-limited delivery, smart anti-filter bypass.",
+  },
+  {
+    id: 3, name: "Questor",
+    gradient: "from-[#002a00] via-[#0a5a0a] to-[#001800]", glowColor: "#22c55e", ring: "border-green-500", darkBg: "#002a00",
+    description: "Monitor channels for keywords and auto-answer with your templates. 24/7 engagement and FAQ handling on autopilot.",
+  },
+  {
+    id: 4, name: "Replify",
+    gradient: "from-[#1a1000] via-[#3d2a00] to-[#0d0800]", glowColor: "#f59e0b", ring: "border-amber-400", darkBg: "#1a1000",
+    description: "Auto-reply to any message matching your trigger phrases — keep conversations going even when you're offline.",
+  },
+  {
+    id: 5, name: "GuildJoiner",
+    gradient: "from-[#1a0000] via-[#2a0000] to-[#080000]", glowColor: "#e05050", ring: "border-red-700", darkBg: "#1a0000",
+    description: "Bulk-join Discord servers via invite codes with smart delay, keep-alive pings, and anti-detection spacing.",
+  },
+  {
+    id: 6, name: "Bumper",
+    gradient: "from-[#2e0a0a] via-[#4e0a1a] to-[#1a0d0d]", glowColor: "#f43f5e", ring: "border-rose-500", darkBg: "#2e0a0a",
+    description: "Auto-bump your servers on Disboard, Top.gg, and Discadia — never miss a 2-hour bump window again.",
+  },
+  {
+    id: 7, name: "Messager",
+    gradient: "from-[#001e2e] via-[#003a52] to-[#000f1a]", glowColor: "#0ea5e9", ring: "border-sky-500", darkBg: "#001e2e",
+    description: "Mass-send to server channels or DMs with custom schedules, template rotation, and smart throttle control.",
+  },
+  {
+    id: 8, name: "Reactor",
+    gradient: "from-[#1a0a2e] via-[#2d0a4e] to-[#0d0d1a]", glowColor: "#7c3aed", ring: "border-purple-600", darkBg: "#1a0a2e",
+    description: "Auto-react to messages with emoji combos — boost engagement on any channel, thread, or announcement.",
+  },
+  {
+    id: 9, name: "Tracker",
+    gradient: "from-[#001414] via-[#003030] to-[#000a0a]", glowColor: "#14b8a6", ring: "border-teal-500", darkBg: "#001414",
+    description: "Real-time member activity tracker — logs joins, leaves, role changes, online/offline events across all guilds.",
+  },
+  {
+    id: 10, name: "Scheduler",
+    gradient: "from-[#1a1a00] via-[#3a3a00] to-[#0d0d00]", glowColor: "#eab308", ring: "border-yellow-500", darkBg: "#1a1a00",
+    description: "Queue and schedule any bot action — messages, joins, reacts, bumps — with cron-style timing and retry logic.",
+  },
+  {
+    id: 11, name: "Cloner",
+    gradient: "from-[#00141a] via-[#002a38] to-[#000a0d]", glowColor: "#06b6d4", ring: "border-cyan-500", darkBg: "#00141a",
+    description: "Clone server templates, channels, and roles — replicate your entire setup to new guilds in seconds.",
+  },
+  {
+    id: 12, name: "Verifier",
+    gradient: "from-[#0a1a00] via-[#1a3a00] to-[#050d00]", glowColor: "#84cc16", ring: "border-lime-500", darkBg: "#0a1a00",
+    description: "Auto-verify new members with custom gate sequences, role assignment, and welcome message delivery.",
+  },
 ];
 
 // ─── Linked servers for Mentio (IDs 10–14 from bot/Server.tsx) ────────────────
-const MENTIO_SERVERS: Omit<ServerMentioConfig, "enabled" | "mentionCount" | "cooldownMin" | "channelHook" | "activityOnly">[] = [
+const MENTIO_SERVERS: Omit<ServerMentioConfig, "enabled" | "mentionCount" | "cooldownMin" | "channelHook" | "activityOnly" | "customMessages">[] = [
   {
     serverId: 10,
     guildId: "1320917906346868876",
@@ -91,8 +138,11 @@ function defaultServerConfigs(): ServerMentioConfig[] {
     cooldownMin: 5,
     channelHook: "",
     activityOnly: true,
+    customMessages: [],
   }));
 }
+
+type MemberStatus = "unknown" | "checking" | "member" | "not-member";
 
 // ─── SVG icons ────────────────────────────────────────────────────────────────
 
@@ -217,25 +267,68 @@ function ServerConfigRow({
   last?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [memberStatus, setMemberStatus] = useState<MemberStatus>("unknown");
+  const [joining, setJoining] = useState(false);
+  const [joinMsg, setJoinMsg] = useState<string | null>(null);
+  const [newCustomMsg, setNewCustomMsg] = useState("");
   const ac = config.accentColor;
+
+  // Check membership once on mount
+  useEffect(() => {
+    setMemberStatus("checking");
+    checkGuildMembership(config.guildId).then(({ member }) => {
+      setMemberStatus(member ? "member" : "not-member");
+    }).catch(() => setMemberStatus("unknown"));
+  }, [config.guildId]);
 
   function set<K extends keyof ServerMentioConfig>(key: K, val: ServerMentioConfig[K]) {
     onChange({ ...config, [key]: val });
   }
 
+  async function handleJoin() {
+    setJoining(true);
+    setJoinMsg(null);
+    const result = await joinServer(config.inviteCode);
+    if (result.success) {
+      setMemberStatus("member");
+      setJoinMsg(result.alreadyMember ? "Already a member" : "Joined successfully!");
+    } else {
+      setJoinMsg(result.error ?? "Failed to join");
+    }
+    setJoining(false);
+    setTimeout(() => setJoinMsg(null), 3000);
+  }
+
+  const msgs = Array.isArray(config.customMessages) ? config.customMessages : [];
+
   return (
     <div style={last ? undefined : { borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
       {/* Header row */}
-      <div className="flex items-center gap-3 py-3">
+      <div className="flex items-center gap-2 py-3">
         <img src={config.logoUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 border-2"
           style={{ borderColor: ac + "60" }} onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
         <div className="flex-1 min-w-0">
           <div className="text-[12px] font-bold text-[#111] truncate">{config.name}</div>
-          <div className="text-[10px] font-mono text-[#999]">discord.gg/{config.inviteCode}</div>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-[10px] font-mono text-[#999]">/{config.inviteCode}</span>
+            {/* Membership badge */}
+            {memberStatus === "checking" && <Loader2 className="w-2.5 h-2.5 text-[#aaa] animate-spin" />}
+            {memberStatus === "member" && <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">✓ Joined</span>}
+            {memberStatus === "not-member" && <span className="text-[9px] font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded-full border border-orange-200">Not joined</span>}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Enabled badge */}
-          <div className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+        <div className="flex items-center gap-1.5">
+          {/* Join button */}
+          {memberStatus === "not-member" && (
+            <button onClick={handleJoin} disabled={joining}
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold transition-all disabled:opacity-60"
+              style={{ backgroundColor: ac + "15", color: ac, border: `1px solid ${ac}40` }}>
+              {joining ? <Loader2 className="w-3 h-3 animate-spin" /> : <LogIn className="w-3 h-3" />}
+              {joining ? "Joining…" : "Join"}
+            </button>
+          )}
+          {/* On/Off toggle */}
+          <div className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
             style={{
               backgroundColor: config.enabled ? ac + "18" : "rgba(0,0,0,0.06)",
               color: config.enabled ? ac : "#aaa",
@@ -249,6 +342,14 @@ function ServerConfigRow({
           </button>
         </div>
       </div>
+
+      {/* Join result toast */}
+      {joinMsg && (
+        <div className="mx-0 mb-2 px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+          style={{ backgroundColor: joinMsg.includes("success") || joinMsg.includes("Already") ? "#dcfce7" : "#fee2e2", color: joinMsg.includes("success") || joinMsg.includes("Already") ? "#166534" : "#991b1b" }}>
+          {joinMsg}
+        </div>
+      )}
 
       {/* Expanded settings */}
       {expanded && (
@@ -282,12 +383,10 @@ function ServerConfigRow({
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <input
-                type="number" min="1" max="1440" value={config.cooldownMin}
+              <input type="number" min="1" max="1440" value={config.cooldownMin}
                 onChange={(e) => set("cooldownMin", Math.max(1, parseInt(e.target.value) || 1))}
                 className="w-16 text-center text-[12px] font-bold rounded-xl py-1 outline-none text-[#111]"
-                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1.5px solid rgba(204,0,0,0.18)" }}
-              />
+                style={{ backgroundColor: "rgba(204,0,0,0.05)", border: "1.5px solid rgba(204,0,0,0.18)" }} />
               <span className="text-[10px] text-[#aaa]">min</span>
             </div>
           </div>
@@ -298,15 +397,13 @@ function ServerConfigRow({
               <Hash className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
               <div>
                 <div className="text-[12px] font-semibold text-[#222]">Channel hook</div>
-                <div className="text-[10px] text-[#999]">Specific channel ID / name</div>
+                <div className="text-[10px] text-[#999]">Channel ID or name</div>
               </div>
             </div>
-            <input
-              type="text" placeholder="general" value={config.channelHook}
+            <input type="text" placeholder="general" value={config.channelHook}
               onChange={(e) => set("channelHook", e.target.value)}
               className="w-28 text-[11px] rounded-xl px-2 py-1 outline-none text-[#222] placeholder:text-[#ccc] font-mono"
-              style={{ backgroundColor: "rgba(204,0,0,0.04)", border: "1.5px solid rgba(204,0,0,0.15)" }}
-            />
+              style={{ backgroundColor: "rgba(204,0,0,0.04)", border: "1.5px solid rgba(204,0,0,0.15)" }} />
           </div>
 
           {/* Activity only */}
@@ -321,11 +418,46 @@ function ServerConfigRow({
             <ToggleSwitch on={config.activityOnly} onToggle={() => set("activityOnly", !config.activityOnly)} color={ac} />
           </div>
 
+          {/* Custom messages for this server */}
+          <div>
+            <div className="flex items-center gap-1.5 mb-2">
+              <MessageSquare className="w-3.5 h-3.5 shrink-0" style={{ color: ac }} />
+              <div className="text-[12px] font-semibold text-[#222]">Custom messages</div>
+              <span className="text-[9px] text-[#aaa] ml-1">(overrides global templates)</span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              {msgs.map((m, i) => (
+                <div key={i} className="flex items-start gap-2 px-2 py-1.5 rounded-lg" style={{ backgroundColor: ac + "08", border: `1px solid ${ac}20` }}>
+                  <span className="flex-1 text-[11px] text-[#333] leading-relaxed">{m}</span>
+                  <button onClick={() => set("customMessages", msgs.filter((_, j) => j !== i))} className="text-[#ccc] hover:text-red-500 transition-colors shrink-0 mt-0.5">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+              <div className="flex items-center gap-1.5">
+                <input type="text" placeholder="Add message for this server…" value={newCustomMsg}
+                  onChange={(e) => setNewCustomMsg(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && newCustomMsg.trim()) { set("customMessages", [...msgs, newCustomMsg.trim()]); setNewCustomMsg(""); } }}
+                  className="flex-1 text-[11px] rounded-lg px-2 py-1 outline-none text-[#222] placeholder:text-[#bbb]"
+                  style={{ backgroundColor: "rgba(0,0,0,0.03)", border: `1px solid ${ac}25` }} />
+                <button
+                  onClick={() => { if (newCustomMsg.trim()) { set("customMessages", [...msgs, newCustomMsg.trim()]); setNewCustomMsg(""); } }}
+                  className="w-6 h-6 rounded-lg flex items-center justify-center text-white transition-all hover:brightness-110"
+                  style={{ backgroundColor: ac }}>
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
       )}
     </div>
   );
 }
+
+// ─── Run log entry ────────────────────────────────────────────────────────────
+type LogEntry = { id: number; type: "info" | "ok" | "err"; text: string };
 
 // ─── Mentio-specific full edit panel ─────────────────────────────────────────
 
@@ -333,6 +465,10 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [runLog, setRunLog] = useState<LogEntry[]>([]);
+  const logRef = useRef<HTMLDivElement>(null);
+  const logIdRef = useRef(0);
 
   const [smartMention, setSmartMention] = useState(true);
   const [dmMode, setDmMode] = useState(false);
@@ -344,6 +480,12 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
   const [messages, setMessages] = useState<string[]>(["Hey! Check this out 👋", "Join us! 🚀"]);
   const [newMessage, setNewMessage] = useState("");
 
+  function addLog(type: LogEntry["type"], text: string) {
+    const id = ++logIdRef.current;
+    setRunLog((prev) => [...prev.slice(-49), { id, type, text }]);
+    setTimeout(() => { logRef.current?.scrollTo({ top: 9999, behavior: "smooth" }); }, 30);
+  }
+
   useEffect(() => {
     getToolSettings(item.id).then((s) => {
       setSmartMention(s.smartMention);
@@ -354,14 +496,73 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
       setDelay(String(s.delay));
       if (Array.isArray(s.messages) && s.messages.length) setMessages(s.messages);
       if (Array.isArray(s.serverConfigs) && s.serverConfigs.length) {
-        // Merge saved configs onto current MENTIO_SERVERS list (preserves new servers added later)
         const saved = s.serverConfigs as ServerMentioConfig[];
         setServerConfigs(
-          MENTIO_SERVERS.map((base) => saved.find((c) => c.serverId === base.serverId) ?? { ...base, enabled: true, mentionCount: 3, cooldownMin: 5, channelHook: "", activityOnly: true })
+          MENTIO_SERVERS.map((base) => {
+            const existing = saved.find((c) => c.serverId === base.serverId);
+            return existing
+              ? { ...existing, customMessages: Array.isArray(existing.customMessages) ? existing.customMessages : [] }
+              : { ...base, enabled: true, mentionCount: 3, cooldownMin: 5, channelHook: "", activityOnly: true, customMessages: [] };
+          })
         );
       }
     }).catch(() => {}).finally(() => setLoading(false));
   }, [item.id]);
+
+  async function handleRun() {
+    const targets = serverConfigs.filter((c) => c.enabled);
+    if (!targets.length) { addLog("err", "No servers enabled — toggle at least one ON"); return; }
+    setRunning(true);
+    setRunLog([]);
+    addLog("info", `Starting Mentio run on ${targets.length} server(s)…`);
+    const delayMs = (parseInt(delay, 10) || 3) * 1000;
+
+    for (const cfg of targets) {
+      addLog("info", `[${cfg.name}] Checking membership…`);
+      const { member } = await checkGuildMembership(cfg.guildId);
+
+      if (!member) {
+        if (autoJoin) {
+          addLog("info", `[${cfg.name}] Not a member — auto-joining via ${cfg.inviteCode}…`);
+          const jr = await joinServer(cfg.inviteCode);
+          if (!jr.success) {
+            addLog("err", `[${cfg.name}] Join failed: ${jr.error}`);
+            continue;
+          }
+          addLog("ok", `[${cfg.name}] ${jr.alreadyMember ? "Already a member" : "Joined!"}`);
+          await new Promise((r) => setTimeout(r, 1200));
+        } else {
+          addLog("err", `[${cfg.name}] Not a member and auto-join is off — skipping`);
+          continue;
+        }
+      } else {
+        addLog("ok", `[${cfg.name}] Already a member ✓`);
+      }
+
+      const pool = cfg.customMessages?.length ? cfg.customMessages : messages;
+      const msg = pool[Math.floor(Math.random() * pool.length)] ?? "Hey! Check this out 👋";
+      addLog("info", `[${cfg.name}] Sending ${cfg.mentionCount} mention(s)${cfg.channelHook ? ` → #${cfg.channelHook}` : ""}…`);
+
+      const result = await runAutoMention({
+        guildId: cfg.guildId,
+        channelHook: cfg.channelHook,
+        message: msg,
+        mentionCount: safeMode ? Math.min(cfg.mentionCount, 2) : cfg.mentionCount,
+        delayMs,
+      });
+
+      if (result.success) {
+        addLog("ok", `[${cfg.name}] ✓ Sent to #${result.channel} — tagged ${result.mentionedCount} member(s)`);
+      } else {
+        addLog("err", `[${cfg.name}] Failed: ${result.error}`);
+      }
+
+      await new Promise((r) => setTimeout(r, delayMs));
+    }
+
+    addLog("ok", "Run complete.");
+    setRunning(false);
+  }
 
   function updateServerConfig(index: number, updated: ServerMentioConfig) {
     setServerConfigs((prev) => prev.map((c, i) => (i === index ? updated : c)));
@@ -424,6 +625,39 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
       </div>
 
       <div className="flex-1 overflow-y-auto discord-scrollbar px-5 pb-4 pt-1">
+
+        {/* ── Run Now ── */}
+        <SectionLabel label="Execute" />
+        <div className="rounded-2xl overflow-hidden mb-4" style={{ border: "1.5px solid rgba(28,248,255,0.2)", backgroundColor: "rgba(28,248,255,0.03)" }}>
+          <div className="px-4 py-3 flex items-center gap-3">
+            <button onClick={handleRun} disabled={running}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-bold transition-all disabled:opacity-60 hover:brightness-110"
+              style={{ backgroundColor: "#1CF8FF", color: "#000" }}>
+              {running ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+              {running ? "Running…" : "Run Mentio Now"}
+            </button>
+            <div className="text-[11px] text-[#666]">
+              {serverConfigs.filter((c) => c.enabled).length} server(s) targeted
+            </div>
+          </div>
+
+          {/* Activity log */}
+          {runLog.length > 0 && (
+            <div ref={logRef} className="max-h-[160px] overflow-y-auto discord-scrollbar px-4 pb-3 flex flex-col gap-1"
+              style={{ borderTop: "1px solid rgba(28,248,255,0.12)" }}>
+              {runLog.map((entry) => (
+                <div key={entry.id} className="flex items-start gap-2 text-[11px] font-mono leading-5">
+                  {entry.type === "ok" && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />}
+                  {entry.type === "err" && <XCircle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" />}
+                  {entry.type === "info" && <div className="w-3.5 h-3.5 rounded-full border border-[#444] shrink-0 mt-0.5" />}
+                  <span style={{ color: entry.type === "ok" ? "#86efac" : entry.type === "err" ? "#fca5a5" : "#888" }}>
+                    {entry.text}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* ── Global toggles ── */}
         <SectionLabel label="Global Settings" />
