@@ -1,8 +1,9 @@
 import { useState, useId, useEffect, useRef } from "react";
 import { getToolSettings, saveToolSettings, joinServer, checkGuildMembership, runAutoMention, type ServerMentioConfig } from "@/lib/api";
+import { SERVERS } from "./Server";
 import {
   ChevronDown, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight,
-  Clock, MessageSquare, Server, AtSign, Shield, Users, Hash,
+  Clock, MessageSquare, Server as ServerIcon, AtSign, Shield, Users, Hash,
   ChevronUp, Wifi, Play, CheckCircle2, XCircle, Loader2, LogIn,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -86,60 +87,24 @@ const automationItems: AutomationItem[] = [
   },
 ];
 
-// ─── Linked servers for Mentio (IDs 10–14 from bot/Server.tsx) ────────────────
-const MENTIO_SERVERS: Omit<ServerMentioConfig, "enabled" | "mentionCount" | "cooldownMin" | "channelHook" | "activityOnly" | "customMessages">[] = [
-  {
-    serverId: 10,
-    guildId: "1320917906346868876",
-    name: "Blox Fruits Trading Server",
-    inviteCode: "legacytrading",
-    logoUrl: "https://cdn.discordapp.com/icons/1320917906346868876/a_204d5b403207b4a8fe13b5ba628c86f8.gif?size=64",
-    accentColor: "#f97316",
-  },
-  {
-    serverId: 11,
-    guildId: "1320854419532812431",
-    name: "Blox Fruits Trading Server",
-    inviteCode: "blox-fruit",
-    logoUrl: "https://cdn.discordapp.com/icons/1320854419532812431/a_4113fa484c36bab0bd7df1224d9365c4.gif?size=64",
-    accentColor: "#eab308",
-  },
-  {
-    serverId: 12,
-    guildId: "1165018533349044315",
-    name: "BF Trading | Stock Notifier",
-    inviteCode: "bfts",
-    logoUrl: "https://cdn.discordapp.com/icons/1320917906346868876/a_204d5b403207b4a8fe13b5ba628c86f8.gif?size=64",
-    accentColor: "#d97706",
-  },
-  {
-    serverId: 13,
-    guildId: "1218556281539788840",
-    name: "Blox Fruits Trading Server",
-    inviteCode: "bloxfruitstrading",
-    logoUrl: "https://cdn.discordapp.com/icons/1218556281539788840/6850a0401154036ae4d319e0396fbf8e.png?size=64",
-    accentColor: "#22c55e",
-  },
-  {
-    serverId: 14,
-    guildId: "888721743601094678",
-    name: "ScammerAlert!",
-    inviteCode: "scammeralert",
-    logoUrl: "https://cdn.discordapp.com/icons/888721743601094678/a_96b48c1c030b62740af6ca673eeea8d7.gif?size=64",
-    accentColor: "#ef4444",
-  },
-];
-
+// ─── All known servers → Mentio targets (derived from SERVERS in Server.tsx) ──
 function defaultServerConfigs(): ServerMentioConfig[] {
-  return MENTIO_SERVERS.map((s) => ({
-    ...s,
-    enabled: true,
-    mentionCount: 3,
-    cooldownMin: 5,
-    channelHook: "",
-    activityOnly: true,
-    customMessages: [],
-  }));
+  return SERVERS
+    .filter((s) => s.guildId && s.inviteCode)
+    .map((s) => ({
+      serverId: s.id,
+      guildId: s.guildId!,
+      name: s.name,
+      inviteCode: s.inviteCode!,
+      logoUrl: s.logoUrl,
+      accentColor: s.accentColor,
+      enabled: true,
+      mentionCount: 3,
+      cooldownMin: 5,
+      channelHook: "",
+      activityOnly: true,
+      customMessages: [],
+    }));
 }
 
 type MemberStatus = "unknown" | "checking" | "member" | "not-member";
@@ -288,7 +253,7 @@ function ServerConfigRow({
   async function handleJoin() {
     setJoining(true);
     setJoinMsg(null);
-    const result = await joinServer(config.inviteCode);
+    const result = await joinServer(config.inviteCode, config.guildId);
     if (result.success) {
       setMemberStatus("member");
       setJoinMsg(result.alreadyMember ? "Already a member" : "Joined successfully!");
@@ -498,11 +463,11 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
       if (Array.isArray(s.serverConfigs) && s.serverConfigs.length) {
         const saved = s.serverConfigs as ServerMentioConfig[];
         setServerConfigs(
-          MENTIO_SERVERS.map((base) => {
-            const existing = saved.find((c) => c.serverId === base.serverId);
+          SERVERS.filter((s) => s.guildId && s.inviteCode).map((base) => {
+            const existing = saved.find((c) => c.serverId === base.id);
             return existing
               ? { ...existing, customMessages: Array.isArray(existing.customMessages) ? existing.customMessages : [] }
-              : { ...base, enabled: true, mentionCount: 3, cooldownMin: 5, channelHook: "", activityOnly: true, customMessages: [] };
+              : { serverId: base.id, guildId: base.guildId!, name: base.name, inviteCode: base.inviteCode!, logoUrl: base.logoUrl, accentColor: base.accentColor, enabled: true, mentionCount: 3, cooldownMin: 5, channelHook: "", activityOnly: true, customMessages: [] };
           })
         );
       }
@@ -524,12 +489,13 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
       if (!member) {
         if (autoJoin) {
           addLog("info", `[${cfg.name}] Not a member — auto-joining via ${cfg.inviteCode}…`);
-          const jr = await joinServer(cfg.inviteCode);
+          const jr = await joinServer(cfg.inviteCode, cfg.guildId);
           if (!jr.success) {
             addLog("err", `[${cfg.name}] Join failed: ${jr.error}`);
             continue;
           }
-          addLog("ok", `[${cfg.name}] ${jr.alreadyMember ? "Already a member" : "Joined!"}`);
+          const bypassNote = jr.onboardingSkipped ? " · onboarding skipped" : jr.verificationSkipped ? " · verification accepted" : "";
+          addLog("ok", `[${cfg.name}] ${jr.alreadyMember ? "Already a member" : "Joined!"}${bypassNote}`);
           await new Promise((r) => setTimeout(r, 1200));
         } else {
           addLog("err", `[${cfg.name}] Not a member and auto-join is off — skipping`);
@@ -674,7 +640,7 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
             description="Target recently active members only">
             <ToggleSwitch on={smartMention} onToggle={() => setSmartMention((v) => !v)} />
           </SettingRow>
-          <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers"
+          <SettingRow icon={<ServerIcon className="w-4 h-4" />} label="Auto-Join Servers"
             description="Join servers before mentioning">
             <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin((v) => !v)} />
           </SettingRow>
@@ -811,7 +777,7 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
           <SettingRow icon={<AtSign className="w-4 h-4" />} label="Smart Mentions" description="Target active members only">
             <ToggleSwitch on={smartMention} onToggle={() => setSmartMention((v) => !v)} />
           </SettingRow>
-          <SettingRow icon={<Server className="w-4 h-4" />} label="Auto-Join Servers" description="Join servers before mentioning">
+          <SettingRow icon={<ServerIcon className="w-4 h-4" />} label="Auto-Join Servers" description="Join servers before mentioning">
             <ToggleSwitch on={autoJoin} onToggle={() => setAutoJoin((v) => !v)} />
           </SettingRow>
           <SettingRow icon={<MessageSquare className="w-4 h-4" />} label="DM Mode" description="Send via direct messages">

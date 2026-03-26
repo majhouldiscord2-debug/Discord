@@ -43,12 +43,12 @@ export async function saveToolSettings(settings: ToolSettings): Promise<void> {
   if (!res.ok) throw new Error("Failed to save settings");
 }
 
-export async function joinServer(inviteCode: string): Promise<{ success: boolean; alreadyMember?: boolean; guild?: { id: string; name: string } | null; error?: string }> {
+export async function joinServer(inviteCode: string, guildId?: string): Promise<{ success: boolean; alreadyMember?: boolean; verificationSkipped?: boolean; onboardingSkipped?: boolean; guild?: { id: string; name: string } | null; error?: string }> {
   try {
     const res = await fetch(`${API_BASE}/discord/join-server`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ inviteCode }),
+      body: JSON.stringify({ inviteCode, guildId }),
     });
     const data = await res.json();
     if (!res.ok) return { success: false, error: data.error ?? "Failed to join" };

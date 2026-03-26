@@ -17,7 +17,7 @@ interface DiscordServer {
   onlineCount?: number;
 }
 
-const SERVERS: DiscordServer[] = [
+export const SERVERS: DiscordServer[] = [
   {
     id: 1,
     guildId: "1313625670026530866",

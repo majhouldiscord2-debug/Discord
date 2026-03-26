@@ -271,27 +271,85 @@ router.get("/discord/relationships", async (_req, res) => {
   return res.json(result.data);
 });
 
+// ── helpers for onboarding / verification bypass ─────────────────────────────
+
+async function skipMemberVerification(guildId: string, token: string, tokenType: string): Promise<{ attempted: boolean; accepted?: boolean }> {
+  // 1. fetch the rules/screening gate
+  const gateRes = await discordFetch(`/guilds/${guildId}/member-verification`, token, tokenType);
+  if (!gateRes.ok) return { attempted: false };
+
+  const gate = gateRes.data as Record<string, unknown>;
+  if (!gate?.form_fields) return { attempted: false };
+
+  const formFields = (gate.form_fields as Array<Record<string, unknown>>).map((field) => ({
+    field_type: field.field_type,
+    label: field.label,
+    values: field.values ?? [],
+    required: field.required ?? true,
+    response: true,
+  }));
+
+  const acceptRes = await discordFetch(`/guilds/${guildId}/requests/@me`, token, tokenType, {
+    method: "PUT",
+    body: JSON.stringify({ version: gate.version, form_fields: formFields }),
+  });
+
+  return { attempted: true, accepted: acceptRes.ok };
+}
+
+async function completeOnboarding(guildId: string, token: string, tokenType: string) {
+  // COMPLETED_ONBOARDING = 1 << 0 = 1
+  // COMPLETED_ONBOARDING_HOME = 1 << 2 = 4
+  await discordFetch(`/guilds/${guildId}/members/@me`, token, tokenType, {
+    method: "PATCH",
+    body: JSON.stringify({ flags: 5 }),
+  });
+}
+
+// ── join server ───────────────────────────────────────────────────────────────
+
 router.post("/discord/join-server", async (req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
-  const { inviteCode } = req.body as { inviteCode: string };
+  const { inviteCode, guildId } = req.body as { inviteCode: string; guildId?: string };
   if (!inviteCode?.trim()) return res.status(400).json({ error: "inviteCode required" });
 
-  const result = await discordFetch(`/invites/${inviteCode.trim()}`, auth.token, auth.tokenType, {
+  const joinResult = await discordFetch(`/invites/${inviteCode.trim()}`, auth.token, auth.tokenType, {
     method: "POST",
     body: JSON.stringify({}),
   });
 
-  if (!result.ok) {
-    const data = result.data as Record<string, unknown>;
-    if (result.status === 400 && (data?.code === 40006 || String(data?.message).includes("already"))) {
-      return res.json({ success: true, alreadyMember: true, guild: (data as Record<string, unknown>)?.guild ?? null });
+  if (!joinResult.ok) {
+    const data = joinResult.data as Record<string, unknown>;
+    if (joinResult.status === 400 && (data?.code === 40006 || String(data?.message).toLowerCase().includes("already"))) {
+      const resolvedGuildId = guildId ?? ((data?.guild as Record<string, unknown>)?.id as string | undefined);
+      if (resolvedGuildId) {
+        await skipMemberVerification(resolvedGuildId, auth.token, auth.tokenType);
+        await completeOnboarding(resolvedGuildId, auth.token, auth.tokenType);
+      }
+      return res.json({ success: true, alreadyMember: true, guild: data?.guild ?? null });
     }
-    return res.status(result.status).json({ error: (data as Record<string, unknown>)?.message ?? "Failed to join", code: (data as Record<string, unknown>)?.code });
+    return res.status(joinResult.status).json({
+      error: (joinResult.data as Record<string, unknown>)?.message ?? "Failed to join",
+      code: (joinResult.data as Record<string, unknown>)?.code,
+    });
   }
 
-  const d = result.data as Record<string, unknown>;
-  return res.json({ success: true, alreadyMember: false, guild: d?.guild ?? null });
+  const joined = joinResult.data as Record<string, unknown>;
+  const resolvedGuildId = guildId ?? ((joined?.guild as Record<string, unknown>)?.id as string | undefined);
+
+  const bypass: Record<string, unknown> = {};
+
+  if (resolvedGuildId) {
+    await sleep(800);
+    const vResult = await skipMemberVerification(resolvedGuildId, auth.token, auth.tokenType);
+    bypass.verificationSkipped = vResult.accepted ?? false;
+    await sleep(600);
+    await completeOnboarding(resolvedGuildId, auth.token, auth.tokenType);
+    bypass.onboardingSkipped = true;
+  }
+
+  return res.json({ success: true, alreadyMember: false, guild: joined?.guild ?? null, ...bypass });
 });
 
 router.get("/discord/guild-membership/:guildId", async (req, res) => {
