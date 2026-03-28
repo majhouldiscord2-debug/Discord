@@ -2,5 +2,5 @@ name = "discord-workspace"
 compatibility_date = "2024-03-28"
 
 [pages]
-build_command = "pnpm run build"
-build_output_directory = "dist"
+build_command = "pnpm -r --filter discord-ui-standalone run build"
+build_output_directory = "discord-ui-standalone/dist"
