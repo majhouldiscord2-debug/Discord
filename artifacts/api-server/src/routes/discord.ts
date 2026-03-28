@@ -71,7 +71,42 @@ function clientHeaders(token: string, tokenType: string, extra?: Record<string, 
   };
 }
 
-async function discordFetch(path: string, token: string, tokenType: string, options?: RequestInit) {
+// ── Rate-limit bucket registry ────────────────────────────────────────────────
+// Tracks per-bucket "earliest next call" time so we never exceed any bucket.
+
+const rlBuckets = new Map<string, number>(); // bucketId → earliest call timestamp
+let globalRateLimitUntil = 0;               // global 429 cooldown
+
+function getRlKey(path: string): string {
+  // Collapse dynamic segments so /channels/123/messages and /channels/456/messages
+  // map to the same bucket guess before we see the real header.
+  return path.replace(/\d{17,20}/g, ":id").split("?")[0];
+}
+
+async function enforceRateLimit(bucketId: string, resetAfterMs: number) {
+  rlBuckets.set(bucketId, Date.now() + resetAfterMs + 50);
+}
+
+async function waitForBucket(bucketKey: string) {
+  const until = rlBuckets.get(bucketKey) ?? 0;
+  const wait = until - Date.now();
+  if (wait > 0) await sleep(wait);
+}
+
+// ── Core fetch with rate-limit awareness + automatic 429 retry ────────────────
+
+async function discordFetch(
+  path: string, token: string, tokenType: string,
+  options?: RequestInit, _retries = 0,
+): Promise<{ ok: boolean; status: number; data: unknown }> {
+  // Respect global rate limit
+  const globalWait = globalRateLimitUntil - Date.now();
+  if (globalWait > 0) await sleep(globalWait + jitter(50, 100));
+
+  // Respect per-bucket cooldown
+  const bucketKey = getRlKey(path);
+  await waitForBucket(bucketKey);
+
   const res = await fetch(`${DISCORD_API}${path}`, {
     ...options,
     headers: {
@@ -79,8 +114,125 @@ async function discordFetch(path: string, token: string, tokenType: string, opti
       ...(options?.headers as Record<string, string> ?? {}),
     },
   });
-  const data = await res.json();
+
+  // Track rate-limit bucket headers from the response
+  const remaining = parseInt(res.headers.get("X-RateLimit-Remaining") ?? "1");
+  const resetAfterSec = parseFloat(res.headers.get("X-RateLimit-Reset-After") ?? "0");
+  const bucketId = res.headers.get("X-RateLimit-Bucket") ?? bucketKey;
+  const isGlobal = res.headers.get("X-RateLimit-Global") === "true";
+
+  if (remaining === 0 && resetAfterSec > 0) {
+    const waitMs = Math.ceil(resetAfterSec * 1000) + jitter(50, 150);
+    if (isGlobal) {
+      globalRateLimitUntil = Date.now() + waitMs;
+    } else {
+      await enforceRateLimit(bucketId, waitMs);
+    }
+  }
+
+  // 429 — wait exactly what Discord says, then retry (max 4 attempts)
+  if (res.status === 429 && _retries < 4) {
+    let retryMs = 1000;
+    try {
+      const body = await res.json() as Record<string, unknown>;
+      const ra = typeof body.retry_after === "number" ? body.retry_after : 1;
+      retryMs = Math.ceil(ra * 1000) + jitter(100, 300);
+      if (body.global === true) globalRateLimitUntil = Date.now() + retryMs;
+    } catch {}
+    await sleep(retryMs);
+    return discordFetch(path, token, tokenType, options, _retries + 1);
+  }
+
+  const data = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, data };
+}
+
+// ── Per-channel send cooldown ─────────────────────────────────────────────────
+// Enforces a minimum gap between consecutive messages on the same channel.
+
+const channelLastSend = new Map<string, number>(); // channelId → last send timestamp
+const MIN_CHANNEL_GAP_MS = 4500;
+
+async function waitChannelCooldown(channelId: string) {
+  const last = channelLastSend.get(channelId) ?? 0;
+  const gap = (Date.now() - last);
+  if (gap < MIN_CHANNEL_GAP_MS) await sleep(MIN_CHANNEL_GAP_MS - gap + jitter(200, 500));
+}
+
+function markChannelSent(channelId: string) {
+  channelLastSend.set(channelId, Date.now());
+}
+
+// ── Session-level action throttle ─────────────────────────────────────────────
+// Limits total messages sent per rolling 10-minute window across all channels.
+
+const SESSION_WINDOW_MS = 10 * 60 * 1000;
+const SESSION_MAX_SENDS = 18; // Discord's unofficial safe threshold per 10 min
+const sendTimestamps: number[] = [];
+
+function sessionAllowsSend(): { allowed: boolean; waitMs: number } {
+  const now = Date.now();
+  // Drop entries outside the rolling window
+  while (sendTimestamps.length && sendTimestamps[0] < now - SESSION_WINDOW_MS) {
+    sendTimestamps.shift();
+  }
+  if (sendTimestamps.length >= SESSION_MAX_SENDS) {
+    // Wait until the oldest entry falls out of the window
+    const waitMs = (sendTimestamps[0] + SESSION_WINDOW_MS) - now + jitter(500, 1000);
+    return { allowed: false, waitMs };
+  }
+  return { allowed: true, waitMs: 0 };
+}
+
+function recordSend() {
+  sendTimestamps.push(Date.now());
+}
+
+// ── Typing simulation ─────────────────────────────────────────────────────────
+// Sends a real Discord typing indicator and waits a human-realistic duration
+// based on message length before the actual send.
+
+async function simulateTyping(channelId: string, token: string, tokenType: string, message: string) {
+  // Fire the typing indicator (visible to other users — looks exactly like a real person)
+  await discordFetch(`/channels/${channelId}/typing`, token, tokenType, { method: "POST" });
+
+  // Human typing speed: 180–320 chars/min (3–5.3 chars/sec)
+  const charsPerSec = 3 + Math.random() * 2.3;
+  const rawMs = (message.length / charsPerSec) * 1000;
+  // Clamp between 1.8s and 9s, add ±25% jitter
+  const typingMs = Math.round(Math.min(9000, Math.max(1800, rawMs)) * (0.75 + Math.random() * 0.5));
+  await sleep(typingMs);
+}
+
+// ── Safe message sender (used everywhere a message is posted) ─────────────────
+
+async function safeSendMessage(
+  channelId: string, content: string, token: string, tokenType: string,
+  extraHeaders?: Record<string, string>,
+): Promise<{ ok: boolean; status: number; data: unknown }> {
+  // 1. Session throttle check — pause if we're approaching Discord's limits
+  const guard = sessionAllowsSend();
+  if (!guard.allowed) await sleep(guard.waitMs);
+
+  // 2. Per-channel cooldown
+  await waitChannelCooldown(channelId);
+
+  // 3. Simulate realistic typing before send
+  await simulateTyping(channelId, token, tokenType, content);
+
+  // 4. Send the message
+  const result = await discordFetch(`/channels/${channelId}/messages`, token, tokenType, {
+    method: "POST",
+    body: JSON.stringify({ content }),
+    headers: extraHeaders,
+  });
+
+  if (result.ok) {
+    recordSend();
+    markChannelSent(channelId);
+  }
+
+  return result;
 }
 
 router.get("/discord/me", async (_req, res) => {
@@ -129,15 +281,13 @@ router.get("/discord/channels/:channelId/messages", async (req, res) => {
 });
 
 router.post("/discord/channels/:channelId/messages", async (req, res) => {
+  res.socket?.setTimeout(0);
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
   const { channelId } = req.params;
   const { content } = req.body as { content: string };
   if (!content?.trim()) return res.status(400).json({ error: "Content required" });
-  const result = await discordFetch(`/channels/${channelId}/messages`, auth.token, auth.tokenType, {
-    method: "POST",
-    body: JSON.stringify({ content }),
-  });
+  const result = await safeSendMessage(channelId, content, auth.token, auth.tokenType);
   if (!result.ok) return res.status(result.status).json(result.data);
   return res.json(result.data);
 });
@@ -550,20 +700,51 @@ router.post("/discord/auto-mention", async (req, res) => {
 
   memberIds = memberIds.slice(0, mentionCount);
 
+  // Shuffle mention order so the same users aren't always first
+  for (let i = memberIds.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [memberIds[i], memberIds[j]] = [memberIds[j], memberIds[i]];
+  }
+
   const mentionStr = memberIds.map((id: string) => `<@${id}>`).join(" ");
   const content = mentionStr ? `${mentionStr}\n${message}` : message;
 
-  await sleep(Math.min(delayMs, 3000));
-  const sendResult = await discordFetch(`/channels/${target.id}/messages`, auth.token, auth.tokenType, {
-    method: "POST",
-    body: JSON.stringify({ content }),
-  });
+  // Pre-send pause: mimic user reading / composing (not always the same)
+  await sleep(jitter(delayMs * 0.4, delayMs * 0.6));
+
+  // Use the full anti-flag send pipeline (session guard + channel cooldown + typing sim)
+  const sendResult = await safeSendMessage(target.id, content, auth.token, auth.tokenType);
 
   if (!sendResult.ok) {
     return res.status(sendResult.status).json({ error: "Failed to send message", details: sendResult.data });
   }
   const sent = sendResult.data as Record<string, unknown>;
   return res.json({ success: true, messageId: sent?.id, channel: target.name, mentionedCount: memberIds.length });
+});
+
+// ── Anti-flag session status ───────────────────────────────────────────────────
+router.get("/discord/antiflag-status", (_req, res) => {
+  const now = Date.now();
+  while (sendTimestamps.length && sendTimestamps[0] < now - SESSION_WINDOW_MS) sendTimestamps.shift();
+  const used = sendTimestamps.length;
+  const remaining = SESSION_MAX_SENDS - used;
+  const globalCooldownMs = Math.max(0, globalRateLimitUntil - now);
+  const nextSendAt = used >= SESSION_MAX_SENDS
+    ? sendTimestamps[0] + SESSION_WINDOW_MS
+    : null;
+  return res.json({
+    sessionSends: used,
+    sessionLimit: SESSION_MAX_SENDS,
+    sessionRemaining: remaining,
+    sessionWindowMinutes: SESSION_WINDOW_MS / 60000,
+    globalCooldownMs,
+    nextSendAt,
+    buckets: Object.fromEntries(
+      [...rlBuckets.entries()]
+        .filter(([, until]) => until > now)
+        .map(([k, until]) => [k, until - now])
+    ),
+  });
 });
 
 router.get("/discord/guild-counts/:guildId", async (req, res) => {
@@ -613,7 +794,7 @@ router.post("/auth/token", async (req, res, next) => {
       });
     return res.json({ success: true, user: verify.data });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 

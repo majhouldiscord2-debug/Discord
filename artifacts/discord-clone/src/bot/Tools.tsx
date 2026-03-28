@@ -1,5 +1,5 @@
 import { useState, useId, useEffect, useRef } from "react";
-import { getToolSettings, saveToolSettings, joinServer, checkGuildMembership, runAutoMention, type ServerMentioConfig } from "@/lib/api";
+import { getToolSettings, saveToolSettings, joinServer, checkGuildMembership, runAutoMention, getAntiflagStatus, type ServerMentioConfig, type AntiflagStatus } from "@/lib/api";
 import { SERVERS } from "./Server";
 import {
   ChevronDown, ChevronLeft, Zap, Star, Plus, Trash2, ToggleLeft, ToggleRight,
@@ -216,6 +216,15 @@ function SettingRow({ icon, label, description, children, last }: { icon: React.
         </div>
       </div>
       <div className="shrink-0">{children}</div>
+    </div>
+  );
+}
+
+function Stat({ label, val, color }: { label: string; val: string; color: string }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-[12px] font-bold" style={{ color }}>{val}</span>
+      <span className="text-[9px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.3)" }}>{label}</span>
     </div>
   );
 }
@@ -444,6 +453,17 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
   const [serverConfigs, setServerConfigs] = useState<ServerMentioConfig[]>(defaultServerConfigs);
   const [messages, setMessages] = useState<string[]>(["Hey! Check this out 👋", "Join us! 🚀"]);
   const [newMessage, setNewMessage] = useState("");
+  const [antiflag, setAntiflag] = useState<AntiflagStatus | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    async function poll() {
+      try { const s = await getAntiflagStatus(); if (alive) setAntiflag(s); } catch {}
+    }
+    poll();
+    const t = setInterval(poll, 6000);
+    return () => { alive = false; clearInterval(t); };
+  }, []);
 
   function addLog(type: LogEntry["type"], text: string) {
     const id = ++logIdRef.current;
@@ -592,6 +612,48 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
       </div>
 
       <div className="flex-1 overflow-y-auto discord-scrollbar px-5 pb-4 pt-1">
+
+        {/* ── Anti-Flag Status Bar ── */}
+        {antiflag && (() => {
+          const pct = Math.round((antiflag.sessionSends / antiflag.sessionLimit) * 100);
+          const safe = pct < 60;
+          const warn = pct >= 60 && pct < 85;
+          const danger = pct >= 85;
+          const barColor = danger ? "#ef4444" : warn ? "#f59e0b" : "#22c55e";
+          const label = danger ? "HIGH LOAD" : warn ? "MODERATE" : "PROTECTED";
+          const cooldownSec = Math.ceil(antiflag.globalCooldownMs / 1000);
+          const activeBuckets = Object.keys(antiflag.buckets).length;
+          return (
+            <div className="mb-4 rounded-2xl overflow-hidden" style={{ background: "rgba(0,0,0,0.35)", border: "1.5px solid rgba(255,255,255,0.07)" }}>
+              <div className="px-4 pt-3 pb-2 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4" style={{ color: barColor }} />
+                  <span className="text-[11px] font-black tracking-widest uppercase" style={{ color: barColor }}>{label}</span>
+                  {cooldownSec > 0 && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{ background: "rgba(239,68,68,0.15)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)" }}>
+                      Global cooldown {cooldownSec}s
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.35)" }}>
+                  {antiflag.sessionSends}/{antiflag.sessionLimit} sends / {antiflag.sessionWindowMinutes}min
+                </span>
+              </div>
+              <div className="px-4 pb-1">
+                <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+                  <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.min(pct, 100)}%`, background: barColor, boxShadow: `0 0 8px ${barColor}` }} />
+                </div>
+              </div>
+              <div className="px-4 pb-3 pt-1 flex items-center gap-5 flex-wrap">
+                <Stat label="Typing sim" val="ON" color="#22c55e" />
+                <Stat label="Client spoof" val="v1.0.9180" color="#22c55e" />
+                <Stat label="Rate buckets" val={activeBuckets > 0 ? `${activeBuckets} cooling` : "clear"} color={activeBuckets > 0 ? "#f59e0b" : "#22c55e"} />
+                <Stat label="Chan cooldown" val="≥4.5s" color="#22c55e" />
+                <Stat label="Remaining" val={String(antiflag.sessionRemaining)} color={antiflag.sessionRemaining < 4 ? "#ef4444" : "#22c55e"} />
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ── Run Now ── */}
         <SectionLabel label="Execute" />

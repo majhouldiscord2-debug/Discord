@@ -90,6 +90,22 @@ export async function runAutoMention(params: {
   }
 }
 
+export interface AntiflagStatus {
+  sessionSends: number;
+  sessionLimit: number;
+  sessionRemaining: number;
+  sessionWindowMinutes: number;
+  globalCooldownMs: number;
+  nextSendAt: number | null;
+  buckets: Record<string, number>;
+}
+
+export async function getAntiflagStatus(): Promise<AntiflagStatus> {
+  const res = await fetch(`${API_BASE}/discord/antiflag-status`);
+  if (!res.ok) throw new Error("Failed to fetch anti-flag status");
+  return res.json();
+}
+
 export interface DiscordUser {
   id: string;
   username: string;
