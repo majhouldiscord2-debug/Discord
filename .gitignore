@@ -51,3 +51,6 @@ Thumbs.db
 # Optimization for GitHub 100 files limit
 # Ignore internal agents and skills if they are too many
 .agents/
+.canvas/
+artifacts/
+scripts/
