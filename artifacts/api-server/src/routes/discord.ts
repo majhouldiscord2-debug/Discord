@@ -18,12 +18,64 @@ function authHeader(token: string, tokenType: string) {
   return tokenType === "bot" ? `Bot ${token}` : token;
 }
 
+// ── Real Discord client fingerprint headers ───────────────────────────────────
+
+const CLIENT_BUILD = 363561;
+const CLIENT_VERSION = "1.0.9180";
+const CHROME_VERSION = "128.0.6613.186";
+const ELECTRON_VERSION = "32.2.7";
+const BROWSER_UA = `Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/${CLIENT_VERSION} Chrome/${CHROME_VERSION} Electron/${ELECTRON_VERSION} Safari/537.36`;
+
+function buildSuperProperties(): string {
+  const props = {
+    os: "Windows",
+    browser: "Discord Client",
+    release_channel: "stable",
+    client_version: CLIENT_VERSION,
+    os_version: "10.0.22631",
+    os_arch: "x64",
+    app_arch: "ia32",
+    system_locale: "en-US",
+    browser_user_agent: BROWSER_UA,
+    browser_version: ELECTRON_VERSION,
+    client_build_number: CLIENT_BUILD,
+    native_build_number: 56131,
+    client_event_source: null,
+    design_id: 0,
+  };
+  return Buffer.from(JSON.stringify(props)).toString("base64");
+}
+
+function buildContextProperties(location: string, extra?: Record<string, unknown>): string {
+  return Buffer.from(JSON.stringify({ location, ...extra })).toString("base64");
+}
+
+function jitter(base: number, spread: number) {
+  return base + Math.floor(Math.random() * spread);
+}
+
+function clientHeaders(token: string, tokenType: string, extra?: Record<string, string>): Record<string, string> {
+  return {
+    Authorization: authHeader(token, tokenType),
+    "Content-Type": "application/json",
+    "User-Agent": BROWSER_UA,
+    "X-Super-Properties": buildSuperProperties(),
+    "X-Discord-Locale": "en-US",
+    "X-Discord-Timezone": "America/New_York",
+    "X-Debug-Options": "bugReporterEnabled",
+    "Accept-Language": "en-US,en;q=0.9",
+    "sec-ch-ua": `"Chromium";v="${CHROME_VERSION.split(".")[0]}", "Not-A.Brand";v="99"`,
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": '"Windows"',
+    ...(extra ?? {}),
+  };
+}
+
 async function discordFetch(path: string, token: string, tokenType: string, options?: RequestInit) {
   const res = await fetch(`${DISCORD_API}${path}`, {
     ...options,
     headers: {
-      Authorization: authHeader(token, tokenType),
-      "Content-Type": "application/json",
+      ...clientHeaders(token, tokenType),
       ...(options?.headers as Record<string, string> ?? {}),
     },
   });
@@ -274,8 +326,8 @@ router.get("/discord/relationships", async (_req, res) => {
 // ── helpers for onboarding / verification bypass ─────────────────────────────
 
 async function skipMemberVerification(guildId: string, token: string, tokenType: string): Promise<{ attempted: boolean; accepted?: boolean }> {
-  // 1. fetch the rules/screening gate
-  const gateRes = await discordFetch(`/guilds/${guildId}/member-verification`, token, tokenType);
+  await sleep(jitter(600, 400));
+  const gateRes = await discordFetch(`/guilds/${guildId}/member-verification?with_guild=false&invite_code=`, token, tokenType);
   if (!gateRes.ok) return { attempted: false };
 
   const gate = gateRes.data as Record<string, unknown>;
@@ -289,45 +341,99 @@ async function skipMemberVerification(guildId: string, token: string, tokenType:
     response: true,
   }));
 
+  await sleep(jitter(800, 600));
+
   const acceptRes = await discordFetch(`/guilds/${guildId}/requests/@me`, token, tokenType, {
     method: "PUT",
     body: JSON.stringify({ version: gate.version, form_fields: formFields }),
+    headers: {
+      "X-Context-Properties": buildContextProperties("Rules Screening"),
+    },
   });
 
   return { attempted: true, accepted: acceptRes.ok };
 }
 
 async function completeOnboarding(guildId: string, token: string, tokenType: string) {
-  // COMPLETED_ONBOARDING = 1 << 0 = 1
-  // COMPLETED_ONBOARDING_HOME = 1 << 2 = 4
+  await sleep(jitter(500, 400));
+  const onboardingRes = await discordFetch(`/guilds/${guildId}/onboarding`, token, tokenType);
+  if (onboardingRes.ok) {
+    const data = onboardingRes.data as Record<string, unknown>;
+    const prompts = Array.isArray(data?.prompts) ? data.prompts as Array<Record<string, unknown>> : [];
+    const defaultOptionIds: string[] = [];
+    for (const prompt of prompts) {
+      const options = Array.isArray(prompt?.options) ? prompt.options as Array<Record<string, unknown>> : [];
+      if (options.length > 0) {
+        defaultOptionIds.push(options[0].id as string);
+      }
+    }
+    if (defaultOptionIds.length > 0) {
+      await sleep(jitter(700, 500));
+      await discordFetch(`/guilds/${guildId}/onboarding-responses`, token, tokenType, {
+        method: "POST",
+        body: JSON.stringify({ onboarding_responses: defaultOptionIds, onboarding_prompts_seen: defaultOptionIds }),
+      });
+    }
+  }
+  await sleep(jitter(400, 300));
   await discordFetch(`/guilds/${guildId}/members/@me`, token, tokenType, {
     method: "PATCH",
     body: JSON.stringify({ flags: 5 }),
+    headers: {
+      "X-Context-Properties": buildContextProperties("Guild Onboarding"),
+    },
   });
 }
 
 // ── join server ───────────────────────────────────────────────────────────────
 
 router.post("/discord/join-server", async (req, res) => {
+  res.socket?.setTimeout(0);
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
   const { inviteCode, guildId } = req.body as { inviteCode: string; guildId?: string };
   if (!inviteCode?.trim()) return res.status(400).json({ error: "inviteCode required" });
 
-  const joinResult = await discordFetch(`/invites/${inviteCode.trim()}`, auth.token, auth.tokenType, {
+  const code = inviteCode.trim();
+
+  // Step 1: Preview the invite first (simulates user clicking invite link)
+  const previewRes = await discordFetch(
+    `/invites/${code}?inputValue=${encodeURIComponent(code)}&with_counts=true&with_expiration=true`,
+    auth.token, auth.tokenType,
+  );
+  const previewData = previewRes.data as Record<string, unknown>;
+  const previewGuild = previewData?.guild as Record<string, unknown> | undefined;
+  const previewGuildId = guildId ?? previewGuild?.id as string | undefined;
+  const previewChannel = previewData?.channel as Record<string, unknown> | undefined;
+
+  // Step 2: Simulate a human reading the invite preview (1.5–3.5 seconds)
+  await sleep(jitter(1500, 2000));
+
+  // Step 3: Accept the invite with full context properties (like real client)
+  const contextProps: Record<string, unknown> = { location: "Join Guild" };
+  if (previewGuildId) contextProps["location_guild_id"] = previewGuildId;
+  if (previewChannel?.id) {
+    contextProps["location_channel_id"] = previewChannel.id;
+    contextProps["location_channel_type"] = previewChannel.type ?? 0;
+  }
+
+  const joinResult = await discordFetch(`/invites/${code}`, auth.token, auth.tokenType, {
     method: "POST",
-    body: JSON.stringify({}),
+    body: JSON.stringify({ session_id: null }),
+    headers: {
+      "X-Context-Properties": buildContextProperties("Join Guild", contextProps),
+    },
   });
 
   if (!joinResult.ok) {
     const data = joinResult.data as Record<string, unknown>;
     if (joinResult.status === 400 && (data?.code === 40006 || String(data?.message).toLowerCase().includes("already"))) {
-      const resolvedGuildId = guildId ?? ((data?.guild as Record<string, unknown>)?.id as string | undefined);
+      const resolvedGuildId = previewGuildId ?? ((data?.guild as Record<string, unknown>)?.id as string | undefined);
       if (resolvedGuildId) {
         await skipMemberVerification(resolvedGuildId, auth.token, auth.tokenType);
         await completeOnboarding(resolvedGuildId, auth.token, auth.tokenType);
       }
-      return res.json({ success: true, alreadyMember: true, guild: data?.guild ?? null });
+      return res.json({ success: true, alreadyMember: true, guild: data?.guild ?? previewGuild ?? null });
     }
     return res.status(joinResult.status).json({
       error: (joinResult.data as Record<string, unknown>)?.message ?? "Failed to join",
@@ -336,15 +442,17 @@ router.post("/discord/join-server", async (req, res) => {
   }
 
   const joined = joinResult.data as Record<string, unknown>;
-  const resolvedGuildId = guildId ?? ((joined?.guild as Record<string, unknown>)?.id as string | undefined);
+  const resolvedGuildId = previewGuildId ?? ((joined?.guild as Record<string, unknown>)?.id as string | undefined);
 
   const bypass: Record<string, unknown> = {};
 
   if (resolvedGuildId) {
-    await sleep(800);
+    // Step 4: Handle verification gate (looks like user reading rules)
+    await sleep(jitter(1200, 800));
     const vResult = await skipMemberVerification(resolvedGuildId, auth.token, auth.tokenType);
     bypass.verificationSkipped = vResult.accepted ?? false;
-    await sleep(600);
+
+    // Step 5: Handle onboarding (looks like user going through welcome flow)
     await completeOnboarding(resolvedGuildId, auth.token, auth.tokenType);
     bypass.onboardingSkipped = true;
   }

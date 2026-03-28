@@ -488,14 +488,14 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
 
       if (!member) {
         if (autoJoin) {
-          addLog("info", `[${cfg.name}] Not a member — auto-joining via ${cfg.inviteCode}…`);
+          addLog("info", `[${cfg.name}] Not a member — joining via /${cfg.inviteCode} (stealth mode)…`);
           const jr = await joinServer(cfg.inviteCode, cfg.guildId);
           if (!jr.success) {
             addLog("err", `[${cfg.name}] Join failed: ${jr.error}`);
             continue;
           }
-          const bypassNote = jr.onboardingSkipped ? " · onboarding skipped" : jr.verificationSkipped ? " · verification accepted" : "";
-          addLog("ok", `[${cfg.name}] ${jr.alreadyMember ? "Already a member" : "Joined!"}${bypassNote}`);
+          const bypassNote = jr.onboardingSkipped ? " · onboarding done" : jr.verificationSkipped ? " · rules accepted" : "";
+          addLog("ok", `[${cfg.name}] ${jr.alreadyMember ? "Already a member ✓" : "Joined safely ✓"}${bypassNote}`);
           await new Promise((r) => setTimeout(r, 1200));
         } else {
           addLog("err", `[${cfg.name}] Not a member and auto-join is off — skipping`);
