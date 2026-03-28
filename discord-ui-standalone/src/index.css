@@ -16,6 +16,15 @@
   --color-warning: hsl(var(--warning));
   --color-danger: hsl(var(--danger));
   --color-border: hsl(var(--border));
+  --color-primary-border: hsl(var(--primary-border));
+  --color-secondary-border: hsl(var(--secondary-border));
+  --color-destructive-border: hsl(var(--destructive-border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
   --font-sans: 'Inter', sans-serif;
 }
 
@@ -24,12 +33,19 @@
   --background: 223 7% 21%;          /* #313338 - Main Content */
   --foreground: 220 13% 95%;         /* #f2f3f5 - Primary Text */
   
+  --card: 223 7% 21%;
+  --card-foreground: 220 13% 95%;
+
+  --popover: 223 7% 21%;
+  --popover-foreground: 220 13% 95%;
+
   --sidebar: 220 6% 18%;             /* #2b2d31 - DM Sidebar & Active Panel */
   --sidebar-dark: 225 6% 13%;        /* #1e1f22 - Server List */
   --sidebar-darker: 226 6% 15%;      /* #232428 - User Profile Bottom Bar */
   
   --primary: 235 86% 65%;            /* #5865f2 - Blurple */
   --primary-foreground: 0 0% 100%;   /* White */
+  --primary-border: 235 86% 60%;
   
   --accent: 227 6% 27%;              /* #404249 - Hover / Selected States */
   --muted: 214 9% 61%;               /* #949ba4 - Muted Text / Inactive Icons */
@@ -39,7 +55,17 @@
   --warning: 38 95% 54%;             /* #f0b232 - Idle Status */
   --danger: 359 82% 60%;             /* #f23f43 - DND Status / Notifications */
   
+  --destructive: 359 82% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --destructive-border: 359 82% 55%;
+
+  --secondary: 227 6% 27%;
+  --secondary-foreground: 220 13% 95%;
+  --secondary-border: 227 6% 22%;
+
   --border: 225 6% 13%;              /* Subtle borders matching dark sidebar */
+  --input: 225 6% 13%;
+  --ring: 235 86% 65%;
 }
 
 @layer base {
