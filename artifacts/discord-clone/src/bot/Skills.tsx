@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Shield, MessageSquare, UserCheck, Bell, BarChart2, Gift,
   Star, Ticket, Music, Zap, Trophy, BookOpen, Hash, Clock,
+  ShieldCheck, EyeOff,
 } from "lucide-react";
 
 interface Skill {
@@ -116,9 +117,31 @@ const SKILLS: Skill[] = [
     tags: ["Slowmode", "Flood", "Dynamic"],
     stats: [{ label: "Activations", value: "47" }, { label: "Avg slowmode", value: "8s" }],
   },
+  {
+    id: 15, name: "Anti-Flag Protection",
+    description: "Shields your account from Discord's automated detection systems. Applies randomized typing intervals, human-like message pacing, and dynamic cooldowns between actions. Backs off automatically when rate-limit signals are detected, rotates request timing patterns so no two actions follow the same cadence, and prevents rapid sequential API calls that trigger anomaly scoring.",
+    category: "Protection", level: "Expert", icon: <ShieldCheck className="w-5 h-5" />, accentColor: "#cc0000", enabled: true,
+    tags: ["Anti-flag", "Rate-limit", "Pacing", "Cooldown", "Stealth"],
+    stats: [
+      { label: "Actions protected", value: "100%" },
+      { label: "Flag incidents", value: "0" },
+      { label: "Avg jitter", value: "±1.2s" },
+    ],
+  },
+  {
+    id: 16, name: "Anti-Selfbot Masking",
+    description: "Prevents Discord's self-bot detection from identifying automated behaviour. Sends the full Discord desktop client fingerprint on every request — including X-Super-Properties, X-Context-Properties, real browser User-Agent, X-Discord-Locale, and X-Debug-Options — making each request indistinguishable from the official Windows client. Adds session-aware headers, mimics invite-preview flows before joins, and applies randomised multi-step delays that replicate real human interaction patterns.",
+    category: "Protection", level: "Expert", icon: <EyeOff className="w-5 h-5" />, accentColor: "#cc0000", enabled: true,
+    tags: ["Anti-selfbot", "Fingerprint", "Headers", "Stealth", "Session"],
+    stats: [
+      { label: "Header layers", value: "11" },
+      { label: "Detection score", value: "0%" },
+      { label: "Client spoof", value: "v1.0.9180" },
+    ],
+  },
 ];
 
-const CATEGORIES = ["All", "Moderation", "Onboarding", "Roles", "Messaging", "Insights", "Engagement", "Support", "Entertainment"];
+const CATEGORIES = ["All", "Protection", "Moderation", "Onboarding", "Roles", "Messaging", "Insights", "Engagement", "Support", "Entertainment"];
 const LEVELS = ["All", "Basic", "Advanced", "Expert"];
 
 const LEVEL_BADGES: Record<string, { bg: string; color: string; border: string }> = {
@@ -129,35 +152,66 @@ const LEVEL_BADGES: Record<string, { bg: string; color: string; border: string }
 
 function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) => void }) {
   const badge = LEVEL_BADGES[skill.level];
+  const isProtection = skill.category === "Protection";
 
   return (
     <div
-      className="rounded-2xl flex flex-col gap-3 p-5 transition-all duration-200 cursor-default"
-      style={{
+      className="rounded-2xl flex flex-col gap-3 p-5 transition-all duration-200 cursor-default relative overflow-hidden"
+      style={isProtection ? {
+        background: "linear-gradient(135deg, #0a0000 0%, #1a0404 60%, #0d0000 100%)",
+        border: "1.5px solid rgba(204,0,0,0.45)",
+        boxShadow: "0 2px 24px rgba(0,0,0,0.55), 0 0 18px rgba(204,0,0,0.18)",
+      } : {
         background: "#ffffff",
         border: "1.5px solid rgba(204,0,0,0.18)",
-        boxShadow: "0 2px 20px rgba(0,0,0,0.18), 0 0 0 0 transparent",
+        boxShadow: "0 2px 20px rgba(0,0,0,0.18)",
       }}
       onMouseEnter={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "translateY(-3px)";
-        el.style.boxShadow = "0 8px 32px rgba(0,0,0,0.22), 0 0 18px rgba(204,0,0,0.22)";
-        el.style.borderColor = "rgba(204,0,0,0.55)";
+        el.style.boxShadow = isProtection
+          ? "0 12px 40px rgba(0,0,0,0.7), 0 0 32px rgba(204,0,0,0.38)"
+          : "0 8px 32px rgba(0,0,0,0.22), 0 0 18px rgba(204,0,0,0.22)";
+        el.style.borderColor = isProtection ? "rgba(204,0,0,0.75)" : "rgba(204,0,0,0.55)";
       }}
       onMouseLeave={(e) => {
         const el = e.currentTarget as HTMLDivElement;
         el.style.transform = "";
-        el.style.boxShadow = "0 2px 20px rgba(0,0,0,0.18), 0 0 0 0 transparent";
-        el.style.borderColor = "rgba(204,0,0,0.18)";
+        el.style.boxShadow = isProtection
+          ? "0 2px 24px rgba(0,0,0,0.55), 0 0 18px rgba(204,0,0,0.18)"
+          : "0 2px 20px rgba(0,0,0,0.18)";
+        el.style.borderColor = isProtection ? "rgba(204,0,0,0.45)" : "rgba(204,0,0,0.18)";
       }}
     >
+      {isProtection && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at 80% 20%, rgba(204,0,0,0.12) 0%, transparent 65%)",
+          }}
+        />
+      )}
+
+      {isProtection && (
+        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full z-10"
+          style={{ background: "rgba(204,0,0,0.18)", border: "1px solid rgba(204,0,0,0.4)" }}>
+          <div className="w-1.5 h-1.5 rounded-full bg-[#cc0000]"
+            style={{ boxShadow: "0 0 6px #cc0000", animation: "pulse 2s infinite" }} />
+          <span className="text-[8.5px] font-bold text-[#ff4444] uppercase tracking-widest">Active</span>
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className="rounded-xl p-2.5 shrink-0" style={{ background: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
+          <div className="rounded-xl p-2.5 shrink-0" style={isProtection
+            ? { background: "rgba(204,0,0,0.18)", color: "#ff4444", boxShadow: "0 0 14px rgba(204,0,0,0.3)" }
+            : { background: "rgba(204,0,0,0.08)", color: "#cc0000" }}>
             {skill.icon}
           </div>
           <div>
-            <p className="text-[13.5px] font-bold text-[#0a0000] leading-tight">{skill.name}</p>
+            <p className={`text-[13.5px] font-bold leading-tight ${isProtection ? "text-white" : "text-[#0a0000]"}`}>
+              {skill.name}
+            </p>
             <div className="flex items-center gap-1.5 mt-0.5">
               <span
                 className="text-[9px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded"
@@ -165,41 +219,54 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
               >
                 {skill.level}
               </span>
-              <span className="text-[10px] text-[#888]">{skill.category}</span>
+              <span className="text-[10px]" style={{ color: isProtection ? "rgba(255,120,120,0.7)" : "#888" }}>
+                {skill.category}
+              </span>
             </div>
           </div>
         </div>
 
-        <button
-          onClick={() => onToggle(skill.id)}
-          className="shrink-0 rounded-full transition-all duration-300 relative"
-          style={{
-            width: 38, height: 21,
-            background: skill.enabled
-              ? "linear-gradient(90deg, #cc0000, #ff2222)"
-              : "rgba(0,0,0,0.12)",
-            boxShadow: skill.enabled ? "0 0 14px rgba(204,0,0,0.55), 0 0 4px rgba(204,0,0,0.4)" : "none",
-          }}
-        >
-          <div
-            className="absolute top-[2.5px] rounded-full bg-white transition-all duration-300"
+        {!isProtection && (
+          <button
+            onClick={() => onToggle(skill.id)}
+            className="shrink-0 rounded-full transition-all duration-300 relative"
             style={{
-              width: 16, height: 16,
-              left: skill.enabled ? "calc(100% - 18px)" : 3,
-              boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+              width: 38, height: 21,
+              background: skill.enabled
+                ? "linear-gradient(90deg, #cc0000, #ff2222)"
+                : "rgba(0,0,0,0.12)",
+              boxShadow: skill.enabled ? "0 0 14px rgba(204,0,0,0.55), 0 0 4px rgba(204,0,0,0.4)" : "none",
             }}
-          />
-        </button>
+          >
+            <div
+              className="absolute top-[2.5px] rounded-full bg-white transition-all duration-300"
+              style={{
+                width: 16, height: 16,
+                left: skill.enabled ? "calc(100% - 18px)" : 3,
+                boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+              }}
+            />
+          </button>
+        )}
       </div>
 
-      <p className="text-[11.5px] text-[#555] leading-relaxed line-clamp-2">{skill.description}</p>
+      <p className={`text-[11.5px] leading-relaxed line-clamp-3 ${isProtection ? "text-[rgba(255,200,200,0.75)]" : "text-[#555]"}`}>
+        {skill.description}
+      </p>
 
       {skill.stats && (
-        <div className="flex gap-4 pt-1 pb-0.5" style={{ borderTop: "1px solid rgba(204,0,0,0.1)" }}>
+        <div
+          className="flex gap-4 pt-1 pb-0.5"
+          style={{ borderTop: `1px solid ${isProtection ? "rgba(204,0,0,0.25)" : "rgba(204,0,0,0.1)"}` }}
+        >
           {skill.stats.map((s) => (
             <div key={s.label} className="flex flex-col">
-              <span className="text-[13px] font-bold text-[#cc0000]">{s.value}</span>
-              <span className="text-[9px] text-[#999] uppercase tracking-wide">{s.label}</span>
+              <span className="text-[13px] font-bold" style={{ color: isProtection ? "#ff6666" : "#cc0000" }}>
+                {s.value}
+              </span>
+              <span className="text-[9px] uppercase tracking-wide" style={{ color: isProtection ? "rgba(255,150,150,0.55)" : "#999" }}>
+                {s.label}
+              </span>
             </div>
           ))}
         </div>
@@ -210,7 +277,11 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
           <span
             key={tag}
             className="px-2 py-0.5 rounded-full text-[9.5px] font-semibold"
-            style={{
+            style={isProtection ? {
+              background: "rgba(204,0,0,0.14)",
+              color: "#ff6666",
+              border: "1px solid rgba(204,0,0,0.35)",
+            } : {
               background: "rgba(204,0,0,0.07)",
               color: "#cc0000",
               border: "1px solid rgba(204,0,0,0.18)",
