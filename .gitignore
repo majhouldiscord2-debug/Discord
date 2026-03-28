@@ -55,5 +55,6 @@ Thumbs.db
 artifacts/
 scripts/
 attached_assets/
+lib/
 # Keep essential UI but ignore some large component folders if needed
 # discord-ui-standalone/src/components/ui/
