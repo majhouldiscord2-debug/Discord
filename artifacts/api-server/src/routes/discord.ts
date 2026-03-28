@@ -356,16 +356,25 @@ router.get("/discord/guild-membership/:guildId", async (req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ member: false });
   const { guildId } = req.params;
-  const result = await discordFetch(`/guilds/${guildId}/members/@me`, auth.token, auth.tokenType);
-  return res.json({ member: result.ok });
+
+  const memberResult = await discordFetch(`/guilds/${guildId}/members/@me`, auth.token, auth.tokenType);
+  if (memberResult.ok) return res.json({ member: true });
+
+  const guildsResult = await discordFetch("/users/@me/guilds?limit=200", auth.token, auth.tokenType);
+  if (guildsResult.ok && Array.isArray(guildsResult.data)) {
+    const isMember = (guildsResult.data as Array<{ id: string }>).some((g) => g.id === guildId);
+    return res.json({ member: isMember });
+  }
+
+  return res.json({ member: false });
 });
 
 router.post("/discord/auto-mention", async (req, res) => {
   const auth = await getStoredAuth();
   if (!auth) return res.status(401).json({ error: "Not authenticated" });
 
-  const { guildId, channelHook, message, mentionCount, delayMs = 1200 } =
-    req.body as { guildId: string; channelHook?: string; message: string; mentionCount: number; delayMs?: number };
+  const { guildId, channelHook, message, mentionCount, delayMs = 1200, activityOnly = false } =
+    req.body as { guildId: string; channelHook?: string; message: string; mentionCount: number; delayMs?: number; activityOnly?: boolean };
 
   if (!guildId || !message) return res.status(400).json({ error: "guildId and message required" });
 
@@ -373,23 +382,67 @@ router.post("/discord/auto-mention", async (req, res) => {
   if (!channelsResult.ok) return res.status(400).json({ error: "Cannot access guild channels" });
 
   const channels = channelsResult.data as Array<{ id: string; name: string; type: number; nsfw?: boolean }>;
-  const text = channels.filter((c) => c.type === 0 && !c.nsfw);
+  const text = channels.filter((c) => (c.type === 0 || c.type === 5) && !c.nsfw);
 
   let target = channelHook
     ? text.find((c) => c.name === channelHook || c.id === channelHook)
     : text[0];
   if (!target) return res.status(400).json({ error: "No suitable text channel found" });
 
-  const membersResult = await discordFetch(`/guilds/${guildId}/members?limit=${Math.min(mentionCount + 10, 100)}`, auth.token, auth.tokenType);
-  const rawMembers = Array.isArray(membersResult.data) ? membersResult.data : [];
   const meResult = await discordFetch("/users/@me", auth.token, auth.tokenType);
-  const meId = (meResult.data as Record<string, unknown>)?.id;
-  const members = rawMembers
-    .map((m: Record<string, unknown>) => (m?.user as Record<string, unknown>)?.id as string)
-    .filter((id: string) => id && id !== meId)
-    .slice(0, mentionCount);
+  const meId = (meResult.data as Record<string, unknown>)?.id as string | undefined;
 
-  const mentionStr = members.map((id: string) => `<@${id}>`).join(" ");
+  let memberIds: string[] = [];
+
+  if (activityOnly) {
+    const recentResult = await discordFetchWithRetry(`/channels/${target.id}/messages?limit=100`, auth.token, auth.tokenType);
+    if (recentResult.ok && Array.isArray(recentResult.data)) {
+      const seen = new Set<string>();
+      for (const msg of recentResult.data as Array<{ author: { id: string; bot?: boolean } }>) {
+        const authorId = msg?.author?.id;
+        if (authorId && authorId !== meId && !msg.author.bot && !seen.has(authorId)) {
+          seen.add(authorId);
+          memberIds.push(authorId);
+          if (memberIds.length >= mentionCount) break;
+        }
+      }
+    }
+  }
+
+  if (memberIds.length < mentionCount) {
+    const membersResult = await discordFetch(`/guilds/${guildId}/members?limit=${Math.min(mentionCount * 2 + 10, 100)}`, auth.token, auth.tokenType);
+    if (membersResult.ok && Array.isArray(membersResult.data)) {
+      const existing = new Set(memberIds);
+      for (const m of membersResult.data as Array<Record<string, unknown>>) {
+        const uid = ((m?.user as Record<string, unknown>)?.id) as string;
+        const isBot = (m?.user as Record<string, unknown>)?.bot as boolean;
+        if (uid && uid !== meId && !isBot && !existing.has(uid)) {
+          existing.add(uid);
+          memberIds.push(uid);
+          if (memberIds.length >= mentionCount) break;
+        }
+      }
+    }
+  }
+
+  if (memberIds.length < mentionCount) {
+    const fallbackResult = await discordFetchWithRetry(`/channels/${target.id}/messages?limit=100`, auth.token, auth.tokenType);
+    if (fallbackResult.ok && Array.isArray(fallbackResult.data)) {
+      const existing = new Set(memberIds);
+      for (const msg of fallbackResult.data as Array<{ author: { id: string; bot?: boolean } }>) {
+        const authorId = msg?.author?.id;
+        if (authorId && authorId !== meId && !msg.author.bot && !existing.has(authorId)) {
+          existing.add(authorId);
+          memberIds.push(authorId);
+          if (memberIds.length >= mentionCount) break;
+        }
+      }
+    }
+  }
+
+  memberIds = memberIds.slice(0, mentionCount);
+
+  const mentionStr = memberIds.map((id: string) => `<@${id}>`).join(" ");
   const content = mentionStr ? `${mentionStr}\n${message}` : message;
 
   await sleep(Math.min(delayMs, 3000));
@@ -402,7 +455,7 @@ router.post("/discord/auto-mention", async (req, res) => {
     return res.status(sendResult.status).json({ error: "Failed to send message", details: sendResult.data });
   }
   const sent = sendResult.data as Record<string, unknown>;
-  return res.json({ success: true, messageId: sent?.id, channel: target.name, mentionedCount: members.length });
+  return res.json({ success: true, messageId: sent?.id, channel: target.name, mentionedCount: memberIds.length });
 });
 
 router.get("/discord/guild-counts/:guildId", async (req, res) => {

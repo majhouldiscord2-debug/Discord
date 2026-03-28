@@ -74,6 +74,7 @@ export async function runAutoMention(params: {
   message: string;
   mentionCount: number;
   delayMs: number;
+  activityOnly?: boolean;
 }): Promise<{ success: boolean; messageId?: string; channel?: string; mentionedCount?: number; error?: string }> {
   try {
     const res = await fetch(`${API_BASE}/discord/auto-mention`, {

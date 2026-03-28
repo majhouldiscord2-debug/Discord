@@ -224,13 +224,35 @@ function SkillCard({ skill, onToggle }: { skill: Skill; onToggle: (id: number) =
   );
 }
 
+const SKILLS_STORAGE_KEY = "tg_bot_skills_enabled";
+
+function loadSavedStates(): Record<number, boolean> {
+  try {
+    const raw = localStorage.getItem(SKILLS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function applyStoredStates(base: Skill[]): Skill[] {
+  const saved = loadSavedStates();
+  return base.map((s) => (s.id in saved ? { ...s, enabled: saved[s.id] } : s));
+}
+
 export default function SkillsPage() {
-  const [skills, setSkills] = useState(SKILLS);
+  const [skills, setSkills] = useState<Skill[]>(() => applyStoredStates(SKILLS));
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeLevel, setActiveLevel] = useState("All");
 
   function toggleSkill(id: number) {
-    setSkills((prev) => prev.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s)));
+    setSkills((prev) => {
+      const next = prev.map((s) => (s.id === id ? { ...s, enabled: !s.enabled } : s));
+      const states: Record<number, boolean> = {};
+      next.forEach((s) => { states[s.id] = s.enabled; });
+      try { localStorage.setItem(SKILLS_STORAGE_KEY, JSON.stringify(states)); } catch {}
+      return next;
+    });
   }
 
   const filtered = skills.filter((s) => {

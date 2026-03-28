@@ -515,6 +515,7 @@ function MentioEditPanel({ item, onBack }: { item: AutomationItem; onBack: () =>
         message: msg,
         mentionCount: safeMode ? Math.min(cfg.mentionCount, 2) : cfg.mentionCount,
         delayMs,
+        activityOnly: cfg.activityOnly,
       });
 
       if (result.success) {
@@ -856,8 +857,27 @@ function EditPanel({ item, onBack, glowColor }: { item: AutomationItem; onBack: 
 
 // ─── Item detail modal ────────────────────────────────────────────────────────
 
+const TOOL_ENABLED_KEY = "tg_tool_enabled";
+
+function getToolEnabled(toolId: number): boolean {
+  try {
+    const raw = localStorage.getItem(TOOL_ENABLED_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    return !!map[toolId];
+  } catch { return false; }
+}
+
+function setToolEnabled(toolId: number, value: boolean) {
+  try {
+    const raw = localStorage.getItem(TOOL_ENABLED_KEY);
+    const map = raw ? JSON.parse(raw) : {};
+    map[toolId] = value;
+    localStorage.setItem(TOOL_ENABLED_KEY, JSON.stringify(map));
+  } catch {}
+}
+
 function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () => void }) {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(() => getToolEnabled(item.id));
   const [editing, setEditing] = useState(false);
 
   return (
@@ -910,7 +930,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
                 <span className="text-[12px] text-[#888]">4.8 · 2.3k reviews</span>
               </div>
             </div>
-            <button onClick={() => setEnabled((v) => !v)}
+            <button onClick={() => { const next = !enabled; setEnabled(next); setToolEnabled(item.id, next); }}
               className="flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold transition-all"
               style={{
                 backgroundColor: enabled ? "rgba(35,165,90,0.1)" : "rgba(204,0,0,0.08)",
@@ -937,7 +957,7 @@ function ItemDetailModal({ item, onClose }: { item: AutomationItem; onClose: () 
 
 // ─── Automation card ──────────────────────────────────────────────────────────
 
-function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onOpen?: () => void; index?: number }) {
+function AutomationCard({ item, onOpen, index = 0, enabled = false }: { item: AutomationItem; onOpen?: () => void; index?: number; enabled?: boolean }) {
   const [hovered, setHovered] = useState(false);
   const delay = Math.min(index * 40, 320);
 
@@ -959,6 +979,9 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
     >
       <div className={cn("absolute inset-0 bg-gradient-to-br opacity-90", item.gradient)} />
       <div className="relative w-full h-full"><WumpusIcon item={item} /></div>
+      <div className="absolute top-1.5 right-1.5">
+        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: enabled ? "#23a55a" : "rgba(255,255,255,0.25)", boxShadow: enabled ? "0 0 6px #23a55a" : "none" }} />
+      </div>
       <div className="absolute bottom-0 left-0 right-0 p-2 text-center">
         <span className="text-[11px] font-bold text-white/90 drop-shadow">{item.name}</span>
       </div>
@@ -968,12 +991,36 @@ function AutomationCard({ item, onOpen, index = 0 }: { item: AutomationItem; onO
 
 // ─── Root export ──────────────────────────────────────────────────────────────
 
+function useToolEnabledMap() {
+  const [map, setMap] = useState<Record<number, boolean>>(() => {
+    try {
+      const raw = localStorage.getItem(TOOL_ENABLED_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch { return {}; }
+  });
+
+  function refresh() {
+    try {
+      const raw = localStorage.getItem(TOOL_ENABLED_KEY);
+      setMap(raw ? JSON.parse(raw) : {});
+    } catch {}
+  }
+
+  return { map, refresh };
+}
+
 export default function ToolsPage() {
   const [selected, setSelected] = useState<AutomationItem | null>(null);
+  const { map: enabledMap, refresh: refreshMap } = useToolEnabledMap();
+
+  function handleClose() {
+    setSelected(null);
+    refreshMap();
+  }
 
   return (
     <div className="relative h-full w-full overflow-hidden" style={{ backgroundColor: "#060000" }}>
-      {selected && <ItemDetailModal item={selected} onClose={() => setSelected(null)} />}
+      {selected && <ItemDetailModal item={selected} onClose={handleClose} />}
 
       <div className="h-full overflow-y-auto discord-scrollbar px-4 pt-4 pb-6">
         <div className="mb-4">
@@ -982,7 +1029,7 @@ export default function ToolsPage() {
         </div>
         <div className="grid grid-cols-3 gap-3">
           {automationItems.map((item, i) => (
-            <AutomationCard key={item.id} item={item} index={i} onOpen={() => setSelected(item)} />
+            <AutomationCard key={item.id} item={item} index={i} onOpen={() => setSelected(item)} enabled={!!enabledMap[item.id]} />
           ))}
         </div>
       </div>
